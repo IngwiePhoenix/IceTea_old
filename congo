@@ -1,0 +1,16 @@
+
+target( all )
+{
+	build( congo );
+	build( congod );
+}
+
+target( congo )
+{
+	type = executable;
+	linker = c++;
+	
+	uses( src/congo );
+	uses( src/congod );
+}
+
