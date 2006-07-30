@@ -1,16 +1,16 @@
 
-target( all )
-{
-	build( congo );
-	build( congod );
-}
+default action: create congo, congod
 
-target( congo )
-{
-	type = executable;
-	linker = c++;
-	
-	uses( src/congo );
-	uses( src/congod );
-}
+create file congod from files in src/congod using rule exe
+create file congo from files in src/congo using rule exe
 
+congod requires libcongo.a
+congo requires libcongo.a
+
+set CXXFLAGS += "-Ilibbu++/src"
+set LDFLAGS += "-Llibbu++ -lbu++"
+
+for congo set LDFLAGS += "-lreadline"
+
+rule exe matches all /(.*)\.o/ perform command "g++ {matches} {LDFLAGS} -o {target}"
+rule cpp matches one /(.*)\.cpp/ produces {1}.o perform command "g++ {CXXFLAGS} -o {target} {match}"
