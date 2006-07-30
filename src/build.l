@@ -1,4 +1,20 @@
-	int lineNum = 1;
+%{
+# include <string>
+# include "builder.h"
+# include "build.tab.h"
+# include "stringrep.h"
+
+std::string strbuf;
+%}
+
+%x strsq
+%x strdq
+%x comment
+%option noyywrap nounput batch debug
+
+%{
+# define YY_USER_ACTION  yylloc->columns (yyleng);
+%}
 %%
 
 [,:=]								return yytext[0];
@@ -23,9 +39,62 @@
 "produces"							return TOK_PRODUCES;
 "command"							return TOK_COMMAND;
 
+"..."\n								/* elipsis line continuation */
 \n+									return TOX_EOL;
-[ \t\r]*
+[ \t\r]*							/* whitespace */
 
-\/\/.*
-"#".*
+\/\/.*								/* single line comment */
+"#".*								/* single line comment */
+
+[^ \t\r\n\'\"]+						{
+	yylval.strval = stringdup( yytext );
+	return STRING;
+}
+
+\"									{
+	BEGIN( strdq );
+	strbuf = "";
+}
+\'									{
+	BEGIN( strsq );
+	strbuf = "";
+}
+
+<strdq>[^\\\n\"]+					{
+	strbuf += yytext;
+}
+
+<strsq>[^\\\n\']+					{
+	strbuf += yytext;
+}
+
+<strdq,strsq>\\n					strbuf += "\n";
+<strdq,strsq>\\t					strbuf += "\t";
+<strdq,strsq>\\r					strbuf += "\r";
+<strdq,strsq>\\b					strbuf += "\b";
+<strdq,strsq>\\f					strbuf += "\f";
+
+<strdq>\"							{
+	BEGIN( INITIAL );
+	yylval->strval = stringdup( strbuf.c_str() );
+	return STRING;
+}
+
+<strsq>\'							{
+	BEGIN( INITIAL );
+	yylval->strval = stringdup( strbuf.c_str() );
+	return STRING;
+}
+
+
+void Builder::scanBegin()
+{
+	if( !(yyin = fopen( file.c_str(), "r" )) )
+		error( std::string("cannot open ") + file );
+}
+
+void Builder::scanEnd()
+{
+	fclose( yyin );
+}
 
