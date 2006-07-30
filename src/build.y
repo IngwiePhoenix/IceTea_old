@@ -1,19 +1,21 @@
-%skeleton "lalr1.cc"
-%define "parser_class_name" "BuildParser"
 %defines
 %{
 # include <string>
 # include "builder.h"
+# include "action.h"
+# include "command.h"
 # include "build.tab.h"
+void yyerror( YYLTYPE *locp, Builder &bld, char const *msg );
 %}
 
 %parse-param { Builder &bld }
 %lex-param { Builder &bld }
+%pure-parser
 
 %locations
 %initial-action
 {
-	@$.begin.filename = @$.end.filename = &bld.file;
+	//@$.begin.filename = @$.end.filename = &bld.file;
 }
 
 %debug
@@ -23,6 +25,7 @@
 }
 
 %token <strval>		STRING		"string literal"
+%token <strval>		REGEXP		"regular expression"
 
 %token TOK_ADDSET				"+="
 %token TOK_DEFAULT				"keyword 'default'"
@@ -43,49 +46,69 @@
 %token TOK_PERFORM				"keyword 'perform'"
 %token TOK_PRODUCES				"keyword 'produces'"
 %token TOK_COMMAND				"keyword 'command'"
+%token TOK_CHECK				"keyword 'check'"
 %token TOK_EOL					"end of line"
+%token ',' ':' '='
 
 %destructor { delete[] $$; } STRING
 
 %%
 
 input:
-	 | input line
+	 | input fullline
 	 ;
 
-line: stuff TOK_EOL				{ printf("\n"); }
+fullline: TOK_EOL
+		| line TOK_EOL
+		;
+
+line: TOK_DEFAULT TOK_ACTION ':'
+	  {
+		  bld.add( new Action() );
+	  }
+	  actionlst
+	| STRING TOK_ACTION ':'
+	  {
+		  bld.add( new Action( $1 ) );
+	  }
+	  actionlst
+	| TOK_CREATE createwhat TOK_FROM createfrom TOK_USING createusing
 	;
 
-stuff:
-	 | stuff token
-	 ;
+createwhat: TOK_FILE STRING { printf("target: %s\n", $2 ); }
+		  ;
 
-token: TOK_ADDSET				{ printf("+= "); }
-	 | TOK_DEFAULT				{ printf("default "); }
-	 | TOK_ACTION				{ printf("action "); }
-	 | TOK_CREATE				{ printf("create "); }
-	 | TOK_FILE					{ printf("file "); }
-	 | TOK_FROM					{ printf("from "); }
-	 | TOK_FILES				{ printf("files "); }
-	 | TOK_IN					{ printf("in "); }
-	 | TOK_USING				{ printf("using "); }
-	 | TOK_RULE					{ printf("rule "); }
-	 | TOK_REQUIRES				{ printf("requires "); }
-	 | TOK_FOR					{ printf("for "); }
-	 | TOK_SET					{ printf("set "); }
-	 | TOK_MATCHES				{ printf("matches "); }
-	 | TOK_ALL					{ printf("all "); }
-	 | TOK_ONE					{ printf("one "); }
-	 | TOK_PERFORM				{ printf("perform "); }
-	 | TOK_PRODUCES				{ printf("produces "); }
-	 | TOK_COMMAND				{ printf("command "); }
-	 ;
+createfrom: TOK_FILES TOK_IN createfromdirlst
+		  ;
+
+createfromdirlst: createfromdir
+				| createfromdirlst ',' createfromdir
+				;
+
+createfromdir: STRING { printf("  srcdir: %s\n", $1 ); }
+			 ;
+
+createusing: TOK_RULE STRING { printf("  rule: %s\n", $2 ); }
+		   ;
+
+actionlst: action
+		 | actionlst ',' action
+		 ;
+
+action: TOK_CHECK STRING
+	    {
+			bld.add( new Command( Command::cmdCheck, $2 ) );
+		}
+	  ;
 
 %%
 
-void yy::BuildParser::error( const yy::BuildParser::location_type &l,
-						   const std::string &m )
+void yyerror( YYLTYPE *locp, Builder &bld, char const *msg )
 {
-	bld.error( l, m );
+	fprintf( stderr, "%s:%d-%d:%d-%d: %s\n",
+		bld.file.c_str(),
+		locp->first_line, locp->last_line,
+		locp->first_column, locp->last_column,
+		msg
+		);
 }
-

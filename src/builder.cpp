@@ -1,9 +1,15 @@
 #include <iostream>
 
 #include "builder.h"
+#include "action.h"
+#include "command.h"
 #include "build.tab.h"
 
-Builder::Builder()
+subExceptionDef( BuildException )
+
+Builder::Builder() :
+	pDefaultAction( NULL ),
+	pLastAddedAction( NULL )
 {
 }
 
@@ -11,24 +17,47 @@ Builder::~Builder()
 {
 }
 
+void yyparse( Builder &bld );
+
 void Builder::load( const char *sFN )
 {
 	file = sFN;
 
 	scanBegin();
-	yy::BuildParser parser( *this );
-	parser.set_debug_level( false );
-	parser.parse();
+	yyparse( *this );
 	scanEnd();
 }
 
-void Builder::error( const yy::location &l, const std::string &m )
+void Builder::add( Action *pAct )
 {
-	std::cerr << l << ": " << m << std::endl;
+	if( pAct->isDefault() )
+	{
+		if( pDefaultAction )
+			throw BuildException("There's already a default exception");
+		pDefaultAction = pAct;
+	}
+	else
+	{
+		mAction[pAct->getName()] = pAct;
+	}
+	pLastAddedAction = pAct;
 }
 
-void Builder::error( const std::string &m )
+void Builder::add( Command *pCmd )
 {
-	std::cerr << m << std::endl;
+	if( pLastAddedAction )
+	{
+		pLastAddedAction->add( pCmd );
+	}
+}
+
+void Builder::debug()
+{
+	pDefaultAction->debug();
+	for( std::map<const char *, Action *, ltstr>::iterator i = mAction.begin();
+		 i != mAction.end(); i++ )
+	{
+		(*i).second->debug();
+	}
 }
 

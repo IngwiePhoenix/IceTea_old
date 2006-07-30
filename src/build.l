@@ -7,13 +7,14 @@
 std::string strbuf;
 %}
 
+%x regexp
 %x strsq
 %x strdq
 %x comment
 %option noyywrap nounput batch debug
 
 %{
-# define YY_USER_ACTION  yylloc->columns (yyleng);
+//# define YY_USER_ACTION  yylloc->columns (yyleng);
 %}
 %%
 
@@ -38,16 +39,27 @@ std::string strbuf;
 "perform"							return TOK_PERFORM;
 "produces"							return TOK_PRODUCES;
 "command"							return TOK_COMMAND;
+"check"								return TOK_CHECK;
 
 "..."\n								/* elipsis line continuation */
-\n+									return TOX_EOL;
+\n+									return TOK_EOL;
 [ \t\r]*							/* whitespace */
 
-\/\/.*								/* single line comment */
+"/"									{
+	BEGIN( regexp );
+	strbuf = "";
+}
+<regexp>[^\n/]*						strbuf += yytext;
+<regexp>"/"							{
+	BEGIN( INITIAL );
+	yylval->strval = stringdup( strbuf.c_str() );
+	return REGEXP;
+}
+
 "#".*								/* single line comment */
 
-[^ \t\r\n\'\"]+						{
-	yylval.strval = stringdup( yytext );
+[^ \t\r\n\'\":=,.]+						{
+	yylval->strval = stringdup( yytext );
 	return STRING;
 }
 
@@ -86,11 +98,13 @@ std::string strbuf;
 	return STRING;
 }
 
+%%
 
 void Builder::scanBegin()
 {
+	yy_flex_debug = false;
 	if( !(yyin = fopen( file.c_str(), "r" )) )
-		error( std::string("cannot open ") + file );
+		fprintf( stderr, "cannot open %s\n", file.c_str() );
 }
 
 void Builder::scanEnd()
