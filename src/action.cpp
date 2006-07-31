@@ -25,9 +25,9 @@ void Action::add( Command *pCmd )
 void Action::debug()
 {
 	if( bDefault )
-		printf("action default:\n");
+		printf("   action default:\n");
 	else
-		printf("action \"%s\":\n", sName.getString() );
+		printf("   action \"%s\":\n", sName.getString() );
 
 	for( std::list<Command *>::iterator i = lCommand.begin();
 		 i != lCommand.end(); i++ )

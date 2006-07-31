@@ -13,7 +13,6 @@ Command::~Command()
 void Command::debug()
 {
 	static const char *cmdt[]={"Check", "Clean"};
-	printf("   command: %s %s\n", cmdt[ nType ], sTarget.getString() );
-
+	printf("      command: %s %s\n", cmdt[ nType ], sTarget.getString() );
 }
 

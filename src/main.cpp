@@ -6,6 +6,8 @@ int main()
 
 	bld.load("congo");
 
+	printf("\n\n----------\nDebug dump\n----------\n");
+
 	bld.debug();
 }
 

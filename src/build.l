@@ -58,7 +58,7 @@ std::string strbuf;
 
 "#".*								/* single line comment */
 
-[^ \t\r\n\'\":=,.]+						{
+[^ \t\r\n\'\":=,/][^ \t\r\n\'\":=,]*						{
 	yylval->strval = stringdup( yytext );
 	return STRING;
 }
