@@ -1,6 +1,8 @@
 #ifndef RULE_H
 #define RULE_H
 
+#include <list>
+#include <string>
 #include <stdint.h>
 #include <regex.h>
 #include "staticstring.h"
@@ -30,13 +32,15 @@ public:
 
 	void debug();
 
-	void setProduces( const char *sProduces );
+	void addProduces( const char *sProduces );
 	void setMatches( Matches how, const char *sWhat );
 	void setPerforms( Perform pwhat, const char *sPerfCmd );
 
+	std::list<std::string> execute( class Builder &bld, std::list<std::string> lInput );
+
 private:
 	StaticString sName;
-	StaticString sProduces;
+	std::list<std::string> lProduces;
 
 	Matches mHow;
 	StaticString sWhat;

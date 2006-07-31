@@ -7,6 +7,7 @@
 #include "build.tab.h"
 #include "exceptionbase.h"
 #include "staticstring.h"
+#include "regexp.h"
 
 subExceptionDecl( BuildException )
 
@@ -34,6 +35,8 @@ public:
 	virtual ~Builder();
 
 	void load( const char *sFN );
+	void build( const char *sAct=NULL );
+	void execute( Action *pAct );
 
 	//void error( const yy::location &l, const std::string &m );
 	//void error( const std::string &m );
@@ -46,7 +49,19 @@ public:
 	void add( Target *pTarg );
 	void varSet( const char *sName, const char *sValue );
 	void varAddSet( const char *sName, const char *sValue );
+	Rule *getRule( const char *sName );
+	std::list<Rule *> findRuleChain( Rule *pRule );
+	void processRequires( std::list<std::string> &lInput );
 	void requires( const char *sBase, const char *sReq );
+	void requiresFromCommand( const char *sBase, const char *sReq );
+	void requiresRegexp( bool on )
+	{
+		bReqRegexp = on;
+	}
+	bool isRequiresRegexp()
+	{
+		return bReqRegexp;
+	}
 	void setContext( const char *sCont );
 	void setContext();
 
@@ -77,10 +92,26 @@ public:
 		return sTmp;
 	}
 
+	Target *getTarget( const char *sName )
+	{
+		if( mTarget.find( sName ) == mTarget.end() )
+			throw BuildException("Target %s not found.", sName );
+
+		return mTarget[sName];
+	}
+
 private:
+	typedef std::map<std::string, std::string> varmap;
+
+	void requiresNormal( const char *sBase, const char *sReq );
+	void requiresRegexp( const char *sBase, const char *sReq );
 	void checkVar( const char *cont, const char *sName );
 	void scanBegin();
 	void scanEnd();
+	varmap *regexVars( RegExp *re );
+
+	bool hasVar( varmap *pMap, std::string &var );
+	std::string varRepl( const char *sSrc, const char *cont, varmap *mExtra );
 
 	Action *pDefaultAction;
 	Action *pLastAddedAction;
@@ -92,14 +123,20 @@ private:
 	Target *pLastAddedTarget;
 	std::map<const char *, Target *, ltstr> mTarget;
 
-	typedef std::map<std::string, std::string> varmap;
 	varmap mVar;
+
 	std::map<std::string, std::list<std::string> *> mRequires;
+
+	typedef std::list<std::pair<RegExp *, std::string> > regreqlist;
+	regreqlist lRequiresRegexp;
+	regreqlist lRequiresRegexpCommand;
 
 	std::map<std::string, varmap> mContVar;
 	StaticString sContext;
 
 	StaticString sTmp;
+
+	bool bReqRegexp;
 };
 
 #endif

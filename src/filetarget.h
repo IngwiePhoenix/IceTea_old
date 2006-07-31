@@ -11,6 +11,11 @@ public:
 	virtual ~FileTarget();
 
 	virtual void debug();
+
+	void addInputDir( const char *sDir );
+
+	virtual void check( class Builder &bld );
+	virtual void clean( class Builder &bld );
 	
 private:
 

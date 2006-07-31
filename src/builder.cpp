@@ -32,6 +32,28 @@ void Builder::load( const char *sFN )
 	scanEnd();
 }
 
+void Builder::build( const char *sAct )
+{
+	Action *pAct;
+	if( sAct == NULL )
+		pAct = pDefaultAction;
+	else
+	{
+		if( mAction.find( sAct ) == mAction.end() )
+			throw BuildException("No action matches '%s'.", sAct );
+		pAct = mAction[sAct];
+	}
+
+	printf("--- %s ---\n", pAct->getName() );
+
+	pAct->execute( *this );
+}
+
+void Builder::execute( Action *pAct )
+{
+	pAct->execute( *this );
+}
+
 void Builder::add( Action *pAct )
 {
 	if( pAct->isDefault() )
@@ -185,7 +207,124 @@ void Builder::varAddSet( const char *sName, const char *sValue )
 	}
 }
 
+void Builder::processRequires( std::list<std::string> &lInput )
+{
+	for( regreqlist::iterator i = lRequiresRegexp.begin();
+		 i != lRequiresRegexp.end(); i++ )
+	{
+		RegExp *re = (*i).first;
+		for( std::list<std::string>::iterator j = lInput.begin();
+			 j != lInput.end(); j++ )
+		{
+			if( re->execute( (*j).c_str() ) )
+			{
+				varmap *revars = regexVars( re );
+				requiresNormal(
+					(*j).c_str(),
+					varRepl(
+						(*i).second.c_str(),
+						"",
+						revars
+						).c_str()
+					);
+				delete revars;
+			}
+		}
+	}
+
+	for( regreqlist::iterator i = lRequiresRegexpCommand.begin();
+		 i != lRequiresRegexpCommand.end(); i++ )
+	{
+		RegExp *re = (*i).first;
+		for( std::list<std::string>::iterator j = lInput.begin();
+			 j != lInput.end(); j++ )
+		{
+			if( re->execute( (*j).c_str() ) )
+			{
+				varmap *revars = regexVars( re );
+				FILE *fcmd = popen(
+					varRepl( (*i).second.c_str(), "", revars ).c_str(),
+					"r" );
+				std::string rhs;
+				bool bHeader = true;
+				for(;;)
+				{
+					if( feof( fcmd ) )
+						break;
+					int cc = fgetc( fcmd );
+					if( cc == EOF )
+						break;
+					unsigned char c = cc;
+					if( bHeader )
+					{
+						if( c == ':' )
+							bHeader = false;
+					}
+					else
+					{
+						if( c == ' ' || c == '\t' )
+						{
+							if( rhs != "" )
+							{
+								requiresNormal(
+									(*j).c_str(),
+									rhs.c_str()
+									);
+								rhs = "";
+							}
+						}
+						else
+						{
+							if( c == '\\' )
+								c = fgetc( fcmd );
+							if( c != '\n' )
+								rhs += c;
+						}
+					}
+				}
+				if( rhs != "" )
+				{
+					requiresNormal(
+						(*j).c_str(),
+						rhs.c_str()
+						);
+					rhs = "";
+				}
+				fclose( fcmd );
+				delete revars;
+			}
+		}
+	}
+}
+
+std::map<std::string, std::string> *Builder::regexVars( RegExp *re )
+{
+	varmap *map = new varmap;
+
+	int jmax = re->getNumSubStrings();
+	for( int j = 0; j < jmax; j++ )
+	{
+		char buf[8];
+		sprintf( buf, "re:%d", j );
+		(*map)[buf] = re->getSubString( j );
+	}
+
+	return map;
+}
+
 void Builder::requires( const char *sBase, const char *sReq )
+{
+	if( bReqRegexp )
+	{
+		requiresRegexp( sBase, sReq );
+	}
+	else
+	{
+		requiresNormal( sBase, sReq );
+	}
+}
+
+void Builder::requiresNormal( const char *sBase, const char *sReq )
 {
 	std::list<std::string> *pList = NULL;
 	if( mRequires.find(sBase) == mRequires.end() )
@@ -201,6 +340,26 @@ void Builder::requires( const char *sBase, const char *sReq )
 	pList->push_back( sReq );
 }
 
+void Builder::requiresRegexp( const char *sBase, const char *sReq )
+{
+	lRequiresRegexp.push_back(
+		std::pair<RegExp *, std::string>(
+			new RegExp( sBase ),
+			sReq
+			)
+		);
+}
+
+void Builder::requiresFromCommand( const char *sBase, const char *sCmd )
+{
+	lRequiresRegexpCommand.push_back(
+		std::pair<RegExp *, std::string>(
+			new RegExp( sBase ),
+			sCmd
+			)
+		);
+}
+
 void Builder::setContext( const char *sCont )
 {
 	sContext = sCont;
@@ -209,5 +368,81 @@ void Builder::setContext( const char *sCont )
 void Builder::setContext()
 {
 	setContext("");
+}
+
+bool Builder::hasVar( varmap *pMap, std::string &var )
+{
+	if( pMap == NULL ) 
+		return false;
+	if( pMap->find( var ) == pMap->end() )
+		return false;
+	return true;
+}
+
+std::string Builder::varRepl( const char *sSrc, const char *cont, varmap *mExtra )
+{
+	varmap *mCont = NULL;
+	if( cont[0] != '\0' )
+	{
+		if( mContVar.find( cont ) != mContVar.end() )
+			mCont = &mContVar[cont];
+	}
+
+	std::string out;
+	std::string var;
+	bool bVar = false;
+
+	for( const char *s = sSrc; *s; s++ )
+	{
+		if( *s == '{' )
+		{
+			bVar = true;
+			continue;
+		}
+		else if( *s == '}' && bVar )
+		{
+			if( hasVar( &mVar, var ) )
+			{
+				out += mVar[var];
+			}
+			else if( hasVar( mCont, var ) )
+			{
+				out += (*mCont)[var];
+			}
+			else if( hasVar( mExtra, var ) )
+			{
+				out += (*mExtra)[var];
+			}
+			var = "";
+			bVar = false;
+			continue;
+		}
+
+		if( bVar == true )
+		{
+			var += *s;
+		}
+		else
+		{
+			out += *s;
+		}
+	}
+
+	return out;
+}
+
+Rule *Builder::getRule( const char *sName )
+{
+	if( mRule.find( sName ) != mRule.end() )
+		return mRule[sName];
+
+	return NULL;
+}
+
+std::list<Rule *> Builder::findRuleChain( Rule *pRule )
+{
+	std::list<Rule *> ret;
+
+	return ret;
 }
 

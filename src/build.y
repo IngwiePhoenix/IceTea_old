@@ -78,8 +78,15 @@ line: TOK_DEFAULT TOK_ACTION ':'
 	| STRING TOK_REQUIRES 
 	  {
 		  bld.setTmp( $1 );
+		  bld.requiresRegexp( false );
 	  }
-	  reqlst
+	  reqcompletion
+	| REGEXP TOK_REQUIRES
+	  {
+		  bld.setTmp( $1 );
+		  bld.requiresRegexp( true );
+	  }
+	  reqcompletion
 	| listcmds
 	| TOK_FOR STRING
 	  {
@@ -91,6 +98,13 @@ line: TOK_DEFAULT TOK_ACTION ':'
 	  }
 	| rule
 	;
+
+reqcompletion: reqlst
+			 | TOK_FROM TOK_COMMAND STRING
+			   {
+				   bld.requiresFromCommand( bld.getTmp(), $3 );
+			   }
+			 ;
 
 reqlst: STRING
 	    {
@@ -118,7 +132,20 @@ createfromdirlst: createfromdir
 				| createfromdirlst ',' createfromdir
 				;
 
-createfromdir: STRING { printf("  srcdir: %s\n", $1 ); }
+createfromdir: STRING
+			   {
+				   try
+				   {
+					   ((FileTarget *)bld.lastTarget())->addInputDir( $1 );
+				   }
+				   catch( BuildException &e )
+				   {
+					   std::string s( $1 );
+					   s +=": ";
+					   s += e.what();
+					   yyerror( &yyloc, bld, s.c_str() );
+				   }
+			   }
 			 ;
 
 createusing: TOK_RULE STRING
@@ -159,11 +186,18 @@ rulesublst: rulesub
 		  ;
 
 rulesub: TOK_MATCHES rulematches
-	   | TOK_PRODUCES STRING
-	     {
-			 bld.lastRule()->setProduces( $2 );
-		 }
+	   | TOK_PRODUCES produceslst
 	   ;
+
+produceslst: STRING
+		   {
+			   bld.lastRule()->addProduces( $1 );
+		   }
+		   | produceslst ',' STRING
+		   {
+			   bld.lastRule()->addProduces( $3 );
+		   }
+		   ;
 
 rulematches: TOK_ALL REGEXP
 		     {

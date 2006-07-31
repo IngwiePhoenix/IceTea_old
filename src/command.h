@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include "staticstring.h"
 
+class Builder;
+
 class Command
 {
 public:
@@ -28,6 +30,8 @@ public:
 	}
 
 	void debug();
+
+	void execute( class Builder &bld );
 
 private:
 	CmdType nType;

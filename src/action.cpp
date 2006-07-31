@@ -1,5 +1,6 @@
 #include "action.h"
 #include "command.h"
+#include "builder.h"
 
 Action::Action() :
 	bDefault( true ),
@@ -33,6 +34,15 @@ void Action::debug()
 		 i != lCommand.end(); i++ )
 	{
 		(*i)->debug();
+	}
+}
+
+void Action::execute( Builder &bld )
+{
+	for( std::list<Command *>::iterator i = lCommand.begin();
+		 i != lCommand.end(); i++ )
+	{
+		(*i)->execute( bld );
 	}
 }
 

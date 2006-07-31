@@ -5,6 +5,7 @@
 #include "staticstring.h"
 
 class Command;
+class Builder;
 
 class Action
 {
@@ -25,6 +26,8 @@ public:
 	}
 
 	void debug();
+
+	void execute( class Builder &bld );
 
 private:
 	bool bDefault;

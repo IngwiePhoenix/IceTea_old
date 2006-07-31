@@ -2,8 +2,7 @@
 #include "builder.h" // for BuildException
 
 Rule::Rule( const char *sName ) :
-	sName( sName ),
-	sProduces("{target}")
+	sName( sName )
 {
 }
 
@@ -14,11 +13,23 @@ Rule::~Rule()
 
 void Rule::debug()
 {
-	printf("   Rule %s produces %s:\n",
-		sName.getString(),
-		sProduces.getString()
+	printf("   Rule %s:\n",
+		sName.getString()
 		);
-	printf("      Matches ");
+	printf("      Produces: ");
+	if( lProduces.empty() )
+		printf("{target}");
+	else
+	{
+		for( std::list<std::string>::iterator i = lProduces.begin();
+			 i != lProduces.end(); i++ )
+		{
+			if( i != lProduces.begin() )
+				printf(", ");
+			printf("%s", (*i).c_str() );
+		}
+	}
+	printf("\n      Matches ");
 	if( mHow == matchOne )
 		printf("one ");
 	else if( mHow == matchAll )
@@ -31,9 +42,9 @@ void Rule::debug()
 	printf("\"%s\"\n", sPerfCmd.getString() );
 }
 
-void Rule::setProduces( const char *sP )
+void Rule::addProduces( const char *sP )
 {
-	sProduces = sP;
+	lProduces.push_back( sP );
 }
 
 void Rule::setMatches( Matches how, const char *sW )
@@ -57,5 +68,15 @@ void Rule::setPerforms( Perform pwhat, const char *sperfcmd )
 {
 	pHow = pwhat;
 	sPerfCmd = sperfcmd;
+}
+
+std::list<std::string> Rule::execute( Builder &bld, std::list<std::string> lInput )
+{
+	std::list<Rule *> lRule = bld.findRuleChain( this );
+
+	std::list<std::string> ret;
+
+	return ret;
+
 }
 
