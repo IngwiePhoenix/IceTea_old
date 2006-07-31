@@ -4,8 +4,10 @@
 #include <list>
 #include <string>
 #include <stdint.h>
-#include <regex.h>
+#include "regexp.h"
 #include "staticstring.h"
+
+class Perform;
 
 class Rule
 {
@@ -16,7 +18,7 @@ public:
 		matchAll
 	};
 
-	enum Perform
+	enum ePerform
 	{
 		perfCommand
 	};
@@ -34,20 +36,27 @@ public:
 
 	void addProduces( const char *sProduces );
 	void setMatches( Matches how, const char *sWhat );
-	void setPerforms( Perform pwhat, const char *sPerfCmd );
+	void setPerforms( ePerform pwhat, const char *sPerfCmd );
 
-	std::list<std::string> execute( class Builder &bld, std::list<std::string> lInput );
+	bool willChain( Rule *pRule );
+
+	std::list<std::string> execute( class Builder &bld, std::list<std::string> lInput, const char *sTarget=NULL );
 
 private:
+	class Perform *buildCommand( class Builder &bld, const char *sCmd, const char *sTarget, const char *sMatches );
+	std::list<std::string> findTargets( class Builder &bld, std::list<std::string> &lIn, std::string &sMatches, const char *sTarget );
 	StaticString sName;
 	std::list<std::string> lProduces;
 
 	Matches mHow;
-	StaticString sWhat;
-	regex_t rWhat;
+	RegExp rWhat;
+	//StaticString sWhat;
+	//regex_t rWhat;
 
-	Perform pHow;
+	ePerform pHow;
 	StaticString sPerfCmd;
+
+	bool bNoProduces;
 };
 
 #endif

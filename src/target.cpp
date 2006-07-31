@@ -26,6 +26,12 @@ void Target::debug()
 	{
 		printf("         %s\n", (*i).c_str() );
 	}
+	printf("      Output list:\n");
+	for( std::list<std::string>::iterator i = lOutput.begin();
+		 i != lOutput.end(); i++ )
+	{
+		printf("         %s\n", (*i).c_str() );
+	}
 }
 
 void Target::addInput( const char *sInput )

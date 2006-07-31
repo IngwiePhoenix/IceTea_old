@@ -45,9 +45,10 @@ void FileTarget::addInputDir( const char *sDir )
 	}
 
 	char *cwd = gnu_getcwd();
-	std::string base( cwd );
-	base += "/";
+	std::string base;//( cwd );
+	//base += "/";
 	base += sDir;
+	base += "/";
 	delete[] cwd;
 
 	struct dirent *de;
@@ -58,7 +59,6 @@ void FileTarget::addInputDir( const char *sDir )
 			continue;
 
 		std::string s( base );
-		s += "/";
 		s += de->d_name;
 		addInput( s.c_str() );
 	}
@@ -70,7 +70,7 @@ void FileTarget::check( Builder &bld )
 {
 	Rule *pRule = bld.getRule( sRule );
 
-	std::list<std::string> tmp = pRule->execute( bld, lInput );
+	std::list<std::string> tmp = pRule->execute( bld, lInput, getName() );
 	lOutput.insert( lOutput.end(), tmp.begin(), tmp.end() );
 
 	bld.processRequires( lInput );

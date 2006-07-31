@@ -100,18 +100,18 @@ public:
 		return mTarget[sName];
 	}
 
-private:
 	typedef std::map<std::string, std::string> varmap;
+	varmap *regexVars( RegExp *re );
+	std::string varRepl( const char *sSrc, const char *cont, varmap *mExtra );
+private:
 
 	void requiresNormal( const char *sBase, const char *sReq );
 	void requiresRegexp( const char *sBase, const char *sReq );
 	void checkVar( const char *cont, const char *sName );
 	void scanBegin();
 	void scanEnd();
-	varmap *regexVars( RegExp *re );
 
 	bool hasVar( varmap *pMap, std::string &var );
-	std::string varRepl( const char *sSrc, const char *cont, varmap *mExtra );
 
 	Action *pDefaultAction;
 	Action *pLastAddedAction;

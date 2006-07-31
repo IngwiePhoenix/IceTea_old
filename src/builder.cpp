@@ -132,18 +132,24 @@ void Builder::debug()
 		}
 	}
 
-	printf("Additional dependancies:\n");
+	printf("Dependancies:\n");
 	for( std::map<std::string, std::list<std::string> *>::iterator i =
 		 mRequires.begin(); i != mRequires.end(); i++ )
 	{
 		printf("   %s: ", (*i).first.c_str() );
 		std::list<std::string> *pList = (*i).second;
+		int i = 0;
 		for( std::list<std::string>::iterator j = pList->begin();
 			 j != pList->end(); j++ )
 		{
 			if( j != pList->begin() )
 				printf(", ");
 			printf("%s", (*j).c_str() );
+			if( i++ >= 3 )
+			{
+				printf("...");
+				break;
+			}
 		}
 		printf("\n");
 	}
@@ -442,6 +448,18 @@ Rule *Builder::getRule( const char *sName )
 std::list<Rule *> Builder::findRuleChain( Rule *pRule )
 {
 	std::list<Rule *> ret;
+
+	for( std::map<const char *, Rule *, ltstr>::iterator i = mRule.begin();
+		 i != mRule.end(); i++ )
+	{
+		if( pRule == (*i).second )
+			continue;
+
+		if( pRule->willChain( (*i).second ) )
+		{
+			ret.push_back( (*i).second );
+		}
+	}
 
 	return ret;
 }
