@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include "regexp.h"
 #include "staticstring.h"
+#include "builder.h"
 
 class Perform;
 
@@ -40,10 +41,10 @@ public:
 
 	bool willChain( Rule *pRule );
 
-	std::list<std::string> execute( class Builder &bld, std::list<std::string> lInput, const char *sTarget=NULL );
+	std::list<std::string> execute( class Builder &bld, std::list<std::string> lInput, std::list<Perform *> &lPerf, const char *sTarget=NULL );
 
 private:
-	class Perform *buildCommand( class Builder &bld, const char *sCmd, const char *sTarget, const char *sMatches );
+	class Perform *buildCommand( class Builder &bld, const char *sCmd, Builder::varmap *vars );
 	std::list<std::string> findTargets( class Builder &bld, std::list<std::string> &lIn, std::string &sMatches, const char *sTarget );
 	StaticString sName;
 	std::list<std::string> lProduces;

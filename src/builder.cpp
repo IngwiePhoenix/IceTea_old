@@ -248,9 +248,8 @@ void Builder::processRequires( std::list<std::string> &lInput )
 			if( re->execute( (*j).c_str() ) )
 			{
 				varmap *revars = regexVars( re );
-				FILE *fcmd = popen(
-					varRepl( (*i).second.c_str(), "", revars ).c_str(),
-					"r" );
+				std::string s = varRepl( (*i).second.c_str(), "", revars );
+				FILE *fcmd = popen( s.c_str(), "r" );
 				std::string rhs;
 				bool bHeader = true;
 				for(;;)
@@ -296,7 +295,7 @@ void Builder::processRequires( std::list<std::string> &lInput )
 						);
 					rhs = "";
 				}
-				fclose( fcmd );
+				pclose( fcmd );
 				delete revars;
 			}
 		}
@@ -407,17 +406,17 @@ std::string Builder::varRepl( const char *sSrc, const char *cont, varmap *mExtra
 		}
 		else if( *s == '}' && bVar )
 		{
-			if( hasVar( &mVar, var ) )
+			if( hasVar( mExtra, var ) )
 			{
-				out += mVar[var];
+				out += (*mExtra)[var];
 			}
 			else if( hasVar( mCont, var ) )
 			{
 				out += (*mCont)[var];
 			}
-			else if( hasVar( mExtra, var ) )
+			else if( hasVar( &mVar, var ) )
 			{
-				out += (*mExtra)[var];
+				out += mVar[var];
 			}
 			var = "";
 			bVar = false;
@@ -462,5 +461,23 @@ std::list<Rule *> Builder::findRuleChain( Rule *pRule )
 	}
 
 	return ret;
+}
+
+void cleanList( std::list<std::string> &lst )
+{
+	std::map<std::string, bool> m;
+
+	for( std::list<std::string>::iterator i = lst.begin(); i != lst.end(); i++ )
+	{
+		if( m.find( *i ) == m.end() )
+			m[ *i ] = true;
+		else
+		{
+			std::list<std::string>::iterator j = i;
+			j--;
+			lst.erase( i );
+			i = j;
+		}
+	}
 }
 

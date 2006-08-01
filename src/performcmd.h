@@ -16,7 +16,6 @@ public:
 
 private:
 	StaticString sCommand;
-	StaticString sTarget;
 };
 
 #endif

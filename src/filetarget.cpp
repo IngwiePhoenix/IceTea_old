@@ -70,10 +70,18 @@ void FileTarget::check( Builder &bld )
 {
 	Rule *pRule = bld.getRule( sRule );
 
-	std::list<std::string> tmp = pRule->execute( bld, lInput, getName() );
+	std::list<Perform *> perf;
+	std::list<std::string> tmp = pRule->execute( bld, lInput, perf, getName() );
 	lOutput.insert( lOutput.end(), tmp.begin(), tmp.end() );
 
-	bld.processRequires( lInput );
+	bld.processRequires( lOutput );
+
+	for( std::list<Perform *>::iterator i = perf.begin();
+		 i != perf.end(); i++ )
+	{
+		std::list<std::string> lReqs = bld.getRequires( (*i)->getTarget() );
+		
+	}
 }
 
 void FileTarget::clean( Builder &bld )

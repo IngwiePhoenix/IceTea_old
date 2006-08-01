@@ -18,6 +18,7 @@ public:
 	virtual void clean( class Builder &bld );
 	
 private:
+	// start here with the file time cache
 
 };
 

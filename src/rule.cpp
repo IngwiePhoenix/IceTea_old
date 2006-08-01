@@ -67,62 +67,18 @@ void Rule::setPerforms( ePerform pwhat, const char *sperfcmd )
 	sPerfCmd = sperfcmd;
 }
 
-Perform *Rule::buildCommand( Builder &bld, const char *sCmd, const char *sTarget, const char *sMatches )
+Perform *Rule::buildCommand( Builder &bld, const char *sCmd, Builder::varmap *vars )
 {
-	Builder::varmap vars;
-	vars["target"] = sTarget;
-	vars["match"] = sMatches;
-	return new PerformCmd( bld.varRepl( sCmd, "", &vars ).c_str(), sTarget );
+	return new PerformCmd(
+			bld.varRepl( sCmd, (*vars)["target"].c_str(), vars ).c_str(),
+			(*vars)["target"].c_str()
+			);
 }
 
-std::list<std::string> Rule::findTargets( Builder &bld, std::list<std::string> &lIn, std::string &sMatches, const char *sTarget )
-{
-	std::list<std::string> lTmp;
-
-	for( std::list<std::string>::iterator i = lIn.begin();
-		 i != lIn.end(); i++ )
-	{
-		if( rWhat.execute( (*i).c_str() ) )
-		{
-			Builder::varmap *revars = bld.regexVars( &rWhat );
-			for( std::list<std::string>::iterator j = lProduces.begin();
-				 j != lProduces.end(); j++ )
-			{
-				if( mHow == matchOne )
-				{
-					lTmp.push_back(
-						bld.varRepl(
-							(*j).c_str(),
-							"",
-							revars
-							)
-						);
-					Perform *p = buildCommand(
-						bld,
-						sPerfCmd,
-						(sTarget==NULL)?(lTmp.back().c_str()):(sTarget),
-						(*i).c_str()
-						);
-					p->execute( bld );
-					delete p;
-				}
-				else if( mHow == matchAll )
-				{
-					sMatches += " ";
-					sMatches += (*i);
-				}
-			}
-			delete revars;
-		}
-	}
-
-	return lTmp;
-}
-
-std::list<std::string> Rule::execute( Builder &bld, std::list<std::string> lInput, const char *sTarget )
+std::list<std::string> Rule::execute( Builder &bld, std::list<std::string> lInput, std::list<Perform *> &lPerf, const char *sTarget )
 {
 	std::list<Rule *> lRule = bld.findRuleChain( this );
-
+	/*
 	if( !lRule.empty() )
 	{
 		printf("Rule %s chains to: ", sName.getString() );
@@ -134,38 +90,81 @@ std::list<std::string> Rule::execute( Builder &bld, std::list<std::string> lInpu
 			printf("%s", (*i)->sName.getString() );
 		}
 		printf("\n");
-	}
+	}*/
 
 	std::list<std::string> lOutput;
 	std::string sMatches;
 
 	for( std::list<Rule *>::iterator i = lRule.begin(); i != lRule.end(); i++ )
 	{
-		std::list<std::string> lTmp = (*i)->execute( bld, lInput );
+		std::list<std::string> lTmp = (*i)->execute( bld, lInput, lPerf );
 		lOutput.insert( lOutput.end(), lTmp.begin(), lTmp.end() );
 	}
 
-	std::list<std::string> lTmp = findTargets( bld, lInput, sMatches, sTarget );
-	lOutput.insert( lOutput.end(), lTmp.begin(), lTmp.end() );
-	lTmp = findTargets( bld, lOutput, sMatches, sTarget );
-	lOutput.insert( lOutput.end(), lTmp.begin(), lTmp.end() );
+	std::list<std::string> lTest;
+	lTest.insert( lTest.end(), lInput.begin(), lInput.end() );
+	lTest.insert( lTest.end(), lOutput.begin(), lOutput.end() );
+	
+	cleanList( lTest );
+
+	for( std::list<std::string>::iterator i = lTest.begin();
+		 i != lTest.end(); i++ )
+	{
+		if( rWhat.execute( (*i).c_str() ) )
+		{
+			Builder::varmap *revars = bld.regexVars( &rWhat );
+			for( std::list<std::string>::iterator j = lProduces.begin();
+				 j != lProduces.end(); j++ )
+			{
+				if( mHow == matchOne )
+				{
+					lOutput.push_back(
+						bld.varRepl(
+							(*j).c_str(),
+							"",
+							revars
+							)
+						);
+					(*revars)["target"] = (sTarget==NULL)?
+						(lOutput.back().c_str()):(sTarget);
+					(*revars)["match"] = (*i).c_str();
+					Perform *p = buildCommand(
+						bld,
+						sPerfCmd,
+						revars
+						);
+					lPerf.push_back( p );
+				}
+				else if( mHow == matchAll )
+				{
+					sMatches += " ";
+					sMatches += (*i);
+				}
+			}
+			delete revars;
+		}
+	}
+	//std::list<std::string> lTmp = findTargets( bld, lTest, sMatches, sTarget );
+	//lOutput.insert( lOutput.end(), lTmp.begin(), lTmp.end() );
 
 	if( mHow == matchAll )
 	{
 		lOutput.push_back(
 			bld.varRepl(
 				sTarget,
-				"",
+				sTarget,
 				NULL
 				)
 			);
+		Builder::varmap vars;
+		vars["target"] = sTarget;
+		vars["match"] = sMatches;
 		Perform *p = buildCommand(
 			bld,
 			sPerfCmd,
-			sTarget,
-			sMatches.c_str()
+			&vars
 			);
-		p->execute( bld );
+		lPerf.push_back( p );
 	}
 
 	return lOutput;

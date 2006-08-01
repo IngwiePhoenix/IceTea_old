@@ -100,11 +100,16 @@ public:
 		return mTarget[sName];
 	}
 
+	std::list<std::string> getRequires( const char *sReq )
+	{
+		return mRequires[sReq];
+	}
+
 	typedef std::map<std::string, std::string> varmap;
 	varmap *regexVars( RegExp *re );
 	std::string varRepl( const char *sSrc, const char *cont, varmap *mExtra );
-private:
 
+private:
 	void requiresNormal( const char *sBase, const char *sReq );
 	void requiresRegexp( const char *sBase, const char *sReq );
 	void checkVar( const char *cont, const char *sName );
@@ -138,5 +143,7 @@ private:
 
 	bool bReqRegexp;
 };
+
+void cleanList( std::list<std::string> &lst );
 
 #endif

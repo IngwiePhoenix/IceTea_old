@@ -6,12 +6,18 @@
 class Perform
 {
 public:
-	Perform();
+	Perform( const char *sTarget );
 	virtual ~Perform();
 
 	virtual void execute( class Builder &bld ) = 0;
 
+	const char *getTarget()
+	{
+		return sTarget;
+	}
+
 private:
+	StaticString sTarget;
 
 };
 

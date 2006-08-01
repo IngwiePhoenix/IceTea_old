@@ -1,6 +1,7 @@
 #include "perform.h"
 
-Perform::Perform()
+Perform::Perform( const char *sTarget ) :
+	sTarget( sTarget )
 {
 }
 

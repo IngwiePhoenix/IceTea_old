@@ -7,8 +7,8 @@ int main()
 	bld.load("build.conf");
 
 	bld.build();
-
+/*
 	printf("\n\n----------\nDebug dump\n----------\n");
-	bld.debug();
+	bld.debug();*/
 }
 
