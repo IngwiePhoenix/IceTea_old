@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <dirent.h>
 
+#include "perform.h"
 #include "rule.h"
 #include "filetarget.h"
 #include "builder.h" // for BuildException
@@ -66,8 +67,11 @@ void FileTarget::addInputDir( const char *sDir )
 	closedir( dir );
 }
 
+int nNew, nCache;
+
 void FileTarget::check( Builder &bld )
 {
+	nNew = nCache = 0;
 	Rule *pRule = bld.getRule( sRule );
 
 	std::list<Perform *> perf;
@@ -79,12 +83,67 @@ void FileTarget::check( Builder &bld )
 	for( std::list<Perform *>::iterator i = perf.begin();
 		 i != perf.end(); i++ )
 	{
-		std::list<std::string> lReqs = bld.getRequires( (*i)->getTarget() );
-		
+		time_t target = getTime( std::string((*i)->getTarget()) );
+		std::list<std::string> *lReqs = bld.getRequires( (*i)->getTarget() );
+		if( lReqs == NULL )
+		{
+			printf("No dependancies: %s\n", (*i)->getTarget() );
+			continue;
+		}
+		for( std::list<std::string>::iterator j = lReqs->begin();
+			 j != lReqs->end(); j++ )
+		{
+			if( getTime( *j ) > target )
+			{
+				(*i)->execute( bld );
+				updateTime( (*i)->getTarget() );
+				break;
+			}
+		}
 	}
+
+	printf("Cache hits %d, %d new (%f%%)\n", nCache, nNew, nCache/ (double)(nNew+nCache)*100.0 );
 }
 
 void FileTarget::clean( Builder &bld )
 {
+	Rule *pRule = bld.getRule( sRule );
+
+	std::list<Perform *> perf;
+	std::list<std::string> tmp = pRule->execute( bld, lInput, perf, getName() );
+	lOutput.insert( lOutput.end(), tmp.begin(), tmp.end() );
+
+	for( std::list<std::string>::iterator i = lOutput.begin();
+		 i != lOutput.end(); i++ )
+	{
+		unlink( (*i).c_str() );
+	}
+}
+
+time_t FileTarget::getTime( std::string str )
+{
+	std::map<std::string, time_t>::iterator i = mTimes.find( str );
+	if( i != mTimes.end() )
+	{
+		nCache++;
+		return (*i).second;
+	}
+
+	struct stat st;
+	stat( str.c_str(), &st );
+
+	mTimes[str] = st.st_mtime;
+
+	nNew++;
+
+	return st.st_mtime;
+}
+
+void FileTarget::updateTime( std::string str )
+{
+	struct stat st;
+	stat( str.c_str(), &st );
+
+	mTimes[str] = st.st_mtime;
 }
 

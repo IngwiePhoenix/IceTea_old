@@ -77,6 +77,7 @@ Perform *Rule::buildCommand( Builder &bld, const char *sCmd, Builder::varmap *va
 
 std::list<std::string> Rule::execute( Builder &bld, std::list<std::string> lInput, std::list<Perform *> &lPerf, const char *sTarget )
 {
+	bld.requiresRegexp( false );
 	std::list<Rule *> lRule = bld.findRuleChain( this );
 	/*
 	if( !lRule.empty() )
@@ -134,11 +135,21 @@ std::list<std::string> Rule::execute( Builder &bld, std::list<std::string> lInpu
 						revars
 						);
 					lPerf.push_back( p );
+
+					bld.requires(
+						(*revars)["target"].c_str(),
+						(*revars)["match"].c_str()
+						);
 				}
 				else if( mHow == matchAll )
 				{
 					sMatches += " ";
 					sMatches += (*i);
+
+					bld.requires(
+						sTarget,
+						(*i).c_str()
+						);
 				}
 			}
 			delete revars;

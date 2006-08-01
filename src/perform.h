@@ -2,6 +2,7 @@
 #define PERFORM_H
 
 #include <stdint.h>
+#include "staticstring.h"
 
 class Perform
 {

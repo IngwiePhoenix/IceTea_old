@@ -3,7 +3,7 @@
 
 PerformCmd::PerformCmd( const char *sCmd, const char *sTarget ) :
 	Perform( sTarget ),
-	sCommand( sCmd ),
+	sCommand( sCmd )
 {
 }
 

@@ -40,6 +40,7 @@ std::string strbuf;
 "produces"							return TOK_PRODUCES;
 "command"							return TOK_COMMAND;
 "check"								return TOK_CHECK;
+"clean"								return TOK_CLEAN;
 
 "..."\n								/* elipsis line continuation */
 \n+									return TOK_EOL;

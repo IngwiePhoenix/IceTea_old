@@ -100,8 +100,10 @@ public:
 		return mTarget[sName];
 	}
 
-	std::list<std::string> getRequires( const char *sReq )
+	std::list<std::string> *getRequires( const char *sReq )
 	{
+		if( mRequires.find(sReq) == mRequires.end() )
+			return NULL;
 		return mRequires[sReq];
 	}
 

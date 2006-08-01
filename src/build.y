@@ -49,6 +49,7 @@ void yyerror( YYLTYPE *locp, Builder &bld, char const *msg );
 %token TOK_PRODUCES				"produces"
 %token TOK_COMMAND				"command"
 %token TOK_CHECK				"check"
+%token TOK_CLEAN				"clean"
 %token TOK_EOL					"end of line"
 %token ',' ':' '='
 
@@ -161,6 +162,10 @@ actionlst: action
 action: TOK_CHECK STRING
 	    {
 			bld.add( new Command( Command::cmdCheck, $2 ) );
+		}
+	  | TOK_CLEAN STRING
+	    {
+			bld.add( new Command( Command::cmdClean, $2 ) );
 		}
 	  ;
 

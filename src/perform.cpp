@@ -8,3 +8,4 @@ Perform::Perform( const char *sTarget ) :
 Perform::~Perform()
 {
 }
+

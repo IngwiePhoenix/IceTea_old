@@ -2,6 +2,10 @@
 #define FILE_TARGET_H
 
 #include <stdint.h>
+#include <map>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include "target.h"
 
 class FileTarget : public Target
@@ -16,9 +20,12 @@ public:
 
 	virtual void check( class Builder &bld );
 	virtual void clean( class Builder &bld );
+
+	time_t getTime( std::string str );
+	void updateTime( std::string str );
 	
 private:
-	// start here with the file time cache
+	std::map<std::string, time_t> mTimes;
 
 };
 
