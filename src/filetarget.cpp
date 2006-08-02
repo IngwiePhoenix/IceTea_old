@@ -71,6 +71,7 @@ int nNew, nCache;
 
 void FileTarget::check( Builder &bld )
 {
+	printf("--- %s ---\n", getName() );
 	nNew = nCache = 0;
 	Rule *pRule = bld.getRule( sRule );
 
@@ -79,6 +80,7 @@ void FileTarget::check( Builder &bld )
 	lOutput.insert( lOutput.end(), tmp.begin(), tmp.end() );
 
 	bld.processRequires( lOutput );
+
 
 	for( std::list<Perform *>::iterator i = perf.begin();
 		 i != perf.end(); i++ )

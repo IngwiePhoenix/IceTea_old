@@ -50,7 +50,9 @@ std::string strbuf;
 	BEGIN( regexp );
 	strbuf = "";
 }
-<regexp>[^\n/]*						strbuf += yytext;
+<regexp>[^\n/\\]*					strbuf += yytext;
+<regexp>"\\/"						strbuf += "/";
+<regexp>"\\"						strbuf += "\\";
 <regexp>"/"							{
 	BEGIN( INITIAL );
 	yylval->strval = stringdup( strbuf.c_str() );
@@ -63,6 +65,12 @@ std::string strbuf;
 	yylval->strval = stringdup( yytext );
 	return STRING;
 }
+
+[^ \t\r\n\'\":=,/][^ \t\r\n\'\"=,]+[^ \t\r\n\'\":=,]						{
+	yylval->strval = stringdup( yytext );
+	return STRING;
+}
+
 
 \"									{
 	BEGIN( strdq );

@@ -44,8 +44,6 @@ void Builder::build( const char *sAct )
 		pAct = mAction[sAct];
 	}
 
-	printf("--- %s ---\n", pAct->getName() );
-
 	pAct->execute( *this );
 }
 
@@ -183,13 +181,15 @@ void Builder::varSet( const char *sName, const char *sValue )
 {
 	checkVar( sContext, sName );
 
+	std::string newVal = varRepl( sValue, sContext, NULL );
+
 	if( sContext[0] == '\0' )
 	{
-		mVar[sName] = sValue;
+		mVar[sName] = newVal;
 	}
 	else
 	{
-		mContVar[sContext.getString()][sName] = sValue;
+		mContVar[sContext.getString()][sName] = newVal;
 	}
 }
 
@@ -197,18 +197,20 @@ void Builder::varAddSet( const char *sName, const char *sValue )
 {
 	checkVar( sContext, sName );
 
+	std::string newVal = varRepl( sValue, sContext, NULL );
+
 	if( sContext[0] == '\0' )
 	{
 		std::string s = mVar[sName];
 		s += " ";
-		s += sValue;
+		s += newVal;
 		mVar[sName] = s;
 	}
 	else
 	{
 		std::string s = mContVar[sContext.getString()][sName];
 		s += " ";
-		s += sValue;
+		s += newVal;
 		mContVar[sContext.getString()][sName] = s;
 	}
 }
