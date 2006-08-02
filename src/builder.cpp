@@ -6,14 +6,16 @@
 #include "target.h"
 #include "build.tab.h"
 #include "rule.h"
+#include "viewer.h"
 
 subExceptionDef( BuildException )
 
-Builder::Builder() :
+Builder::Builder( Viewer &rView ) :
 	pDefaultAction( NULL ),
 	pLastAddedAction( NULL ),
 	sTmp(""),
-	sContext("")
+	sContext(""),
+	rView( rView )
 {
 }
 
@@ -44,7 +46,11 @@ void Builder::build( const char *sAct )
 		pAct = mAction[sAct];
 	}
 
+	rView.beginAction( sAct, pAct->getNumCommands() );
+
 	pAct->execute( *this );
+
+	rView.endAction();
 }
 
 void Builder::execute( Action *pAct )
@@ -318,6 +324,8 @@ void Builder::genRequiresFor( const char *sName )
 		{
 			varmap *revars = regexVars( re );
 			std::string s = varRepl( (*i).second.c_str(), "", revars );
+			rView.beginExtraRequiresCheck( s.c_str() );
+			rView.executeCmd( s.c_str() );
 			FILE *fcmd = popen( s.c_str(), "r" );
 			std::string rhs;
 			bool bHeader = true;
@@ -366,6 +374,7 @@ void Builder::genRequiresFor( const char *sName )
 			}
 			pclose( fcmd );
 			delete revars;
+			rView.endExtraRequiresCheck();
 		}
 	}
 }

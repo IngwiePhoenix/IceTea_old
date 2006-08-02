@@ -25,6 +25,11 @@ public:
 		return bDefault;
 	}
 
+	int getNumCommands()
+	{
+		return lCommand.size();
+	}
+
 	void debug();
 
 	void execute( class Builder &bld );

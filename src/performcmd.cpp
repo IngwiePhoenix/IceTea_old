@@ -1,5 +1,6 @@
 #include "performcmd.h"
 #include "builder.h"
+#include "viewer.h"
 
 PerformCmd::PerformCmd( const char *sCmd, const char *sTarget ) :
 	Perform( sTarget ),
@@ -13,7 +14,7 @@ PerformCmd::~PerformCmd()
 
 void PerformCmd::execute( class Builder &bld )
 {
-	printf("%s\n", sCommand.getString() );
+	bld.view().executeCmd( sCommand );
 	int ret;
 	if( (ret = system( sCommand.getString() )) != 0 )
 	{

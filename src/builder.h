@@ -16,6 +16,7 @@ class Action;
 class Command;
 class Rule;
 class Target;
+class Viewer;
 
 #define YY_DECL int yylex( YYSTYPE *yylval_param, YYLTYPE *yylloc_param, Builder &bld )
 YY_DECL;
@@ -31,7 +32,7 @@ class Builder
 	};
 
 public:
-	Builder();
+	Builder( Viewer &rView );
 	virtual ~Builder();
 
 	void load( const char *sFN );
@@ -43,6 +44,10 @@ public:
 
 	std::string file;
 
+	Viewer &view()
+	{
+		return rView;
+	}
 	void add( Action *pAct );
 	void add( Command *pCmd );
 	void add( Rule *pRule );
@@ -145,6 +150,8 @@ private:
 	StaticString sTmp;
 
 	bool bReqRegexp;
+
+	Viewer &rView;
 };
 
 void cleanList( std::list<std::string> &lst );

@@ -1,8 +1,11 @@
 #include "builder.h"
+#include "viewerplain.h"
+#include "viewerpercent.h"
 
 int main( int argc, char *argv[] )
 {
-	Builder bld;
+	ViewerPercent p;
+	Builder bld( p );
 
 	bld.load("build.conf");
 

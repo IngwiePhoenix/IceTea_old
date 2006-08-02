@@ -21,7 +21,7 @@ public:
 	virtual void check( class Builder &bld );
 	virtual void clean( class Builder &bld );
 
-	time_t getTime( std::string str );
+	time_t getTime( class Builder &bld, std::string str );
 	void updateTime( std::string str );
 	
 private:

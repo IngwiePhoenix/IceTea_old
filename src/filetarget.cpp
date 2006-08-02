@@ -5,6 +5,7 @@
 #include "rule.h"
 #include "filetarget.h"
 #include "builder.h" // for BuildException
+#include "viewer.h"
 
 FileTarget::FileTarget( const char *sName ) :
 	Target( sName )
@@ -67,25 +68,27 @@ void FileTarget::addInputDir( const char *sDir )
 	closedir( dir );
 }
 
-int nNew, nCache;
+//int nNew, nCache;
 
 void FileTarget::check( Builder &bld )
 {
-	printf("--- %s ---\n", getName() );
-	nNew = nCache = 0;
+	//nNew = nCache = 0;
 	Rule *pRule = bld.getRule( sRule );
 
 	std::list<Perform *> perf;
 	std::list<std::string> tmp = pRule->execute( bld, lInput, perf, getName() );
 	lOutput.insert( lOutput.end(), tmp.begin(), tmp.end() );
+	
+	bld.view().beginTarget( getName(), "file", "check", lOutput.size() );
 
 	bld.processRequires( lOutput );
 
 	for( std::list<Perform *>::iterator i = perf.begin();
 		 i != perf.end(); i++ )
 	{
+		bld.view().beginPerform( *i );
 		bool bExtraReqs = false;
-		time_t target = getTime( std::string((*i)->getTarget()) );
+		time_t target = getTime( bld, std::string((*i)->getTarget()) );
 		std::list<std::string> *lReqs = bld.getRequires( (*i)->getTarget() );
 		if( lReqs == NULL )
 		{
@@ -95,10 +98,12 @@ void FileTarget::check( Builder &bld )
 		for( std::list<std::string>::iterator j = lReqs->begin();
 			 j != lReqs->end(); j++ )
 		{
-			if( getTime( *j ) > target )
+			if( getTime( bld, *j ) > target )
 			{
+				bld.view().beginExecute();
 				(*i)->execute( bld );
 				updateTime( (*i)->getTarget() );
+				bld.view().endExecute();
 				break;
 			}
 			if( bExtraReqs == false )
@@ -112,9 +117,12 @@ void FileTarget::check( Builder &bld )
 				}
 			}
 		}
+		bld.view().endPerform();
 	}
 
-	printf("Cache hits %d, %d new (%f%%)\n", nCache, nNew, nCache/ (double)(nNew+nCache)*100.0 );
+	//printf("Cache hits %d, %d new (%f%%)\n", nCache, nNew, nCache/ (double)(nNew+nCache)*100.0 );
+
+	bld.view().endTarget();
 }
 
 void FileTarget::clean( Builder &bld )
@@ -132,21 +140,26 @@ void FileTarget::clean( Builder &bld )
 	}
 }
 
-time_t FileTarget::getTime( std::string str )
+time_t FileTarget::getTime( Builder &bld, std::string str )
 {
 	std::map<std::string, time_t>::iterator i = mTimes.find( str );
 	if( i != mTimes.end() )
 	{
-		nCache++;
+		//nCache++;
+		bld.view().beginRequiresCheck( true, str.c_str() );
+		bld.view().endRequiresCheck();
 		return (*i).second;
 	}
 
+	bld.view().beginRequiresCheck( false, str.c_str() );
 	struct stat st;
 	stat( str.c_str(), &st );
 
 	mTimes[str] = st.st_mtime;
 
-	nNew++;
+	//nNew++;
+
+	bld.view().endRequiresCheck();
 
 	return st.st_mtime;
 }
