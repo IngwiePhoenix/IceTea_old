@@ -217,6 +217,7 @@ void Builder::varAddSet( const char *sName, const char *sValue )
 
 void Builder::processRequires( std::list<std::string> &lInput )
 {
+	// These are cheap and handy to have all the time
 	for( regreqlist::iterator i = lRequiresRegexp.begin();
 		 i != lRequiresRegexp.end(); i++ )
 	{
@@ -240,6 +241,8 @@ void Builder::processRequires( std::list<std::string> &lInput )
 		}
 	}
 
+	// These are only done on request now, they were too expensive
+	/*
 	for( regreqlist::iterator i = lRequiresRegexpCommand.begin();
 		 i != lRequiresRegexpCommand.end(); i++ )
 	{
@@ -300,6 +303,69 @@ void Builder::processRequires( std::list<std::string> &lInput )
 				pclose( fcmd );
 				delete revars;
 			}
+		}
+	}
+	*/
+}
+
+void Builder::genRequiresFor( const char *sName )
+{
+	for( regreqlist::iterator i = lRequiresRegexpCommand.begin();
+		 i != lRequiresRegexpCommand.end(); i++ )
+	{
+		RegExp *re = (*i).first;
+		if( re->execute( sName ) )
+		{
+			varmap *revars = regexVars( re );
+			std::string s = varRepl( (*i).second.c_str(), "", revars );
+			FILE *fcmd = popen( s.c_str(), "r" );
+			std::string rhs;
+			bool bHeader = true;
+			for(;;)
+			{
+				if( feof( fcmd ) )
+					break;
+				int cc = fgetc( fcmd );
+				if( cc == EOF )
+					break;
+				unsigned char c = cc;
+				if( bHeader )
+				{
+					if( c == ':' )
+						bHeader = false;
+				}
+				else
+				{
+					if( c == ' ' || c == '\t' )
+					{
+						if( rhs != "" )
+						{
+							requiresNormal(
+								sName,
+								rhs.c_str()
+								);
+							rhs = "";
+						}
+					}
+					else
+					{
+						if( c == '\\' )
+							c = fgetc( fcmd );
+						if( c != '\n' )
+							rhs += c;
+					}
+				}
+			}
+			if( rhs != "" )
+			{
+				requiresNormal(
+					sName,
+					rhs.c_str()
+					);
+				rhs = "";
+			}
+			pclose( fcmd );
+			delete revars;
 		}
 	}
 }

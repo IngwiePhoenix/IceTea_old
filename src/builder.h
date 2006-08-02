@@ -54,6 +54,7 @@ public:
 	void processRequires( std::list<std::string> &lInput );
 	void requires( const char *sBase, const char *sReq );
 	void requiresFromCommand( const char *sBase, const char *sReq );
+	void genRequiresFor( const char *sName );
 	void requiresRegexp( bool on )
 	{
 		bReqRegexp = on;

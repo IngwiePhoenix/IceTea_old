@@ -81,10 +81,10 @@ void FileTarget::check( Builder &bld )
 
 	bld.processRequires( lOutput );
 
-
 	for( std::list<Perform *>::iterator i = perf.begin();
 		 i != perf.end(); i++ )
 	{
+		bool bExtraReqs = false;
 		time_t target = getTime( std::string((*i)->getTarget()) );
 		std::list<std::string> *lReqs = bld.getRequires( (*i)->getTarget() );
 		if( lReqs == NULL )
@@ -100,6 +100,16 @@ void FileTarget::check( Builder &bld )
 				(*i)->execute( bld );
 				updateTime( (*i)->getTarget() );
 				break;
+			}
+			if( bExtraReqs == false )
+			{
+				std::list<std::string>::iterator k = j;
+				k++;
+				if( k == lReqs->end() )
+				{
+					bExtraReqs = true;
+					bld.genRequiresFor( (*i)->getTarget() );
+				}
 			}
 		}
 	}
