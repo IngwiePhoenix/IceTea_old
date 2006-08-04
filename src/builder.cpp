@@ -563,3 +563,13 @@ void Builder::error( const std::string &err )
 	throw BuildException( err.c_str() );
 }
 
+void Builder::error( YYLTYPE *locp, const std::string &err )
+{
+	fprintf( stderr, "%s:%d-%d:%d-%d: %s\n",
+		file.c_str(),
+		locp->first_line, locp->last_line,
+		locp->first_column, locp->last_column,
+		err.c_str()
+		);	
+}
+

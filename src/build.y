@@ -244,10 +244,5 @@ rulecompletion: TOK_COMMAND STRING
 
 void yyerror( YYLTYPE *locp, Builder &bld, char const *msg )
 {
-	fprintf( stderr, "%s:%d-%d:%d-%d: %s\n",
-		bld.file.c_str(),
-		locp->first_line, locp->last_line,
-		locp->first_column, locp->last_column,
-		msg
-		);
+	bld.error( locp, msg );
 }

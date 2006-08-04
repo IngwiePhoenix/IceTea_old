@@ -39,7 +39,7 @@ public:
 	void build( const char *sAct=NULL );
 	void execute( Action *pAct );
 
-	//void error( const yy::location &l, const std::string &m );
+	void error( YYLTYPE *locp, const std::string &m );
 	void error( const std::string &m );
 
 	std::string file;
