@@ -558,3 +558,8 @@ void cleanList( std::list<std::string> &lst )
 	}
 }
 
+void Builder::error( const std::string &err )
+{
+	throw BuildException( err.c_str() );
+}
+

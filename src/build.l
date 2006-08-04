@@ -113,7 +113,9 @@ void Builder::scanBegin()
 {
 	yy_flex_debug = false;
 	if( !(yyin = fopen( file.c_str(), "r" )) )
-		fprintf( stderr, "cannot open %s\n", file.c_str() );
+	{
+		error( std::string("cannot open file: ") + file );
+	}
 }
 
 void Builder::scanEnd()
