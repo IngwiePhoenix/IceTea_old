@@ -98,7 +98,8 @@ void FileTarget::check( Builder &bld )
 		for( std::list<std::string>::iterator j = lReqs->begin();
 			 j != lReqs->end(); j++ )
 		{
-			if( getTime( bld, *j ) > target )
+			time_t srcfile = getTime( bld, *j );
+			if( srcfile > target )
 			{
 				bld.view().beginExecute();
 				(*i)->execute( bld );
@@ -113,7 +114,7 @@ void FileTarget::check( Builder &bld )
 				if( k == lReqs->end() )
 				{
 					bExtraReqs = true;
-					bld.genRequiresFor( (*i)->getTarget() );
+					bld.genRequiresFor( (*i)->getTarget(), srcfile );
 				}
 			}
 		}

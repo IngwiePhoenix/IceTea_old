@@ -8,6 +8,7 @@
 #include "exceptionbase.h"
 #include "staticstring.h"
 #include "regexp.h"
+#include "cache.h"
 
 subExceptionDecl( BuildException )
 
@@ -17,6 +18,7 @@ class Command;
 class Rule;
 class Target;
 class Viewer;
+class Cache;
 
 #define YY_DECL int yylex( YYSTYPE *yylval_param, YYLTYPE *yylloc_param, Builder &bld )
 YY_DECL;
@@ -48,6 +50,8 @@ public:
 	{
 		return rView;
 	}
+
+	void setCache( const std::string &sFile );
 	void add( Action *pAct );
 	void add( Command *pCmd );
 	void add( Rule *pRule );
@@ -59,7 +63,7 @@ public:
 	void processRequires( std::list<std::string> &lInput );
 	void requires( const char *sBase, const char *sReq );
 	void requiresFromCommand( const char *sBase, const char *sReq );
-	void genRequiresFor( const char *sName );
+	void genRequiresFor( const char *sName, time_t tNewTime );
 	void requiresRegexp( bool on )
 	{
 		bReqRegexp = on;
@@ -152,6 +156,9 @@ private:
 	bool bReqRegexp;
 
 	Viewer &rView;
+
+	StaticString sCacheFile;
+	class Cache cRequires;
 };
 
 void cleanList( std::list<std::string> &lst );

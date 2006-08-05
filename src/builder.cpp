@@ -7,6 +7,8 @@
 #include "build.tab.h"
 #include "rule.h"
 #include "viewer.h"
+#include "cache.h"
+#include "serializerbinary.h"
 
 subExceptionDef( BuildException )
 
@@ -21,6 +23,18 @@ Builder::Builder( Viewer &rView ) :
 
 Builder::~Builder()
 {
+	if( sCacheFile.getLength() > 0 )
+	{
+		try
+		{
+			SerializerBinary ar( sCacheFile, Serializer::save );
+
+			ar << cRequires;
+		}
+		catch( ExceptionBase &e )
+		{
+		}
+	}
 }
 
 void yyparse( Builder &bld );
@@ -51,6 +65,21 @@ void Builder::build( const char *sAct )
 	pAct->execute( *this );
 
 	rView.endAction();
+}
+
+void Builder::setCache( const std::string &sFile )
+{
+	sCacheFile = sFile.c_str();
+
+	try
+	{
+		SerializerBinary ar( sCacheFile, Serializer::load );
+
+		ar >> cRequires;
+	}
+	catch( ExceptionBase &e )
+	{
+	}
 }
 
 void Builder::execute( Action *pAct )
@@ -247,75 +276,31 @@ void Builder::processRequires( std::list<std::string> &lInput )
 		}
 	}
 
-	// These are only done on request now, they were too expensive
-	/*
-	for( regreqlist::iterator i = lRequiresRegexpCommand.begin();
-		 i != lRequiresRegexpCommand.end(); i++ )
-	{
-		RegExp *re = (*i).first;
-		for( std::list<std::string>::iterator j = lInput.begin();
-			 j != lInput.end(); j++ )
-		{
-			if( re->execute( (*j).c_str() ) )
-			{
-				varmap *revars = regexVars( re );
-				std::string s = varRepl( (*i).second.c_str(), "", revars );
-				FILE *fcmd = popen( s.c_str(), "r" );
-				std::string rhs;
-				bool bHeader = true;
-				for(;;)
-				{
-					if( feof( fcmd ) )
-						break;
-					int cc = fgetc( fcmd );
-					if( cc == EOF )
-						break;
-					unsigned char c = cc;
-					if( bHeader )
-					{
-						if( c == ':' )
-							bHeader = false;
-					}
-					else
-					{
-						if( c == ' ' || c == '\t' )
-						{
-							if( rhs != "" )
-							{
-								requiresNormal(
-									(*j).c_str(),
-									rhs.c_str()
-									);
-								rhs = "";
-							}
-						}
-						else
-						{
-							if( c == '\\' )
-								c = fgetc( fcmd );
-							if( c != '\n' )
-								rhs += c;
-						}
-					}
-				}
-				if( rhs != "" )
-				{
-					requiresNormal(
-						(*j).c_str(),
-						rhs.c_str()
-						);
-					rhs = "";
-				}
-				pclose( fcmd );
-				delete revars;
-			}
-		}
-	}
-	*/
 }
 
-void Builder::genRequiresFor( const char *sName )
+void Builder::genRequiresFor( const char *sName, time_t tNewTime )
 {
+	Cache::Entry *ent = cRequires.get( sName );
+	if( ent && tNewTime > 0 )
+	{
+		if( ent->tCreated >= tNewTime )
+		{
+			for( std::list<std::string>::iterator i = ent->lData.begin();
+				 i != ent->lData.end(); i++ )
+			{
+				requiresNormal(
+					sName,
+					(*i).c_str()
+					);
+			}
+
+			return;
+		}
+	}
+
+	ent = new Cache::Entry;
+	ent->tCreated = tNewTime;
+
 	for( regreqlist::iterator i = lRequiresRegexpCommand.begin();
 		 i != lRequiresRegexpCommand.end(); i++ )
 	{
@@ -352,6 +337,7 @@ void Builder::genRequiresFor( const char *sName )
 								sName,
 								rhs.c_str()
 								);
+							ent->lData.push_back( rhs );
 							rhs = "";
 						}
 					}
@@ -370,6 +356,7 @@ void Builder::genRequiresFor( const char *sName )
 					sName,
 					rhs.c_str()
 					);
+				ent->lData.push_back( rhs );
 				rhs = "";
 			}
 			pclose( fcmd );
@@ -377,6 +364,8 @@ void Builder::genRequiresFor( const char *sName )
 			rView.endExtraRequiresCheck();
 		}
 	}
+
+	cRequires.put( sName, ent );
 }
 
 std::map<std::string, std::string> *Builder::regexVars( RegExp *re )

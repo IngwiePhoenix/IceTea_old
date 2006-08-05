@@ -8,13 +8,18 @@ class Param : public ParamProc
 {
 public:
 	Param() :
-		sFile("build.conf")
+		sFile("build.conf"),
+		sCache("build.cache")
 	{
 		addHelpBanner("Build r?\n\n");
 		addParam("file", 'f', &sFile, 
 				"Set the input script, default: build.conf");
 		addParam('p', mkproc(Param::procViewPercent),
 				"Switch to percent view.");
+		addParam("cache", &sCache,
+				"Set an alternative cache file." );
+		addParam('d', &bDebug,
+				"Print out a debug dump of the read build.conf", "true" );
 		addParam("help", mkproc(ParamProc::help),
 				"This help");
 		pViewer = new ViewerPlain;
@@ -42,9 +47,11 @@ public:
 		pViewer = new ViewerPercent;
 	}
 
+	std::string sCache;
 	std::string sFile;
 	StaticString sAction;
 	Viewer *pViewer;
+	bool bDebug;
 
 private:
 };
@@ -56,14 +63,20 @@ int main( int argc, char *argv[] )
 
 	Builder bld( *prm.pViewer );
 
+	bld.setCache( prm.sCache );
 	bld.load( prm.sFile.c_str() );
 
-	if( prm.sAction > 0 )
-		bld.build( prm.sAction );
+	if( prm.bDebug )
+	{
+		printf("\n\n----------\nDebug dump\n----------\n");
+		bld.debug();
+	}
 	else
-		bld.build();
-/*
-	printf("\n\n----------\nDebug dump\n----------\n");
-	bld.debug();*/
+	{
+		if( prm.sAction > 0 )
+			bld.build( prm.sAction );
+		else
+			bld.build();
+	}
 }
 
