@@ -16,9 +16,13 @@ public:
 	virtual void endTarget();
 
 	virtual void beginPerform( Perform *pPerf );
+	virtual void beginExtraRequiresCheck( const char *sCommand );
+	void printHead();
 	virtual void beginExecute();
 
 private:
+	class StaticString sAction;
+	bool bPrinted;
 	class StaticString sTarget;
 
 };

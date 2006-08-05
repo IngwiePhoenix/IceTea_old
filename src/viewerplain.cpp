@@ -12,22 +12,45 @@ ViewerPlain::~ViewerPlain()
 
 void ViewerPlain::beginTarget( const char *sName, const char *sType, const char *sOperation, int nPerforms )
 {
-	printf("--- %s ---\n", sName );
+	sAction = sName;
+	bPrinted = false;
+}
+
+void ViewerPlain::printHead()
+{
+	if( bPrinted == false )
+	{
+		printf("--- %s ---\n", sAction.getString() );
+		bPrinted = true;
+	}
 }
 
 void ViewerPlain::endTarget()
 {
-	printf("\n");
+	if( bPrinted == true )
+	{
+		printf("\n");
+	}
+	else
+	{
+		printf("Nothing to be done for %s.\n", sAction.getString() );
+	}
 }
 
 void ViewerPlain::beginPerform( Perform *pPerf )
 {
 	sTarget = pPerf->getTarget();
+}
+
+void ViewerPlain::beginExtraRequiresCheck( const char *sCommand )
+{
+	printHead();
 	printf("   check: %s\n", sTarget.getString() );
 }
 
 void ViewerPlain::beginExecute()
 {
+	printHead();
 	printf("   build: %s\n", sTarget.getString() );
 }
 

@@ -95,10 +95,13 @@ void FileTarget::check( Builder &bld )
 			printf("No dependancies: %s\n", (*i)->getTarget() );
 			continue;
 		}
+		time_t rebuild = target;
 		for( std::list<std::string>::iterator j = lReqs->begin();
 			 j != lReqs->end(); j++ )
 		{
 			time_t srcfile = getTime( bld, *j );
+			if( srcfile < rebuild )
+				rebuild = srcfile;
 			if( srcfile > target )
 			{
 				bld.view().beginExecute();
@@ -114,7 +117,7 @@ void FileTarget::check( Builder &bld )
 				if( k == lReqs->end() )
 				{
 					bExtraReqs = true;
-					bld.genRequiresFor( (*i)->getTarget(), srcfile );
+					bld.genRequiresFor( (*i)->getTarget(), rebuild );
 				}
 			}
 		}
