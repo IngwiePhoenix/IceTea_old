@@ -1,9 +1,13 @@
 #include <iostream>
+#include <sstream>
+#include <errno.h>
+#include <dirent.h>
 
 #include "builder.h"
 #include "action.h"
 #include "command.h"
 #include "target.h"
+#include "filetarget.h"
 #include "build.tab.h"
 #include "rule.h"
 #include "viewer.h"
@@ -17,7 +21,8 @@ Builder::Builder( Viewer &rView ) :
 	pLastAddedAction( NULL ),
 	sTmp(""),
 	sContext(""),
-	rView( rView )
+	rView( rView ),
+	bUsingList( false )
 {
 }
 
@@ -110,6 +115,14 @@ void Builder::add( Command *pCmd )
 	}
 }
 
+void Builder::addRegexCommand( int nType, const char *sReg )
+{
+	if( pLastAddedAction )
+	{
+		pLastAddedAction->add( nType, sReg );
+	}
+}
+
 void Builder::add( Rule *pRule )
 {
 	pLastAddedRule = pRule;
@@ -120,6 +133,87 @@ void Builder::add( Target *pTarg )
 {
 	pLastAddedTarget = pTarg;
 	mTarget[pTarg->getName()] = pTarg;
+}
+
+void Builder::addTarget( int tokType, const char *sName )
+{
+	nTargetType = tokType;
+	sTargetName = sName;
+}
+
+void Builder::setTargetInputType( int tokType )
+{
+	nTargetInputType = tokType;
+}
+
+void Builder::addTargetInput( const char *sInput )
+{
+	lsTargetInput.push_back( sInput );
+}
+
+void Builder::setTargetRule( const char *sRule )
+{
+	sTargetRule = sRule;
+}
+
+void Builder::endTarget()
+{
+	if( bUsingList == false )
+	{
+		switch( nTargetType )
+		{
+			case TOK_FILE:
+				add( new FileTarget( sTargetName.c_str() ) );
+				switch( nTargetInputType )
+				{
+					case TOK_FILES:
+						for( std::list<std::string>::iterator
+							 i = lsTargetInput.begin();
+							 i != lsTargetInput.end(); i++ )
+						{
+							((FileTarget *)lastTarget())->addInputDir(
+								(*i).c_str()
+								);
+						}
+						break;
+				}
+				lastTarget()->setRule( sTargetRule.c_str() );
+				break;
+		}
+	}
+	else
+	{
+		switch( nTargetType )
+		{
+			case TOK_FILE:
+				for( std::list<std::pair<std::string,std::map<std::string,std::string> > >::iterator j = lTok.begin(); j != lTok.end(); j++ )
+				{
+					std::string sName = varRepl( sTargetName.c_str(), "", &(*j).second );
+					add( new FileTarget( sName.c_str() ) );
+					switch( nTargetInputType )
+					{
+						case TOK_FILES:
+							for( std::list<std::string>::iterator
+								 i = lsTargetInput.begin();
+								 i != lsTargetInput.end(); i++ )
+							{
+								std::string sInput = varRepl(
+									(*i).c_str(), "",
+									&(*j).second
+									);
+								((FileTarget *)lastTarget())->addInputDir(
+									sInput.c_str()
+									);
+							}
+							break;
+					}
+					lastTarget()->setRule( sTargetRule.c_str() );
+				}
+				break;
+		}
+	}
+
+	clearList();
 }
 
 void Builder::debug()
@@ -214,17 +308,31 @@ void Builder::checkVar( const char *cont, const char *sName )
 
 void Builder::varSet( const char *sName, const char *sValue )
 {
-	checkVar( sContext, sName );
-
-	std::string newVal = varRepl( sValue, sContext, NULL );
-
-	if( sContext[0] == '\0' )
+	if( bUsingList )
 	{
-		mVar[sName] = newVal;
+		for( std::list<std::pair<std::string,std::map<std::string,std::string> > >::iterator i = lTok.begin(); i != lTok.end(); i++ )
+		{
+			checkVar( (*i).first.c_str(), sName );
+
+			std::string newVal = varRepl( sValue, (*i).first.c_str(), &(*i).second );
+
+			mContVar[(*i).first.c_str()][sName] = newVal;
+		}
 	}
 	else
 	{
-		mContVar[sContext.getString()][sName] = newVal;
+		checkVar( sContext, sName );
+
+		std::string newVal = varRepl( sValue, sContext, NULL );
+
+		if( sContext[0] == '\0' )
+		{
+			mVar[sName] = newVal;
+		}
+		else
+		{
+			mContVar[sContext.getString()][sName] = newVal;
+		}
 	}
 }
 
@@ -383,6 +491,17 @@ std::map<std::string, std::string> *Builder::regexVars( RegExp *re )
 	return map;
 }
 
+void Builder::regexVars( RegExp *re, varmap &map )
+{
+	int jmax = re->getNumSubStrings();
+	for( int j = 0; j < jmax; j++ )
+	{
+		char buf[8];
+		sprintf( buf, "re:%d", j );
+		map[buf] = re->getSubString( j );
+	}
+}
+
 void Builder::requires( const char *sBase, const char *sReq )
 {
 	if( bReqRegexp )
@@ -507,6 +626,7 @@ Rule *Builder::getRule( const char *sName )
 	if( mRule.find( sName ) != mRule.end() )
 		return mRule[sName];
 
+	throw BuildException("No rule named %s registered.", sName );
 	return NULL;
 }
 
@@ -554,11 +674,128 @@ void Builder::error( const std::string &err )
 
 void Builder::error( YYLTYPE *locp, const std::string &err )
 {
-	fprintf( stderr, "%s:%d-%d:%d-%d: %s\n",
-		file.c_str(),
-		locp->first_line, locp->last_line,
-		locp->first_column, locp->last_column,
-		err.c_str()
-		);	
+	std::stringstream s;
+	s << file << ":" << locp->first_line << "." << locp->first_column;
+	if( locp->first_line != locp->last_line )
+		s << "-" << locp->last_line << "." << locp->last_column;
+	else if( locp->first_column != locp->last_column )
+		s << "-" << locp->last_column;
+	s << ": " << err;
+	throw BuildException( s.str().c_str() );	
+}
+
+void Builder::startList( int tokType )
+{
+	bUsingList = true;
+	lTok.clear();
+	bTokFiltered = false;
+	nTokType = tokType;
+}
+
+void Builder::setFilter( const char *sRegExp )
+{
+	rTok.compile( sRegExp );
+	bTokFiltered = true;
+}
+
+void Builder::augmentList( const char *sFrom )
+{
+	switch( nTokType )
+	{
+		case TOK_DIRECTORIES:
+			{
+				DIR *dir = opendir( sFrom );
+				if( dir == NULL )
+				{
+					printf("dir:  %s\n", sFrom );
+					throw BuildException( strerror( errno ) );
+				}
+
+				std::string base;
+				base += sFrom;
+				base += "/";
+
+				struct dirent *de;
+
+				while( (de = readdir( dir )) )
+				{
+					if( de->d_type != DT_DIR )
+						continue;
+					if( de->d_name[0] == '.' || de->d_name[0] == '\0' )
+						continue;
+
+					std::string s( base );
+					s += de->d_name;
+					addListItem( s.c_str() );
+				}
+
+				closedir( dir );				
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+void Builder::endList()
+{
+	switch( nTokType )
+	{
+		case TOK_TARGETS:
+			for( std::map<const char *, Target *, ltstr>::iterator i =
+				 mTarget.begin(); i != mTarget.end(); i++ )
+			{
+				addListItem( (*i).first );
+			}
+			break;
+	}
+}
+
+void Builder::addListItem( const char *sItem )
+{
+	std::map<std::string,std::string> mVars;
+	mVars["match"] = sItem;
+	if( bTokFiltered )
+	{
+		if( rTok.execute( sItem ) )
+		{
+			regexVars( &rTok, mVars );
+		}
+		else
+		{
+			return;
+		}
+	}
+	lTok.push_back(
+		std::pair<std::string,std::map<std::string,std::string> >(
+			sItem, mVars
+			)
+		);
+}
+
+void Builder::clearList()
+{
+	lTok.clear();
+	lsTargetInput.clear();
+	bUsingList = false;
+}
+
+std::list<std::string> Builder::findTargets( const char *sRegex )
+{
+	RegExp r( sRegex );
+
+	std::list<std::string> lTmp;
+
+	for( std::map<const char *, Target *, ltstr>::iterator i = mTarget.begin();
+		 i != mTarget.end(); i++ )
+	{
+		if( r.execute( (*i).first ) )
+		{
+			lTmp.push_back( (*i).first );
+		}
+	}
+
+	return lTmp;
 }
 

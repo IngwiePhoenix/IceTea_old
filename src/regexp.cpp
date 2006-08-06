@@ -17,14 +17,21 @@ RegExp::RegExp( const char *sSrc ) :
 
 RegExp::~RegExp()
 {
-	regfree( &re );
-	delete[] aSubStr;
+	if( bCompiled )
+	{
+		regfree( &re );
+		delete[] aSubStr;
+	}
 }
 
 void RegExp::compile( const char *sSrc )
 {
 	if( bCompiled )
-		throw BuildException("Already compiled.");
+	{
+		regfree( &re );
+		delete[] aSubStr;
+		bCompiled = false;
+	}
 
 	int nErr = regcomp( &re, sSrc, REG_EXTENDED|REG_NEWLINE );
 	if( nErr )

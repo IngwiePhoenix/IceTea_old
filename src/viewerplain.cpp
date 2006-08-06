@@ -54,3 +54,8 @@ void ViewerPlain::beginExecute()
 	printf("   build: %s\n", sTarget.getString() );
 }
 
+void ViewerPlain::executeCmd( const char *sCmd )
+{
+	//printf("--> %s\n", sCmd );
+}
+

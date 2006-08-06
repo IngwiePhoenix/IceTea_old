@@ -14,7 +14,7 @@ std::string strbuf;
 %option noyywrap nounput batch debug
 
 %{
-//# define YY_USER_ACTION  yylloc->columns (yyleng);
+# define YY_USER_ACTION  yylloc->last_column += yyleng;
 %}
 %%
 
@@ -34,6 +34,7 @@ std::string strbuf;
 "for"								return TOK_FOR;
 "set"								return TOK_SET;
 "matches"							return TOK_MATCHES;
+"matching"							return TOK_MATCHING;
 "all"								return TOK_ALL;
 "one"								return TOK_ONE;
 "perform"							return TOK_PERFORM;
@@ -41,10 +42,25 @@ std::string strbuf;
 "command"							return TOK_COMMAND;
 "check"								return TOK_CHECK;
 "clean"								return TOK_CLEAN;
+"directories"						return TOK_DIRECTORIES;
+"targets"							return TOK_TARGETS;
 
-"..."\n								/* elipsis line continuation */
-\n+									return TOK_EOL;
-[ \t\r]*							/* whitespace */
+"..."\n								{
+	yylloc->last_line += yyleng;
+	yylloc->first_line = yylloc->last_line;
+	yylloc->first_column = yylloc->last_column = 0;
+}
+\n+									{
+	yylloc->last_line += yyleng;
+	yylloc->first_line = yylloc->last_line;
+	yylloc->first_column = yylloc->last_column = 0;
+	return TOK_EOL;
+}
+
+[ \t\r]*							{
+	yylloc->first_line = yylloc->last_line;
+	yylloc->first_column = yylloc->last_column+1;
+}
 
 "/"									{
 	BEGIN( regexp );

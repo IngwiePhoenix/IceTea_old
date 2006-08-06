@@ -9,7 +9,8 @@ class Param : public ParamProc
 public:
 	Param() :
 		sFile("build.conf"),
-		sCache("build.cache")
+		sCache("build.cache"),
+		bDebug( false )
 	{
 		addHelpBanner("Build r?\n\n");
 		addParam("file", 'f', &sFile, 
@@ -64,7 +65,16 @@ int main( int argc, char *argv[] )
 	Builder bld( *prm.pViewer );
 
 	bld.setCache( prm.sCache );
-	bld.load( prm.sFile.c_str() );
+	try
+	{
+		bld.load( prm.sFile.c_str() );
+	}
+	catch( BuildException &e )
+	{
+		fputs( e.what(), stderr );
+		fputs( "\n", stderr );
+		return 1;
+	}
 
 	if( prm.bDebug )
 	{

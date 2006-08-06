@@ -15,10 +15,6 @@ void yyerror( YYLTYPE *locp, Builder &bld, char const *msg );
 %pure-parser
 
 %locations
-%initial-action
-{
-	//@$.begin.filename = @$.end.filename = &bld.file;
-}
 
 %debug
 %error-verbose
@@ -43,6 +39,7 @@ void yyerror( YYLTYPE *locp, Builder &bld, char const *msg );
 %token TOK_FOR					"for"
 %token TOK_SET					"set"
 %token TOK_MATCHES				"matches"
+%token TOK_MATCHING				"matching"
 %token TOK_ALL					"all"
 %token TOK_ONE					"one"
 %token TOK_PERFORM				"perform"
@@ -50,6 +47,8 @@ void yyerror( YYLTYPE *locp, Builder &bld, char const *msg );
 %token TOK_COMMAND				"command"
 %token TOK_CHECK				"check"
 %token TOK_CLEAN				"clean"
+%token TOK_DIRECTORIES			"directories"
+%token TOK_TARGETS				"targets"
 %token TOK_EOL					"end of line"
 %token ',' ':' '='
 
@@ -75,7 +74,15 @@ line: TOK_DEFAULT TOK_ACTION ':'
 		  bld.add( new Action( $1 ) );
 	  }
 	  actionlst
-	| TOK_CREATE createwhat TOK_FROM createfrom TOK_USING createusing
+	| TOK_FOR fortypes TOK_MATCHING REGEXP
+	  {
+		  bld.setFilter( $4 );
+	  }
+	  augments
+	  {
+		  bld.endList();
+	  }
+	  listcmds
 	| STRING TOK_REQUIRES 
 	  {
 		  bld.setTmp( $1 );
@@ -91,14 +98,36 @@ line: TOK_DEFAULT TOK_ACTION ':'
 	| listcmds
 	| TOK_FOR STRING
 	  {
-		 bld.setContext( $2 );
+		  bld.startList( STRING );
+		  bld.addListItem( $2 );
 	  }
 	  listcmds
 	  {
-		  bld.setContext();
+		  
 	  }
 	| rule
 	;
+
+fortypes: TOK_DIRECTORIES
+		{
+			bld.startList( TOK_DIRECTORIES );
+		}
+		| TOK_TARGETS
+		{
+			bld.startList( TOK_TARGETS );
+		}
+		| TOK_FILES
+		{
+			bld.startList( TOK_FILES );
+		}
+		;
+
+augments:
+		| TOK_IN STRING
+		{
+			bld.augmentList( $2 );
+		}
+		;
 
 reqcompletion: reqlst
 			 | TOK_FROM TOK_COMMAND STRING
@@ -118,15 +147,23 @@ reqlst: STRING
 	  ;
 
 listcmds: TOK_SET setexpr
+		| TOK_CREATE createwhat TOK_FROM createfrom TOK_USING createusing
+		{
+			bld.endTarget();
+		}
 		;
 
 createwhat: TOK_FILE STRING
 		    {
-				bld.add( new FileTarget( $2 ) );
+				bld.addTarget( TOK_FILE, $2 );
 			}
 		  ;
 
-createfrom: TOK_FILES TOK_IN createfromdirlst
+createfrom: TOK_FILES TOK_IN
+		    {
+				bld.setTargetInputType( TOK_FILES );
+			}
+			createfromdirlst
 		  ;
 
 createfromdirlst: createfromdir
@@ -135,23 +172,13 @@ createfromdirlst: createfromdir
 
 createfromdir: STRING
 			   {
-				   try
-				   {
-					   ((FileTarget *)bld.lastTarget())->addInputDir( $1 );
-				   }
-				   catch( BuildException &e )
-				   {
-					   std::string s( $1 );
-					   s +=": ";
-					   s += e.what();
-					   yyerror( &yyloc, bld, s.c_str() );
-				   }
+				   bld.addTargetInput( $1 );
 			   }
 			 ;
 
 createusing: TOK_RULE STRING
 		     {
-				 bld.lastTarget()->setRule( $2 );
+				 bld.setTargetRule( $2 );
 			 }
 		   ;
 
@@ -163,9 +190,17 @@ action: TOK_CHECK STRING
 	    {
 			bld.add( new Command( Command::cmdCheck, $2 ) );
 		}
+	  | TOK_CHECK REGEXP
+	    {
+			bld.addRegexCommand( Command::cmdCheck, $2 );
+		}
 	  | TOK_CLEAN STRING
 	    {
 			bld.add( new Command( Command::cmdClean, $2 ) );
+		}
+	  | TOK_CLEAN REGEXP
+	    {
+			bld.addRegexCommand( Command::cmdClean, $2 );
 		}
 	  ;
 

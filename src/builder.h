@@ -51,9 +51,23 @@ public:
 		return rView;
 	}
 
+	void startList( int tokType );
+	void setFilter( const char *sRegExp );
+	void augmentList( const char *sFrom );
+	void addListItem( const char *sItem );
+	void clearList();
+	void endList();
+
+	void addTarget( int tokType, const char *sName );
+	void setTargetInputType( int tokType );
+	void addTargetInput( const char *sInput );
+	void setTargetRule( const char *sRule );
+	void endTarget();
+
 	void setCache( const std::string &sFile );
 	void add( Action *pAct );
 	void add( Command *pCmd );
+	void addRegexCommand( int nType, const char *sReg );
 	void add( Rule *pRule );
 	void add( Target *pTarg );
 	void varSet( const char *sName, const char *sValue );
@@ -64,6 +78,7 @@ public:
 	void requires( const char *sBase, const char *sReq );
 	void requiresFromCommand( const char *sBase, const char *sReq );
 	void genRequiresFor( const char *sName, time_t tNewTime );
+	std::list<std::string> findTargets( const char *sRegex );
 	void requiresRegexp( bool on )
 	{
 		bReqRegexp = on;
@@ -119,6 +134,7 @@ public:
 
 	typedef std::map<std::string, std::string> varmap;
 	varmap *regexVars( RegExp *re );
+	void regexVars( RegExp *re, varmap &map );
 	std::string varRepl( const char *sSrc, const char *cont, varmap *mExtra );
 
 private:
@@ -159,6 +175,18 @@ private:
 
 	StaticString sCacheFile;
 	class Cache cRequires;
+
+	std::list<std::pair<std::string,std::map<std::string,std::string> > > lTok;
+	bool bTokFiltered;
+	int nTokType;
+	RegExp rTok;
+
+	int nTargetType;
+	int nTargetInputType;
+	std::string sTargetName;
+	std::list<std::string> lsTargetInput;
+	std::string sTargetRule;
+	bool bUsingList;
 };
 
 void cleanList( std::list<std::string> &lst );

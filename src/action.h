@@ -15,6 +15,7 @@ public:
 	virtual ~Action();
 
 	void add( Command *pCmd );
+	void add( int nType, const char *sCmd );
 
 	const char *getName()
 	{
@@ -38,6 +39,7 @@ private:
 	bool bDefault;
 	StaticString sName;
 	std::list<Command *> lCommand;
+	std::list<std::pair<int, std::string> > lRegExCommand;
 };
 
 #endif

@@ -19,6 +19,7 @@ public:
 	virtual void beginExtraRequiresCheck( const char *sCommand );
 	void printHead();
 	virtual void beginExecute();
+	virtual void executeCmd( const char *sCmd );
 
 private:
 	class StaticString sAction;

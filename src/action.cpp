@@ -23,6 +23,11 @@ void Action::add( Command *pCmd )
 	lCommand.push_back( pCmd );
 }
 
+void Action::add( int nType, const char *sCmd )
+{
+	lRegExCommand.push_back( std::pair<int,std::string>( nType, sCmd ) );
+}
+
 void Action::debug()
 {
 	if( bDefault )
@@ -39,6 +44,16 @@ void Action::debug()
 
 void Action::execute( Builder &bld )
 {
+	for( std::list<std::pair<int,std::string> >::iterator i =
+		 lRegExCommand.begin(); i != lRegExCommand.end(); i++ )
+	{
+		std::list<std::string> lTmp = bld.findTargets( (*i).second.c_str() );
+		for( std::list<std::string>::iterator j = lTmp.begin();
+			 j != lTmp.end(); j++ )
+		{
+			add( new Command( (Command::CmdType)(*i).first, (*j).c_str() ) );
+		}
+	}
 	for( std::list<Command *>::iterator i = lCommand.begin();
 		 i != lCommand.end(); i++ )
 	{
