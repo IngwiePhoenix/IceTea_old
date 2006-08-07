@@ -1,6 +1,7 @@
 #include "builder.h"
 #include "viewerplain.h"
 #include "viewerpercent.h"
+#include "viewermake.h"
 #include "paramproc.h"
 #include "staticstring.h"
 
@@ -17,6 +18,8 @@ public:
 				"Set the input script, default: build.conf");
 		addParam('p', mkproc(Param::procViewPercent),
 				"Switch to percent view.");
+		addParam('m', mkproc(Param::procViewMake),
+				"Switch to 'make' style view.");
 		addParam("cache", &sCache,
 				"Set an alternative cache file." );
 		addParam('d', &bDebug,
@@ -46,6 +49,12 @@ public:
 	{
 		delete pViewer;
 		pViewer = new ViewerPercent;
+	}
+
+	int procViewMake( int argc, char *argv[] )
+	{
+		delete pViewer;
+		pViewer = new ViewerMake;
 	}
 
 	std::string sCache;
