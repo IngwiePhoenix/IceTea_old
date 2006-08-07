@@ -46,7 +46,7 @@ std::string strbuf;
 "targets"							return TOK_TARGETS;
 
 "..."\n								{
-	yylloc->last_line += yyleng;
+	yylloc->last_line += 1;
 	yylloc->first_line = yylloc->last_line;
 	yylloc->first_column = yylloc->last_column = 0;
 }
