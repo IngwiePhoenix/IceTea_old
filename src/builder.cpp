@@ -799,3 +799,27 @@ std::list<std::string> Builder::findTargets( const char *sRegex )
 	return lTmp;
 }
 
+std::string Builder::cmdToString( const char *sCmd )
+{
+	std::string buf;
+	FILE *pr = popen( sCmd, "r" );
+	if( pr == NULL )
+		throw BuildException("Couldn't execute program \"%s\"", sCmd );
+
+	char cbuf[2048];
+
+	for(;;)
+	{
+		int nRead = fread( cbuf, 1, 2048, pr );
+		for( int j = 0; j < nRead; j++ )
+			if( cbuf[j] != '\n' && cbuf[j] != '\r' )
+				buf.append( cbuf+j, 1 );
+		if( feof( pr ) )
+			break;
+	}
+
+	pclose( pr );
+
+	return buf;
+}
+

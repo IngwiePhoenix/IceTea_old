@@ -137,6 +137,8 @@ public:
 	void regexVars( RegExp *re, varmap &map );
 	std::string varRepl( const char *sSrc, const char *cont, varmap *mExtra );
 
+	std::string cmdToString( const char *sCmd );
+
 private:
 	void requiresNormal( const char *sBase, const char *sReq );
 	void requiresRegexp( const char *sBase, const char *sReq );

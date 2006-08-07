@@ -212,6 +212,14 @@ setexpr: STRING '=' STRING
 	     {
 			 bld.varAddSet( $1, $3 );
 		 }
+	   | STRING '=' TOK_FROM TOK_COMMAND STRING
+	     {
+			 bld.varSet( $1, bld.cmdToString( $5 ).c_str() );
+		 }
+	   | STRING TOK_ADDSET TOK_FROM TOK_COMMAND STRING
+	     {
+			 bld.varSet( $1, bld.cmdToString( $5 ).c_str() );
+		 }
 	   ;
 
 rule: TOK_RULE STRING
