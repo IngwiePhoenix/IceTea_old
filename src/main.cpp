@@ -10,7 +10,7 @@ class Param : public ParamProc
 public:
 	Param() :
 		sFile("build.conf"),
-		sCache("build.cache"),
+		sCache(".build.cache"),
 		bDebug( false )
 	{
 		addHelpBanner("Build r?\n\n");

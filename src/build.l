@@ -18,43 +18,24 @@ std::string strbuf;
 %}
 %%
 
-[,:=]								return yytext[0];
+[,:=[\]]							return yytext[0];
 "+="								return TOK_ADDSET;
 
 "default"							return TOK_DEFAULT;
 "action"							return TOK_ACTION;
-"create"							return TOK_CREATE;
-"file"								return TOK_FILE;
-"from"								return TOK_FROM;
-"files"								return TOK_FILES;
-"in"								return TOK_IN;
-"using"								return TOK_USING;
 "rule"								return TOK_RULE;
 "requires"							return TOK_REQUIRES;
-"for"								return TOK_FOR;
 "set"								return TOK_SET;
 "matches"							return TOK_MATCHES;
-"matching"							return TOK_MATCHING;
-"all"								return TOK_ALL;
-"one"								return TOK_ONE;
 "perform"							return TOK_PERFORM;
 "produces"							return TOK_PRODUCES;
-"command"							return TOK_COMMAND;
 "check"								return TOK_CHECK;
 "clean"								return TOK_CLEAN;
-"directories"						return TOK_DIRECTORIES;
-"targets"							return TOK_TARGETS;
 
-"..."\n								{
-	yylloc->last_line += 1;
-	yylloc->first_line = yylloc->last_line;
-	yylloc->first_column = yylloc->last_column = 0;
-}
 \n+									{
 	yylloc->last_line += yyleng;
 	yylloc->first_line = yylloc->last_line;
 	yylloc->first_column = yylloc->last_column = 0;
-	return TOK_EOL;
 }
 
 [ \t\r]*							{
@@ -76,17 +57,6 @@ std::string strbuf;
 }
 
 "#".*								/* single line comment */
-
-[^ \t\r\n\'\":+=,/][^ \t\r\n\'\":+=,]*						{
-	yylval->strval = stringdup( yytext );
-	return STRING;
-}
-
-[^ \t\r\n\'\":+=,/][^ \t\r\n\'\"+=,]+[^ \t\r\n\'\":+=,]						{
-	yylval->strval = stringdup( yytext );
-	return STRING;
-}
-
 
 \"									{
 	BEGIN( strdq );
