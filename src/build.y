@@ -40,9 +40,9 @@ void yyerror( YYLTYPE *locp, Builder &bld, char const *msg );
 %token TOK_PERFORM				"perform"
 %token TOK_PRODUCES				"produces"
 
-%token ',' ':' '='
+%token ',' ':' '=' '(' ')'
 
-%destructor { delete[] $$; } STRING
+%destructor { delete[] $$; } STRING FUNCTION
 
 %%
 
@@ -54,57 +54,61 @@ input:
 	 ;
 
 // Rule interpretation
-rule: TOK_RULE STRING ':' rulecmds
+rule: TOK_RULE STRING {printf("Rule %s:\n", $2 ); } ':' rulecmds
 	;
 
 rulecmds: rulecmd
 		| rulecmds ',' rulecmd
 		;
 
-rulecmd: TOK_MATCHES REGEXP
-	   | TOK_PRODUCES STRING
-	   | TOK_REQUIRES list
-	   | TOK_INPUT TOK_FILTER REGEXP
-	   | TOK_INPUT TOK_FILTER func
-	   | TOK_PERFORM func
+rulecmd: TOK_MATCHES REGEXP { printf("    Matches: %s\n", $2 ); }
+	   | TOK_PRODUCES STRING { printf("    Produces: %s\n", $2 ); }
+	   | TOK_REQUIRES { printf("    Requires:\n"); } list {printf("\n");}
+	   | TOK_INPUT TOK_FILTER REGEXP { printf("    Input Filter: %s\n", $3 ); }
+	   | TOK_INPUT TOK_FILTER { printf("    Input Filter: "); } func {printf("\n");}
+	   | TOK_PERFORM { printf("    Perform: "); } func {printf("\n");}
 	   ;
 
 // Action interpretation
-action: TOK_DEFAULT TOK_ACTION ':' actioncmds
-	  | STRING TOK_ACTION ':' actioncmds
+action: TOK_DEFAULT TOK_ACTION ':' { printf("Default action:\n"); } actioncmds
+	  | STRING TOK_ACTION ':' { printf("\"%s\" action:\n", $1 ); } actioncmds
 	  ;
 
 actioncmds: actioncmd
 		  | actioncmds ',' actioncmd
 		  ;
 
-actioncmd: actioncmdtype list
+actioncmd: { printf("\t"); } actioncmdtype list {printf("\n");}
 		 ;
 
-actioncmdtype: TOK_CHECK
-			 | TOK_CLEAN
+actioncmdtype: TOK_CHECK { printf("check "); }
+			 | TOK_CLEAN { printf("clean "); }
 			 ;
 
 // Target interpretation
-
-target: list ':' targetcmds
+target: list ':' { printf(" are targets:\n"); } targetcmds
 	  ;
 
 targetcmds: targetcmd
 		  | targetcmds ',' targetcmd
 		  ;
 
-targetcmd: TOK_RULE STRING
-		 | TOK_TARGET TOK_PREFIX STRING
-		 | TOK_TARGET TARGETTYPE
-		 | TOK_INPUT list
-		 | TOK_REQUIRES list
+targetcmd: TOK_RULE STRING { printf("    Rule %s\n", $2 ); }
+		 | TOK_TARGET TOK_PREFIX STRING { printf("    Target prefix: %s\n", $3 ); }
+		 | TOK_TARGET TARGETTYPE { printf("    Target Type: %d\n", $2 ); }
+		 | TOK_INPUT { printf("    Input: "); } list { printf("\n"); }
+		 | TOK_REQUIRES { printf("    Requires: "); } list { printf("\n"); }
+		 | TOK_SET { printf("    Set: "); } targetset
+		 ;
+
+targetset: STRING '=' STRING { printf("%s = %s\n", $1, $3 ); }
+		 | STRING TOK_ADDSET STRING { printf("%s += %s\n", $1, $3 ); }
 		 ;
 
 // list goo
 
 list: listitem listfilter
-	| '[' listitems ']' listfilter
+	| '[' { printf("["); } listitems ']' { printf("]"); } listfilter
 	;
 
 listfilter:
@@ -113,21 +117,21 @@ listfilter:
 		  ;
 
 listitems: listitem
-		 | listitems ',' listitem
+		 | listitems ',' {printf(", "); } listitem
 		 ;
 
-listitem: STRING
+listitem: STRING {printf("%s", $1 ); }
 		| func
 		;
 
 // Function
 
-func: FUNCTION '(' funcparams ')'
+func: FUNCTION { printf("%s(", $1 ); } '(' funcparams ')' { printf(")"); }
 	;
 
 funcparams:
-		  | STRING
-		  | funcparams ',' STRING
+		  | STRING { printf("%s", $1 ); }
+		  | funcparams ',' STRING { printf(", %s", $3 ); }
 		  ;
 
 %%
@@ -136,3 +140,4 @@ void yyerror( YYLTYPE *locp, Builder &bld, char const *msg )
 {
 	bld.error( locp, msg );
 }
+

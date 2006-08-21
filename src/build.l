@@ -18,7 +18,7 @@ std::string strbuf;
 %}
 %%
 
-[,:=[\]]							return yytext[0];
+[,:=[\]()]							return yytext[0];
 "+="								return TOK_ADDSET;
 
 "default"							return TOK_DEFAULT;
@@ -32,6 +32,7 @@ std::string strbuf;
 "check"								return TOK_CHECK;
 "clean"								return TOK_CLEAN;
 "target"							return TOK_TARGET;
+"input"								return TOK_INPUT;
 
 \n+									{
 	yylloc->last_line += yyleng;
@@ -58,6 +59,27 @@ std::string strbuf;
 }
 
 "#".*								/* single line comment */
+
+[a-zA-Z][a-zA-Z0-9]*						{
+	{
+		yylval->tval = bld.getTargetType( yytext );
+		if( yylval->tval >= 0 )
+		{
+			return TARGETTYPE;
+		}
+		else if( bld.isFunction( yytext ) )
+		{
+			yylval->strval = stringdup( yytext );
+			return FUNCTION;
+		}
+		bld.error( yylloc, "Invalid token" );
+	}
+}
+
+[^ \t\r\n\'\":=,/][^ \t\r\n\'\"=,]+[^ \t\r\n\'\":=,]						{
+	yylval->strval = stringdup( yytext );
+	return STRING;
+}
 
 \"									{
 	BEGIN( strdq );
@@ -92,6 +114,10 @@ std::string strbuf;
 	BEGIN( INITIAL );
 	yylval->strval = stringdup( strbuf.c_str() );
 	return STRING;
+}
+
+.									{
+	bld.error( yylloc, "Invalid character found!" );
 }
 
 %%
