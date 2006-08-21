@@ -1,7 +1,7 @@
 #include "builder.h"
-#include "viewerplain.h"
-#include "viewerpercent.h"
-#include "viewermake.h"
+//#include "viewerplain.h"
+//#include "viewerpercent.h"
+//#include "viewermake.h"
 #include "paramproc.h"
 #include "staticstring.h"
 
@@ -26,12 +26,12 @@ public:
 				"Print out a debug dump of the read build.conf", "true" );
 		addParam("help", mkproc(ParamProc::help),
 				"This help");
-		pViewer = new ViewerPlain;
+		//pViewer = new ViewerPlain;
 	}
 
 	virtual ~Param()
 	{
-		delete pViewer;
+		//delete pViewer;
 	}
 
 	virtual int cmdParam( int argc, char *argv[] )
@@ -47,20 +47,20 @@ public:
 
 	int procViewPercent( int argc, char *argv[] )
 	{
-		delete pViewer;
-		pViewer = new ViewerPercent;
+		//delete pViewer;
+		//pViewer = new ViewerPercent;
 	}
 
 	int procViewMake( int argc, char *argv[] )
 	{
-		delete pViewer;
-		pViewer = new ViewerMake;
+		//delete pViewer;
+		//pViewer = new ViewerMake;
 	}
 
 	std::string sCache;
 	std::string sFile;
 	StaticString sAction;
-	Viewer *pViewer;
+	//Viewer *pViewer;
 	bool bDebug;
 
 private:
@@ -71,31 +71,31 @@ int main( int argc, char *argv[] )
 	Param prm;
 	prm.process( argc, argv );
 
-	Builder bld( *prm.pViewer );
+	Builder bld;//*prm.pViewer );
 
-	bld.setCache( prm.sCache );
-	try
-	{
+	//bld.setCache( prm.sCache );
+	//try
+	//{
 		bld.load( prm.sFile.c_str() );
-	}
-	catch( BuildException &e )
-	{
-		fputs( e.what(), stderr );
-		fputs( "\n", stderr );
-		return 1;
-	}
+	//}
+	//catch( BuildException &e )
+	//{
+	//	fputs( e.what(), stderr );
+	//	fputs( "\n", stderr );
+	//	return 1;
+	//}
 
 	if( prm.bDebug )
 	{
 		printf("\n\n----------\nDebug dump\n----------\n");
-		bld.debug();
+		//bld.debug();
 	}
 	else
 	{
-		if( prm.sAction > 0 )
-			bld.build( prm.sAction );
-		else
-			bld.build();
+		//if( prm.sAction > 0 )
+		//	bld.build( prm.sAction );
+		//else
+		//	bld.build();
 	}
 }
 

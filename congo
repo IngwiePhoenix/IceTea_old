@@ -31,6 +31,9 @@ server action: check congod
 create file congod from files in src/congod, src/shared using rule exe
 create file congo from files in src/congo, src/shared using rule exe
 
+create files "modules/db{name}.so" from directories in src/congod/db ...
+	from files in "src/congod/db/{name}" using rule lib
+
 #
 # After all of that, some targets or list items may have their own additional
 # dependancies, depending on the rule that built them.  You can define these

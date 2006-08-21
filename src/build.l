@@ -31,6 +31,7 @@ std::string strbuf;
 "produces"							return TOK_PRODUCES;
 "check"								return TOK_CHECK;
 "clean"								return TOK_CLEAN;
+"target"							return TOK_TARGET;
 
 \n+									{
 	yylloc->last_line += yyleng;

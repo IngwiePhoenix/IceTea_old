@@ -2,10 +2,6 @@
 %{
 # include <string>
 # include "builder.h"
-# include "action.h"
-# include "command.h"
-# include "rule.h"
-# include "filetarget.h"
 # include "build.tab.h"
 void yyerror( YYLTYPE *locp, Builder &bld, char const *msg );
 %}
