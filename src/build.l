@@ -94,6 +94,7 @@ std::string strbuf;
 <strdq,strsq>\\\\					strbuf += "\\";
 <strdq,strsq>\\\"					strbuf += "\"";
 <strdq,strsq>\\\'					strbuf += "\'";
+<strdq,strsq>\\.					bld.error( yylloc, "Invalid escape sequence.");
 
 <strdq>\"							{
 	BEGIN( INITIAL );
@@ -110,7 +111,7 @@ std::string strbuf;
 .									{
 	char buf[] = {"Character x is out of place"};
 	buf[10] = yytext[0];
-	bld.error( yylloc, "Character !" );
+	bld.error( yylloc, buf );
 }
 
 %%
