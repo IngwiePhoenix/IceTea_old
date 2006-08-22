@@ -20,9 +20,9 @@ void yyerror( YYLTYPE *locp, Builder &bld, char const *msg );
 }
 
 %token <strval>		STRING		"string literal"
-%token <strval>		REGEXP		"regular expression"
 %token <tval>		TARGETTYPE	"target type"
 %token <strval>		FUNCTION	"function name"
+%token <strval>		PERFORM		"perform name"
 
 %token TOK_ADDSET				"+="
 %token TOK_DEFAULT				"default"
@@ -61,12 +61,11 @@ rulecmds: rulecmd
 		| rulecmds ',' rulecmd
 		;
 
-rulecmd: TOK_MATCHES REGEXP { printf("    Matches: %s\n", $2 ); }
+rulecmd: TOK_MATCHES { printf("    Matches: " ); } func
 	   | TOK_PRODUCES STRING { printf("    Produces: %s\n", $2 ); }
 	   | TOK_REQUIRES { printf("    Requires:\n"); } list {printf("\n");}
-	   | TOK_INPUT TOK_FILTER REGEXP { printf("    Input Filter: %s\n", $3 ); }
 	   | TOK_INPUT TOK_FILTER { printf("    Input Filter: "); } func {printf("\n");}
-	   | TOK_PERFORM { printf("    Perform: "); } func {printf("\n");}
+	   | TOK_PERFORM { printf("    Perform: "); } perf {printf("\n");}
 	   ;
 
 // Action interpretation
@@ -78,7 +77,7 @@ actioncmds: actioncmd
 		  | actioncmds ',' actioncmd
 		  ;
 
-actioncmd: { printf("\t"); } actioncmdtype list {printf("\n");}
+actioncmd: { printf("    "); } actioncmdtype list {printf("\n");}
 		 ;
 
 actioncmdtype: TOK_CHECK { printf("check "); }
@@ -97,6 +96,7 @@ targetcmd: TOK_RULE STRING { printf("    Rule %s\n", $2 ); }
 		 | TOK_TARGET TOK_PREFIX STRING { printf("    Target prefix: %s\n", $3 ); }
 		 | TOK_TARGET TARGETTYPE { printf("    Target Type: %d\n", $2 ); }
 		 | TOK_INPUT { printf("    Input: "); } list { printf("\n"); }
+		 | TOK_INPUT TOK_FILTER { printf("    Input filter: "); } func
 		 | TOK_REQUIRES { printf("    Requires: "); } list { printf("\n"); }
 		 | TOK_SET { printf("    Set: "); } targetset
 		 ;
@@ -106,26 +106,23 @@ targetset: STRING '=' STRING { printf("%s = %s\n", $1, $3 ); }
 		 ;
 
 // list goo
-
 list: listitem listfilter
 	| '[' { printf("["); } listitems ']' { printf("]"); } listfilter
 	;
 
 listfilter:
-		  | TOK_FILTER REGEXP
-		  | TOK_FILTER func
+		  | TOK_FILTER { printf(" filtered by "); } func
 		  ;
 
 listitems: listitem
-		 | listitems ',' {printf(", "); } listitem
+		 | listitems ',' { printf(", "); } listitem
 		 ;
 
-listitem: STRING {printf("%s", $1 ); }
+listitem: STRING { printf("%s", $1 ); }
 		| func
 		;
 
 // Function
-
 func: FUNCTION { printf("%s(", $1 ); } '(' funcparams ')' { printf(")"); }
 	;
 
@@ -134,6 +131,14 @@ funcparams:
 		  | funcparams ',' STRING { printf(", %s", $3 ); }
 		  ;
 
+// Perform
+perf: PERFORM { printf("%s(", $1 ); } '(' perfparams ')' { printf(")"); }
+	;
+
+perfparams:
+		  | STRING { printf("%s", $1 ); }
+		  | perfparams ',' STRING { printf(", %s", $3 ); }
+		  ;
 %%
 
 void yyerror( YYLTYPE *locp, Builder &bld, char const *msg )

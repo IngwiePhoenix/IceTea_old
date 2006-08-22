@@ -7,7 +7,6 @@
 std::string strbuf;
 %}
 
-%x regexp
 %x strsq
 %x strdq
 %x comment
@@ -33,6 +32,8 @@ std::string strbuf;
 "clean"								return TOK_CLEAN;
 "target"							return TOK_TARGET;
 "input"								return TOK_INPUT;
+"filter"							return TOK_FILTER;
+"prefix"							return TOK_PREFIX;
 
 \n+									{
 	yylloc->last_line += yyleng;
@@ -45,19 +46,6 @@ std::string strbuf;
 	yylloc->first_column = yylloc->last_column+1;
 }
 
-"/"									{
-	BEGIN( regexp );
-	strbuf = "";
-}
-<regexp>[^\n/\\]*					strbuf += yytext;
-<regexp>"\\/"						strbuf += "/";
-<regexp>"\\"						strbuf += "\\";
-<regexp>"/"							{
-	BEGIN( INITIAL );
-	yylval->strval = stringdup( strbuf.c_str() );
-	return REGEXP;
-}
-
 "#".*								/* single line comment */
 
 [a-zA-Z][a-zA-Z0-9]*						{
@@ -67,6 +55,11 @@ std::string strbuf;
 		{
 			return TARGETTYPE;
 		}
+		else if( bld.isPerform( yytext ) )
+		{
+			yylval->strval = stringdup( yytext );
+			return PERFORM;
+		}
 		else if( bld.isFunction( yytext ) )
 		{
 			yylval->strval = stringdup( yytext );
@@ -74,11 +67,6 @@ std::string strbuf;
 		}
 		bld.error( yylloc, "Invalid token" );
 	}
-}
-
-[^ \t\r\n\'\":=,/][^ \t\r\n\'\"=,]+[^ \t\r\n\'\":=,]						{
-	yylval->strval = stringdup( yytext );
-	return STRING;
 }
 
 \"									{
@@ -103,6 +91,9 @@ std::string strbuf;
 <strdq,strsq>\\r					strbuf += "\r";
 <strdq,strsq>\\b					strbuf += "\b";
 <strdq,strsq>\\f					strbuf += "\f";
+<strdq,strsq>\\\\					strbuf += "\\";
+<strdq,strsq>\\\"					strbuf += "\"";
+<strdq,strsq>\\\'					strbuf += "\'";
 
 <strdq>\"							{
 	BEGIN( INITIAL );
@@ -117,7 +108,9 @@ std::string strbuf;
 }
 
 .									{
-	bld.error( yylloc, "Invalid character found!" );
+	char buf[] = {"Character x is out of place"};
+	buf[10] = yytext[0];
+	bld.error( yylloc, "Character !" );
 }
 
 %%

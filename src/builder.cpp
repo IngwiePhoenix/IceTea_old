@@ -1,8 +1,12 @@
 #include "builder.h"
+#include "functionfactory.h"
+#include "performfactory.h"
 
 subExceptionDef( BuildException );
 
-Builder::Builder()
+Builder::Builder() :
+	fFunction( FunctionFactory::getInstance() ),
+	fPerform( PerformFactory::getInstance() )
 {
 }
 
@@ -17,7 +21,7 @@ void Builder::load( const std::string &sFile )
 {
 	file = sFile;
 	scanBegin();
-	yydebug = 1;
+	//yydebug = 1;
 	yyparse( *this );
 	scanEnd();
 }
@@ -45,8 +49,36 @@ int Builder::getTargetType( const char *sType )
 	return -1;
 }
 
+//
+// Function functions
+//
 bool Builder::isFunction( const char *sFunc )
 {
-	return true;
+	return fFunction.hasPlugin( sFunc );
+}
+
+void Builder::newFunctionCall( const char *sName )
+{
+	
+}
+
+void Builder::addFunctionParam( const char *sParam )
+{
+}
+
+//
+// Perform functions
+//
+bool Builder::isPerform( const char *sPerf )
+{
+	return fPerform.hasPlugin( sPerf );
+}
+
+void Builder::newPerform( const char *sName )
+{
+}
+
+void Builder::addPerformParam( const char *sParam )
+{
 }
 
