@@ -1,12 +1,14 @@
 #include "builder.h"
 #include "functionfactory.h"
 #include "performfactory.h"
+#include "targetfactory.h"
 
 subExceptionDef( BuildException );
 
 Builder::Builder() :
 	fFunction( FunctionFactory::getInstance() ),
-	fPerform( PerformFactory::getInstance() )
+	fPerform( PerformFactory::getInstance() ),
+	fTarget( TargetFactory::getInstance() )
 {
 }
 
@@ -42,11 +44,12 @@ void Builder::error( const std::string &msg )
 	throw BuildException("%s", msg.c_str() );
 }
 
-int Builder::getTargetType( const char *sType )
+//
+// Target functions
+//
+bool Builder::isTarget( const char *sType )
 {
-	if( !strcmp( sType, "file" ) )
-		return 0;
-	return -1;
+	return fTarget.hasPlugin( sType );
 }
 
 //

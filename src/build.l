@@ -50,9 +50,9 @@ std::string strbuf;
 
 [a-zA-Z][a-zA-Z0-9]*						{
 	{
-		yylval->tval = bld.getTargetType( yytext );
-		if( yylval->tval >= 0 )
+		if( bld.isTarget( yytext ) )
 		{
+			yylval->strval = stringdup( yytext );
 			return TARGETTYPE;
 		}
 		else if( bld.isPerform( yytext ) )

@@ -16,11 +16,10 @@ void yyerror( YYLTYPE *locp, Builder &bld, char const *msg );
 %error-verbose
 %union {
 	char *strval;
-	int tval;
 }
 
 %token <strval>		STRING		"string literal"
-%token <tval>		TARGETTYPE	"target type"
+%token <strval>		TARGETTYPE	"target type"
 %token <strval>		FUNCTION	"function name"
 %token <strval>		PERFORM		"perform name"
 
@@ -51,6 +50,7 @@ input:
 	 | input rule
 	 | input action
 	 | input target
+	 | input set
 	 ;
 
 // Rule interpretation
@@ -61,7 +61,7 @@ rulecmds: rulecmd
 		| rulecmds ',' rulecmd
 		;
 
-rulecmd: TOK_MATCHES { printf("    Matches: " ); } func
+rulecmd: TOK_MATCHES { printf("    Matches: " ); } func { printf("\n"); }
 	   | TOK_PRODUCES STRING { printf("    Produces: %s\n", $2 ); }
 	   | TOK_REQUIRES { printf("    Requires:\n"); } list {printf("\n");}
 	   | TOK_INPUT TOK_FILTER { printf("    Input Filter: "); } func {printf("\n");}
@@ -94,9 +94,9 @@ targetcmds: targetcmd
 
 targetcmd: TOK_RULE STRING { printf("    Rule %s\n", $2 ); }
 		 | TOK_TARGET TOK_PREFIX STRING { printf("    Target prefix: %s\n", $3 ); }
-		 | TOK_TARGET TARGETTYPE { printf("    Target Type: %d\n", $2 ); }
+		 | TOK_TARGET TARGETTYPE { printf("    Target Type: %s\n", $2 ); }
 		 | TOK_INPUT { printf("    Input: "); } list { printf("\n"); }
-		 | TOK_INPUT TOK_FILTER { printf("    Input filter: "); } func
+		 | TOK_INPUT TOK_FILTER { printf("    Input filter: "); } func  { printf("\n"); }
 		 | TOK_REQUIRES { printf("    Requires: "); } list { printf("\n"); }
 		 | TOK_SET { printf("    Set: "); } targetset
 		 ;
@@ -104,6 +104,14 @@ targetcmd: TOK_RULE STRING { printf("    Rule %s\n", $2 ); }
 targetset: STRING '=' STRING { printf("%s = %s\n", $1, $3 ); }
 		 | STRING TOK_ADDSET STRING { printf("%s += %s\n", $1, $3 ); }
 		 ;
+
+// global set
+set: TOK_SET { printf("Set: "); } setwhat
+   ;
+
+setwhat: STRING '=' STRING { printf("%s = %s\n", $1, $3 ); }
+	   | STRING TOK_ADDSET STRING { printf("%s += %s\n", $1, $3 ); }
+	   ;
 
 // list goo
 list: listitem listfilter

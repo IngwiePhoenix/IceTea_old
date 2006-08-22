@@ -11,6 +11,8 @@ class Function;
 class FunctionFactory;
 class Perform;
 class PerformFactory;
+class Target;
+class TargetFactory;
 
 #define YY_DECL int yylex( YYSTYPE *yylval_param, YYLTYPE *yylloc_param, Builder &bld )
 YY_DECL;
@@ -28,12 +30,18 @@ public:
 
 	void load( const std::string &sFile );
 
-	int getTargetType( const char *sType );
 
 private:
 	std::string file;
 	void scanBegin();
 	void scanEnd();
+
+public: // Target functions
+	bool isTarget( const char *sType );
+
+private: // Target variables
+	Target *pTmpTarget;
+	TargetFactory &fTarget;
 
 public: // Function functions
 	bool isFunction( const char *sFunc );
