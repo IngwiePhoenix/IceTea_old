@@ -3,6 +3,7 @@
 # include <string>
 # include "builder.h"
 # include "build.tab.h"
+# include "action.h"
 void yyerror( YYLTYPE *locp, Builder &bld, char const *msg );
 %}
 
@@ -69,20 +70,36 @@ rulecmd: TOK_MATCHES { printf("    Matches: " ); } func { printf("\n"); }
 	   ;
 
 // Action interpretation
-action: TOK_DEFAULT TOK_ACTION ':' { printf("Default action:\n"); } actioncmds
-	  | STRING TOK_ACTION ':' { printf("\"%s\" action:\n", $1 ); } actioncmds
+action: TOK_DEFAULT TOK_ACTION ':'
+	  {
+		  bld.addAction();
+	  }
+	    actioncmds
+	  | STRING TOK_ACTION ':'
+	  {
+		  if( $1[0] == '\0' )
+			  bld.error(
+			  	&yylloc,
+				"You cannot use an empty string as the name of an action."
+				);
+		  bld.addAction( $1 );
+	  }
+	    actioncmds
 	  ;
 
 actioncmds: actioncmd
 		  | actioncmds ',' actioncmd
 		  ;
 
-actioncmd: { printf("    "); } actioncmdtype list {printf("\n");}
+actioncmd: TOK_CHECK list
+		 {
+			 bld.addCommand( Action::actCheck );
+		 }
+		 | TOK_CLEAN list
+		 {
+			 bld.addCommand( Action::actClean );
+		 }
 		 ;
-
-actioncmdtype: TOK_CHECK { printf("check "); }
-			 | TOK_CLEAN { printf("clean "); }
-			 ;
 
 // Target interpretation
 target: list ':' { printf(" are targets:\n"); } targetcmds
@@ -114,8 +131,12 @@ setwhat: STRING '=' STRING { printf("%s = %s\n", $1, $3 ); }
 	   ;
 
 // list goo
-list: listitem listfilter
-	| '[' { printf("["); } listitems ']' { printf("]"); } listfilter
+list: singlelistitem listfilter
+	| '['
+	{
+		bld.newList();
+	}
+	  listitems ']' listfilter
 	;
 
 listfilter:
@@ -123,20 +144,42 @@ listfilter:
 		  ;
 
 listitems: listitem
-		 | listitems ',' { printf(", "); } listitem
+		 | listitems ',' listitem
 		 ;
 
-listitem: STRING { printf("%s", $1 ); }
+listitem: STRING
+		{
+			bld.addListString( $1 );
+		}
 		| func
+		{
+			bld.addListFunc();
+		}
 		;
 
+singlelistitem: STRING
+			  {
+				  bld.newList();
+				  bld.addListString( $1 );
+			  }
+			  | func
+			  {
+				  bld.newList();
+				  bld.addListFunc();
+			  }
+			  ;
+
 // Function
-func: FUNCTION { printf("%s(", $1 ); } '(' funcparams ')' { printf(")"); }
+func: FUNCTION
+	{
+		bld.newFunctionCall( $1 );
+	}
+	  '(' funcparams ')'
 	;
 
 funcparams:
-		  | STRING { printf("%s", $1 ); }
-		  | funcparams ',' STRING { printf(", %s", $3 ); }
+		  | STRING { bld.addFunctionParam( $1 ); }
+		  | funcparams ',' STRING { bld.addFunctionParam( $3 ); }
 		  ;
 
 // Perform

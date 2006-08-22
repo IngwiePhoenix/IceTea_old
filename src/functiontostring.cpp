@@ -10,3 +10,8 @@ FunctionToString::FunctionToString()
 FunctionToString::~FunctionToString()
 {
 }
+
+void FunctionToString::execute( StringList &lInput, StringList &lOutput )
+{
+}
+

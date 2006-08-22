@@ -10,3 +10,8 @@ FunctionRegexp::FunctionRegexp()
 FunctionRegexp::~FunctionRegexp()
 {
 }
+
+void FunctionRegexp::execute( StringList &lInput, StringList &lOutput )
+{
+}
+

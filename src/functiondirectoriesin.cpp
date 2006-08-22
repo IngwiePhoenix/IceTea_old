@@ -10,3 +10,8 @@ FunctionDirectoriesIn::FunctionDirectoriesIn()
 FunctionDirectoriesIn::~FunctionDirectoriesIn()
 {
 }
+
+void FunctionDirectoriesIn::execute( StringList &lInput, StringList &lOutput )
+{
+}
+

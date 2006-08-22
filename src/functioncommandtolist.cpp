@@ -10,3 +10,8 @@ FunctionCommandToList::FunctionCommandToList()
 FunctionCommandToList::~FunctionCommandToList()
 {
 }
+
+void FunctionCommandToList::execute( StringList &lInput, StringList &lOutput )
+{
+}
+

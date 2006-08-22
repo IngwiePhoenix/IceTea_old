@@ -10,6 +10,8 @@ class FunctionRegexp : public Function
 public:
 	FunctionRegexp();
 	virtual ~FunctionRegexp();
+	
+	virtual void execute( StringList &lInput, StringList &lOutput );
 
 private:
 

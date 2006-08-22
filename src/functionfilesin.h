@@ -10,6 +10,8 @@ class FunctionFilesIn : public Function
 public:
 	FunctionFilesIn();
 	virtual ~FunctionFilesIn();
+	
+	virtual void execute( StringList &lInput, StringList &lOutput );
 
 private:
 

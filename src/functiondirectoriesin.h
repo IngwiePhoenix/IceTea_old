@@ -10,6 +10,8 @@ class FunctionDirectoriesIn : public Function
 public:
 	FunctionDirectoriesIn();
 	virtual ~FunctionDirectoriesIn();
+	
+	virtual void execute( StringList &lInput, StringList &lOutput );
 
 private:
 

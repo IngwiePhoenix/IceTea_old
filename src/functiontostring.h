@@ -10,6 +10,8 @@ class FunctionToString : public Function
 public:
 	FunctionToString();
 	virtual ~FunctionToString();
+	
+	virtual void execute( StringList &lInput, StringList &lOutput );
 
 private:
 

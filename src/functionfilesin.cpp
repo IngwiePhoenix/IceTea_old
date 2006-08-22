@@ -10,3 +10,8 @@ FunctionFilesIn::FunctionFilesIn()
 FunctionFilesIn::~FunctionFilesIn()
 {
 }
+
+void FunctionFilesIn::execute( StringList &lInput, StringList &lOutput )
+{
+}
+

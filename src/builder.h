@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 #include <string>
+#include <list>
+#include <utility>
 #include "build.tab.h"
 #include "exceptions.h"
 
@@ -19,6 +21,8 @@ YY_DECL;
 
 subExceptionDecl( BuildException );
 
+typedef std::list<std::string> StringList;
+
 class Builder
 {
 public:
@@ -29,7 +33,6 @@ public:
 	void error( const std::string &msg );
 
 	void load( const std::string &sFile );
-
 
 private:
 	std::string file;
@@ -66,10 +69,30 @@ public: // List functions
 	void addListString( const char *str );
 	void addListFunc();
 
+	typedef std::pair<std::string, Function *> BuildListItem;
+	typedef std::list<BuildListItem> BuildList;
+
+	StringList buildToStringList( BuildList &lSrc, StringList &lIn );
+
+private:
+	BuildList lTmp;
+
 public: // Functions for dealing with rules
+
+public: // Functions for dealing with actions
 	void addAction();
 	void addAction( const char *sName );
 	void addCommand( int nType );
+
+private: // Action variables
+	typedef std::pair<int, BuildList> ActionTmpCmd;
+	typedef std::list<ActionTmpCmd> ActionTmpCmdList;
+	typedef std::pair<std::string, ActionTmpCmdList> ActionTmp;
+	typedef std::list<ActionTmp> ActionTmpList;
+	ActionTmpList lActions;
+
+public: // Debug
+	void debugDump();
 };
 
 #endif

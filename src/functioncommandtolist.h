@@ -10,6 +10,8 @@ class FunctionCommandToList : public Function
 public:
 	FunctionCommandToList();
 	virtual ~FunctionCommandToList();
+	
+	virtual void execute( StringList &lInput, StringList &lOutput );
 
 private:
 

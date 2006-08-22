@@ -85,12 +85,12 @@ int main( int argc, char *argv[] )
 	//	return 1;
 	//}
 
-	if( prm.bDebug )
+	//if( prm.bDebug )
 	{
 		printf("\n\n----------\nDebug dump\n----------\n");
-		//bld.debug();
+		bld.debugDump();
 	}
-	else
+	//else
 	{
 		//if( prm.sAction > 0 )
 		//	bld.build( prm.sAction );
