@@ -27,6 +27,11 @@ public:
 	 */
 	void addTarget( Target *pTarget );
 	void addRequires( const std::string &who, const std::string &what );
+	void addRule( Rule *pRule );
+
+	void set( const std::string &cont, const std::string &var, const std::string &val );
+	void setAdd( const std::string &cont, const std::string &var, const std::string &val );
+	std::string getVar( const std::string &cont, const std::string &var );
 
 	void debugDump();
 
@@ -34,9 +39,15 @@ private:
 	typedef std::map<std::string, Target *> TargetMap;
 	typedef std::list<std::string> StringList;
 	typedef std::map<std::string, StringList> ReqMap;
+	typedef std::map<std::string, std::string> VarMap;
+	typedef std::map<std::string, VarMap> ContextMap;
+	typedef std::map<std::string, Rule *> RuleMap;
 
 	TargetMap mTarget;
 	ReqMap mRequires;
+	VarMap mVars;
+	ContextMap mContVars;
+	RuleMap mRule;
 
 	//std::map<std::string, Rule *> mRule;
 	//Action *pActDefault;

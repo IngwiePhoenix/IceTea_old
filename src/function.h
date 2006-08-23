@@ -13,7 +13,7 @@ public:
 	void addParam( const char *str );
 	virtual void execute( const StringList &lInput, StringList &lOutput )=0;
 
-private:
+protected:
 	StringList lParams;
 
 };

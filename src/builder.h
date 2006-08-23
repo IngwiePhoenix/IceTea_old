@@ -20,6 +20,8 @@ class TargetFactory;
 YY_DECL;
 
 typedef std::list<std::string> StringList;
+typedef std::list<Function *> FunctionList;
+typedef std::list<Perform *> PerformList;
 
 template<class tx, class ty, class tz>
 class Triplet
@@ -137,14 +139,14 @@ private: // Rule variables
 		Function *pMatches;
 		BuildList lProduces;
 		BuildList lRequires;
-		std::list<Function *> lFilter;
-		std::list<Perform *> lPerform;
+		FunctionList lFilter;
+		PerformList lPerform;
 	};
 
 	typedef std::list<RuleInfo> RuleTmpList;
 	RuleTmpList lRuleTmp;
 
-public: // Functions for dealing with actions
+public: // Action functions
 	void addAction();
 	void addAction( const char *sName );
 	void addCommand( int nType );

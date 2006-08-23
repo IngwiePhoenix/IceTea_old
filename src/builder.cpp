@@ -134,7 +134,14 @@ void Builder::addListFunc()
 
 void Builder::filterList()
 {
-	printf("Filters aren't done yet.\n");
+	StringList lTmp2;
+	StringList lIn = buildToStringList( lTmp, StringList() );
+	pTmpFunc->execute( lIn, lTmp2 );
+	lTmp.clear();
+	for( StringList::iterator i = lTmp2.begin(); i != lTmp2.end(); i++ )
+	{
+		lTmp.push_back( BuildListItem( *i, NULL ) );
+	}
 }
 
 StringList Builder::buildToStringList( const BuildList &lSrc, const StringList &lIn )
@@ -353,6 +360,21 @@ Build *Builder::genBuild()
 {
 	Build *bld = new Build;
 
+	for( SetVarList::iterator i = lGlobalVars.begin();
+		 i != lGlobalVars.end(); i++ )
+	{
+		switch( (*i).third )
+		{
+			case setSet:
+				bld->set( "", (*i).first, (*i).second );
+				break;
+
+			case setAdd:
+				bld->setAdd( "", (*i).first, (*i).second );
+				break;
+		}
+	}
+
 	for( TargetTmpList::iterator i = lTargetTmp.begin();
 		 i != lTargetTmp.end(); i++ )
 	{
@@ -387,6 +409,20 @@ Build *Builder::genBuild()
 				 k != lReqs.end(); k++ )
 			{
 				bld->addRequires( (*j), (*k) );
+			}
+			for( SetVarList::iterator k = (*i).second.lVar.begin();
+				 k != (*i).second.lVar.end(); k++ )
+			{
+				switch( (*k).third )
+				{
+					case setSet:
+						bld->set( *j, (*k).first, (*k).second );
+						break;
+	
+					case setAdd:
+						bld->setAdd( *j, (*k).first, (*k).second );
+						break;
+				}
 			}
 		}
 	}
