@@ -11,7 +11,7 @@ FunctionToString::~FunctionToString()
 {
 }
 
-void FunctionToString::execute( StringList &lInput, StringList &lOutput )
+void FunctionToString::execute( const StringList &lInput, StringList &lOutput )
 {
 }
 

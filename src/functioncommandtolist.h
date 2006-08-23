@@ -11,7 +11,7 @@ public:
 	FunctionCommandToList();
 	virtual ~FunctionCommandToList();
 	
-	virtual void execute( StringList &lInput, StringList &lOutput );
+	virtual void execute( const StringList &lInput, StringList &lOutput );
 
 private:
 

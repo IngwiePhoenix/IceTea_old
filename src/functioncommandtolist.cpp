@@ -11,7 +11,7 @@ FunctionCommandToList::~FunctionCommandToList()
 {
 }
 
-void FunctionCommandToList::execute( StringList &lInput, StringList &lOutput )
+void FunctionCommandToList::execute( const StringList &lInput, StringList &lOutput )
 {
 }
 

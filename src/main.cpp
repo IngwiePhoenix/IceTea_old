@@ -4,6 +4,7 @@
 //#include "viewermake.h"
 #include "paramproc.h"
 #include "staticstring.h"
+#include "build.h"
 
 class Param : public ParamProc
 {
@@ -76,7 +77,7 @@ int main( int argc, char *argv[] )
 	//bld.setCache( prm.sCache );
 	//try
 	//{
-		bld.load( prm.sFile.c_str() );
+	Build *pBuild = bld.load( prm.sFile.c_str() );
 	//}
 	//catch( BuildException &e )
 	//{
@@ -90,6 +91,8 @@ int main( int argc, char *argv[] )
 		printf("\n\n----------\nDebug dump\n----------\n");
 		bld.debugDump();
 	}
+		printf("\n\n----------\nDebug dump\n----------\n");
+		pBuild->debugDump();
 	//else
 	{
 		//if( prm.sAction > 0 )

@@ -11,7 +11,7 @@ FunctionRegexp::~FunctionRegexp()
 {
 }
 
-void FunctionRegexp::execute( StringList &lInput, StringList &lOutput )
+void FunctionRegexp::execute( const StringList &lInput, StringList &lOutput )
 {
 }
 

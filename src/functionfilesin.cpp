@@ -11,7 +11,7 @@ FunctionFilesIn::~FunctionFilesIn()
 {
 }
 
-void FunctionFilesIn::execute( StringList &lInput, StringList &lOutput )
+void FunctionFilesIn::execute( const StringList &lInput, StringList &lOutput )
 {
 }
 

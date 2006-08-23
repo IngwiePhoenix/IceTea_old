@@ -55,18 +55,37 @@ input:
 	 ;
 
 // Rule interpretation
-rule: TOK_RULE STRING {printf("Rule %s:\n", $2 ); } ':' rulecmds
+rule: TOK_RULE STRING ':'
+	{
+		bld.addRule( $2 );
+	}
+	  rulecmds
 	;
 
 rulecmds: rulecmd
 		| rulecmds ',' rulecmd
 		;
 
-rulecmd: TOK_MATCHES { printf("    Matches: " ); } func { printf("\n"); }
-	   | TOK_PRODUCES STRING { printf("    Produces: %s\n", $2 ); }
-	   | TOK_REQUIRES { printf("    Requires:\n"); } list {printf("\n");}
-	   | TOK_INPUT TOK_FILTER { printf("    Input Filter: "); } func {printf("\n");}
-	   | TOK_PERFORM { printf("    Perform: "); } perf {printf("\n");}
+rulecmd: TOK_MATCHES func
+	   {
+		   bld.addRuleMatches();
+	   }
+	   | TOK_PRODUCES list
+	   {
+		   bld.addRuleProduces();
+	   }
+	   | TOK_REQUIRES list
+	   {
+		   bld.addRuleRequires();
+	   }
+	   | TOK_INPUT TOK_FILTER func
+	   {
+		   bld.addRuleInputFilter();
+	   }
+	   | TOK_PERFORM perf
+	   {
+		   bld.addRulePerform();
+	   }
 	   ;
 
 // Action interpretation
@@ -102,32 +121,62 @@ actioncmd: TOK_CHECK list
 		 ;
 
 // Target interpretation
-target: list ':' { printf(" are targets:\n"); } targetcmds
+target: list ':'
+	  {
+		  bld.newTarget();
+	  }
+	    targetcmds
 	  ;
 
 targetcmds: targetcmd
 		  | targetcmds ',' targetcmd
 		  ;
 
-targetcmd: TOK_RULE STRING { printf("    Rule %s\n", $2 ); }
-		 | TOK_TARGET TOK_PREFIX STRING { printf("    Target prefix: %s\n", $3 ); }
-		 | TOK_TARGET TARGETTYPE { printf("    Target Type: %s\n", $2 ); }
-		 | TOK_INPUT { printf("    Input: "); } list { printf("\n"); }
-		 | TOK_INPUT TOK_FILTER { printf("    Input filter: "); } func  { printf("\n"); }
-		 | TOK_REQUIRES { printf("    Requires: "); } list { printf("\n"); }
-		 | TOK_SET { printf("    Set: "); } targetset
+targetcmd: TOK_RULE STRING
+		 {
+			 bld.setTargetRule( $2 );
+		 }
+		 | TOK_TARGET TOK_PREFIX STRING
+		 {
+			 bld.setTargetPrefix( $3 );
+		 }
+		 | TOK_TARGET TARGETTYPE
+		 {
+			 bld.setTargetType( $2 );
+		 }
+		 | TOK_INPUT list
+		 {
+			 bld.addTargetInput();
+		 }
+		 | TOK_REQUIRES list
+		 {
+			 bld.addTargetRequires();
+		 }
+		 | TOK_SET targetset
 		 ;
 
-targetset: STRING '=' STRING { printf("%s = %s\n", $1, $3 ); }
-		 | STRING TOK_ADDSET STRING { printf("%s += %s\n", $1, $3 ); }
+targetset: STRING '=' STRING
+		 {
+			 bld.addTargetSet( $1, $3, setSet );
+		 }
+		 | STRING TOK_ADDSET STRING
+		 {
+			 bld.addTargetSet( $1, $3, setAdd );
+		 }
 		 ;
 
 // global set
-set: TOK_SET { printf("Set: "); } setwhat
+set: TOK_SET setwhat
    ;
 
-setwhat: STRING '=' STRING { printf("%s = %s\n", $1, $3 ); }
-	   | STRING TOK_ADDSET STRING { printf("%s += %s\n", $1, $3 ); }
+setwhat: STRING '=' STRING
+	   {
+		   bld.addGlobalSet( $1, $3, setSet );
+	   }
+	   | STRING TOK_ADDSET STRING
+	   {
+		   bld.addGlobalSet( $1, $3, setAdd );
+	   }
 	   ;
 
 // list goo
@@ -140,7 +189,10 @@ list: singlelistitem listfilter
 	;
 
 listfilter:
-		  | TOK_FILTER { printf(" filtered by "); } func
+		  | TOK_FILTER func
+		  {
+			  bld.filterList();
+		  }
 		  ;
 
 listitems: listitem
@@ -183,12 +235,22 @@ funcparams:
 		  ;
 
 // Perform
-perf: PERFORM { printf("%s(", $1 ); } '(' perfparams ')' { printf(")"); }
+perf: PERFORM
+	{
+		bld.newPerform( $1 );
+	}
+	  '(' perfparams ')'
 	;
 
 perfparams:
-		  | STRING { printf("%s", $1 ); }
-		  | perfparams ',' STRING { printf(", %s", $3 ); }
+		  | STRING
+		  {
+			  bld.addPerformParam( $1 );
+		  }
+		  | perfparams ',' STRING
+		  {
+			  bld.addPerformParam( $3 );
+		  }
 		  ;
 %%
 

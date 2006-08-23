@@ -6,8 +6,8 @@
 #include <list>
 #include <utility>
 #include "build.tab.h"
-#include "exceptions.h"
 
+class Build;
 class Builder;
 class Function;
 class FunctionFactory;
@@ -19,12 +19,37 @@ class TargetFactory;
 #define YY_DECL int yylex( YYSTYPE *yylval_param, YYLTYPE *yylloc_param, Builder &bld )
 YY_DECL;
 
-subExceptionDecl( BuildException );
-
 typedef std::list<std::string> StringList;
+
+template<class tx, class ty, class tz>
+class Triplet
+{
+public:
+	Triplet( const tx &x, const ty &y, const tz &z ) :
+		first( x ), second( y ), third( z )
+	{}
+
+	Triplet( const Triplet &src ) :
+		first( src.first ), second( src.second ), third( src.third )
+	{}
+
+	tx first;
+	ty second;
+	tz third;
+};
+
+enum eSetHow
+{
+	setSet,
+	setAdd
+};
 
 class Builder
 {
+	typedef std::pair<std::string, Function *> BuildListItem;
+	typedef std::list<BuildListItem> BuildList;
+	typedef Triplet<std::string, std::string, int> SetVar;
+	typedef std::list<SetVar> SetVarList;
 public:
 	Builder();
 	virtual ~Builder();
@@ -32,19 +57,40 @@ public:
 	void error( YYLTYPE *locp, const char *msg );
 	void error( const std::string &msg );
 
-	void load( const std::string &sFile );
+	Build *load( const std::string &sFile );
 
 private:
 	std::string file;
 	void scanBegin();
 	void scanEnd();
 
+	Build *genBuild();
+
 public: // Target functions
 	bool isTarget( const char *sType );
+	void newTarget();
+	void setTargetRule( const char *sRule );
+	void setTargetPrefix( const char *sPrefix );
+	void setTargetType( const char *sType );
+	void addTargetInput();
+	void addTargetRequires();
+	void addTargetSet( const char *sVar, const char *sVal, int nHow );
 
 private: // Target variables
-	Target *pTmpTarget;
 	TargetFactory &fTarget;
+	class TargetInfo
+	{
+	public:
+		std::string sRule;
+		std::string sPrefix;
+		std::string sType;
+		BuildList lInput;
+		BuildList lRequires;
+		SetVarList lVar;
+	};
+	typedef std::pair<BuildList,TargetInfo> TargetTmp;
+	typedef std::list<TargetTmp> TargetTmpList;
+	TargetTmpList lTargetTmp;
 
 public: // Function functions
 	bool isFunction( const char *sFunc );
@@ -68,16 +114,35 @@ public: // List functions
 	void newList();
 	void addListString( const char *str );
 	void addListFunc();
+	void filterList();
 
-	typedef std::pair<std::string, Function *> BuildListItem;
-	typedef std::list<BuildListItem> BuildList;
+	StringList buildToStringList( const BuildList &lSrc, const StringList &lIn );
 
-	StringList buildToStringList( BuildList &lSrc, StringList &lIn );
-
-private:
+private: // List variables
 	BuildList lTmp;
 
-public: // Functions for dealing with rules
+public: // Rules functions
+	void addRule( const char *sName );
+	void addRuleMatches();
+	void addRuleProduces();
+	void addRuleRequires();
+	void addRuleInputFilter();
+	void addRulePerform();
+
+private: // Rule variables
+	class RuleInfo
+	{
+	public:
+		std::string sName;
+		Function *pMatches;
+		BuildList lProduces;
+		BuildList lRequires;
+		std::list<Function *> lFilter;
+		std::list<Perform *> lPerform;
+	};
+
+	typedef std::list<RuleInfo> RuleTmpList;
+	RuleTmpList lRuleTmp;
 
 public: // Functions for dealing with actions
 	void addAction();
@@ -91,8 +156,15 @@ private: // Action variables
 	typedef std::list<ActionTmp> ActionTmpList;
 	ActionTmpList lActions;
 
+public: // Global variable functions
+	void addGlobalSet( const char *sVar, const char *sValue, int nHow );
+
+private: // Global variable variables
+	SetVarList lGlobalVars;
+
 public: // Debug
 	void debugDump();
+	void printBuildList( const BuildList &lst );
 };
 
 #endif

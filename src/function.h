@@ -11,7 +11,7 @@ public:
 	virtual ~Function();
 
 	void addParam( const char *str );
-	virtual void execute( StringList &lInput, StringList &lOutput )=0;
+	virtual void execute( const StringList &lInput, StringList &lOutput )=0;
 
 private:
 	StringList lParams;

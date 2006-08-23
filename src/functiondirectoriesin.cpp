@@ -11,7 +11,7 @@ FunctionDirectoriesIn::~FunctionDirectoriesIn()
 {
 }
 
-void FunctionDirectoriesIn::execute( StringList &lInput, StringList &lOutput )
+void FunctionDirectoriesIn::execute( const StringList &lInput, StringList &lOutput )
 {
 }
 

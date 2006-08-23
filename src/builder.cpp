@@ -3,8 +3,8 @@
 #include "performfactory.h"
 #include "targetfactory.h"
 #include "action.h"
-
-subExceptionDef( BuildException );
+#include "build.h"
+#include "rule.h"
 
 Builder::Builder() :
 	fFunction( FunctionFactory::getInstance() ),
@@ -20,13 +20,15 @@ Builder::~Builder()
 void yyparse( Builder &bld );
 extern int yydebug;
 
-void Builder::load( const std::string &sFile )
+Build *Builder::load( const std::string &sFile )
 {
 	file = sFile;
 	scanBegin();
 	//yydebug = 1;
 	yyparse( *this );
 	scanEnd();
+
+	return genBuild();
 }
 
 void Builder::error( YYLTYPE *locp, const char *msg )
@@ -52,6 +54,47 @@ bool Builder::isTarget( const char *sType )
 {
 	return fTarget.hasPlugin( sType );
 }
+	
+void Builder::newTarget()
+{
+	lTargetTmp.push_back( TargetTmp(lTmp, TargetInfo()) );
+}
+
+void Builder::setTargetRule( const char *sRule )
+{
+	lTargetTmp.back().second.sRule = sRule;
+}
+
+void Builder::setTargetPrefix( const char *sPrefix )
+{
+	lTargetTmp.back().second.sPrefix = sPrefix;
+}
+
+void Builder::setTargetType( const char *sType )
+{
+	lTargetTmp.back().second.sType = sType;
+}
+
+void Builder::addTargetInput()
+{
+	lTargetTmp.back().second.lInput.insert(
+		lTargetTmp.back().second.lInput.end(),
+		lTmp.begin(), lTmp.end()
+		);
+}
+
+void Builder::addTargetRequires()
+{
+	lTargetTmp.back().second.lRequires.insert(
+		lTargetTmp.back().second.lRequires.end(),
+		lTmp.begin(), lTmp.end()
+		);
+}
+
+void Builder::addTargetSet( const char *sVar, const char *sVal, int nHow )
+{
+	lTargetTmp.back().second.lVar.push_back( SetVar( sVar, sVal, nHow ) );
+}
 
 //
 // Function functions
@@ -71,6 +114,9 @@ void Builder::addFunctionParam( const char *sParam )
 	pTmpFunc->addParam( sParam );
 }
 
+//
+// List functions
+//
 void Builder::newList()
 {
 	lTmp.clear();
@@ -86,11 +132,16 @@ void Builder::addListFunc()
 	lTmp.push_back( BuildListItem("", pTmpFunc ) );
 }
 
-StringList Builder::buildToStringList( Builder::BuildList &lSrc, StringList &lIn )
+void Builder::filterList()
+{
+	printf("Filters aren't done yet.\n");
+}
+
+StringList Builder::buildToStringList( const BuildList &lSrc, const StringList &lIn )
 {
 	StringList lOut;
 
-	for( BuildList::iterator i = lSrc.begin(); i != lSrc.end(); i++ )
+	for( BuildList::const_iterator i = lSrc.begin(); i != lSrc.end(); i++ )
 	{
 		if( (*i).second )
 		{
@@ -106,6 +157,46 @@ StringList Builder::buildToStringList( Builder::BuildList &lSrc, StringList &lIn
 }
 
 //
+// Rule functions
+//
+void Builder::addRule( const char *sName )
+{
+	lRuleTmp.push_back( RuleInfo() );
+	lRuleTmp.back().sName = sName;
+}
+
+void Builder::addRuleMatches()
+{
+	lRuleTmp.back().pMatches = pTmpFunc;
+}
+
+void Builder::addRuleProduces()
+{
+	lRuleTmp.back().lProduces.insert(
+		lRuleTmp.back().lProduces.end(),
+		lTmp.begin(), lTmp.end()
+		);
+}
+
+void Builder::addRuleRequires()
+{
+	lRuleTmp.back().lRequires.insert(
+		lRuleTmp.back().lRequires.end(),
+		lTmp.begin(), lTmp.end()
+		);
+}
+
+void Builder::addRuleInputFilter()
+{
+	lRuleTmp.back().lFilter.push_back( pTmpFunc );
+}
+
+void Builder::addRulePerform()
+{
+	lRuleTmp.back().lPerform.push_back( pTmpPerform );
+}
+
+//
 // Perform functions
 //
 bool Builder::isPerform( const char *sPerf )
@@ -115,10 +206,12 @@ bool Builder::isPerform( const char *sPerf )
 
 void Builder::newPerform( const char *sName )
 {
+	pTmpPerform = fPerform.instantiate( sName );
 }
 
 void Builder::addPerformParam( const char *sParam )
 {
+	pTmpPerform->addParam( sParam );
 }
 
 //
@@ -137,6 +230,14 @@ void Builder::addAction( const char *sName )
 void Builder::addCommand( int nType )
 {
 	lActions.back().second.push_back( ActionTmpCmd( nType, lTmp ) );
+}
+
+//
+// Global variable functions
+//
+void Builder::addGlobalSet( const char *sVar, const char *sValue, int nHow )
+{
+	lGlobalVars.push_back( SetVar( sVar, sValue, nHow ) );
 }
 
 //
@@ -159,25 +260,137 @@ void Builder::debugDump()
 		for( ActionTmpCmdList::iterator j = (*i).second.begin();
 			 j != (*i).second.end(); j++ )
 		{
-			printf("    %d [", (*j).first );
-			for( BuildList::iterator k = (*j).second.begin();
-				 k != (*j).second.end(); k++ )
-			{
-				if( k != (*j).second.begin() )
-				{
-					printf(", ");
-				}
-				if( (*k).second )
-				{
-					printf("func()");
-				}
-				else
-				{
-					printf("\"%s\"", (*k).first.c_str() );
-				}
-			}
-			printf("]\n");
+			printf("    %d ", (*j).first );
+			printBuildList( (*j).second );
+			printf("\n");
 		}
 	}
+
+	printf("\nTargets:\n");
+	for( TargetTmpList::iterator i = lTargetTmp.begin();
+		 i != lTargetTmp.end(); i++ )
+	{
+		printf("  ");
+		printBuildList( (*i).first );
+		printf(":\n");
+
+		printf("    Rule:     %s\n", (*i).second.sRule.c_str() );
+		printf("    Prefix:   %s\n", (*i).second.sPrefix.c_str() );
+		printf("    Type:     %s\n", (*i).second.sType.c_str() );
+		printf("    Input:    ");
+		printBuildList( (*i).second.lInput );
+		printf("\n    Requires: ");
+		printBuildList( (*i).second.lRequires );
+		printf("\n    Vars:\n");
+		
+		for( SetVarList::iterator j = (*i).second.lVar.begin();
+			 j != (*i).second.lVar.end(); j++ )
+		{
+			char *op;
+			switch( (*j).third )
+			{
+				case setSet: op = "="; break;
+				case setAdd: op = "+="; break;
+			}
+			printf("      %s %s %s\n", (*j).first.c_str(), op, (*j).second.c_str() );
+		}
+	}
+
+	printf("\nGlobals:\n");
+	for( SetVarList::iterator j = lGlobalVars.begin();
+		 j != lGlobalVars.end(); j++ )
+	{
+		char *op;
+		switch( (*j).third )
+		{
+			case setSet: op = "="; break;
+			case setAdd: op = "+="; break;
+		}
+		printf("  %s %s %s\n", (*j).first.c_str(), op, (*j).second.c_str() );
+	}
+
+	printf("\nRules:\n");
+	for( RuleTmpList::iterator i = lRuleTmp.begin();
+		 i != lRuleTmp.end(); i++ )
+	{
+		printf("  %s:\n", (*i).sName.c_str() );
+		printf("    Matches:  func()\n");
+		printf("    Produces: ");
+		printBuildList( (*i).lProduces );
+		printf("\n    Requires: ");
+		printBuildList( (*i).lRequires );
+		printf("\n    Filters:  %d\n", (*i).lFilter.size() );
+		printf("    Performs: %d\n", (*i).lPerform.size() );
+	}
+}
+
+void Builder::printBuildList( const BuildList &lst )
+{
+	printf("[");
+	for( BuildList::const_iterator k = lst.begin();
+		 k != lst.end(); k++ )
+	{
+		if( k != lst.begin() )
+		{
+			printf(", ");
+		}
+		if( (*k).second )
+		{
+			printf("func()");
+		}
+		else
+		{
+			printf("\"%s\"", (*k).first.c_str() );
+		}
+	}
+	printf("]");
+}
+
+//
+// Actually make a build object
+//
+Build *Builder::genBuild()
+{
+	Build *bld = new Build;
+
+	for( TargetTmpList::iterator i = lTargetTmp.begin();
+		 i != lTargetTmp.end(); i++ )
+	{
+		StringList lTargetNames = buildToStringList(
+			(*i).first, StringList()
+			);
+		for( StringList::iterator j = lTargetNames.begin();
+			 j != lTargetNames.end(); j++ )
+		{
+			if( (*i).second.sType != "" )
+			{
+				Target *pTarget = fTarget.instantiate(
+					(*i).second.sType.c_str()
+					);
+				pTarget->setName( *j );
+				pTarget->setRule( (*i).second.sRule );
+
+				StringList lInputs = buildToStringList(
+					(*i).second.lInput, StringList()
+					);
+				pTarget->getInput().insert(
+					pTarget->getInput().end(),
+					lInputs.begin(), lInputs.end()
+					);
+				
+				bld->addTarget( pTarget );
+			}
+			StringList lReqs = buildToStringList(
+				(*i).second.lRequires, StringList()
+				);
+			for( StringList::iterator k = lReqs.begin();
+				 k != lReqs.end(); k++ )
+			{
+				bld->addRequires( (*j), (*k) );
+			}
+		}
+	}
+
+	return bld;
 }
 
