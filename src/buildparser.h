@@ -6,6 +6,7 @@
 #include <list>
 #include <utility>
 #include "build.tab.h"
+#include "parser.h"
 
 class Build;
 class BuildParser;
@@ -46,7 +47,7 @@ enum eSetHow
 	setAdd
 };
 
-class BuildParser
+class BuildParser : public Parser
 {
 	typedef std::pair<std::string, Function *> BuildListItem;
 	typedef std::list<BuildListItem> BuildList;
@@ -56,13 +57,9 @@ public:
 	BuildParser();
 	virtual ~BuildParser();
 
-	void error( YYLTYPE *locp, const char *msg );
-	void error( const std::string &msg );
-
 	Build *load( const std::string &sFile );
 
 private:
-	std::string file;
 	void scanBegin();
 	void scanEnd();
 
