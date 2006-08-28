@@ -1,4 +1,4 @@
-#include "builder.h"
+#include "buildparser.h"
 #include "functionfactory.h"
 #include "performfactory.h"
 #include "targetfactory.h"
@@ -6,21 +6,21 @@
 #include "build.h"
 #include "rule.h"
 
-Builder::Builder() :
+BuildParser::BuildParser() :
 	fFunction( FunctionFactory::getInstance() ),
 	fPerform( PerformFactory::getInstance() ),
 	fTarget( TargetFactory::getInstance() )
 {
 }
 
-Builder::~Builder()
+BuildParser::~BuildParser()
 {
 }
 
-void yyparse( Builder &bld );
+void yyparse( BuildParser &bld );
 extern int yydebug;
 
-Build *Builder::load( const std::string &sFile )
+Build *BuildParser::load( const std::string &sFile )
 {
 	file = sFile;
 	scanBegin();
@@ -31,7 +31,7 @@ Build *Builder::load( const std::string &sFile )
 	return genBuild();
 }
 
-void Builder::error( YYLTYPE *locp, const char *msg )
+void BuildParser::error( YYLTYPE *locp, const char *msg )
 {
 	fflush( stdout );
 	throw BuildException("%s: %d.%d-%d.%d: %s",
@@ -41,7 +41,7 @@ void Builder::error( YYLTYPE *locp, const char *msg )
 			msg );
 }
 
-void Builder::error( const std::string &msg )
+void BuildParser::error( const std::string &msg )
 {
 	fflush( stdout );
 	throw BuildException("%s", msg.c_str() );
@@ -50,32 +50,32 @@ void Builder::error( const std::string &msg )
 //
 // Target functions
 //
-bool Builder::isTarget( const char *sType )
+bool BuildParser::isTarget( const char *sType )
 {
 	return fTarget.hasPlugin( sType );
 }
 	
-void Builder::newTarget()
+void BuildParser::newTarget()
 {
 	lTargetTmp.push_back( TargetTmp(lTmp, TargetInfo()) );
 }
 
-void Builder::setTargetRule( const char *sRule )
+void BuildParser::setTargetRule( const char *sRule )
 {
 	lTargetTmp.back().second.sRule = sRule;
 }
 
-void Builder::setTargetPrefix( const char *sPrefix )
+void BuildParser::setTargetPrefix( const char *sPrefix )
 {
 	lTargetTmp.back().second.sPrefix = sPrefix;
 }
 
-void Builder::setTargetType( const char *sType )
+void BuildParser::setTargetType( const char *sType )
 {
 	lTargetTmp.back().second.sType = sType;
 }
 
-void Builder::addTargetInput()
+void BuildParser::addTargetInput()
 {
 	lTargetTmp.back().second.lInput.insert(
 		lTargetTmp.back().second.lInput.end(),
@@ -83,7 +83,7 @@ void Builder::addTargetInput()
 		);
 }
 
-void Builder::addTargetRequires()
+void BuildParser::addTargetRequires()
 {
 	lTargetTmp.back().second.lRequires.insert(
 		lTargetTmp.back().second.lRequires.end(),
@@ -91,7 +91,7 @@ void Builder::addTargetRequires()
 		);
 }
 
-void Builder::addTargetSet( const char *sVar, const char *sVal, int nHow )
+void BuildParser::addTargetSet( const char *sVar, const char *sVal, int nHow )
 {
 	lTargetTmp.back().second.lVar.push_back( SetVar( sVar, sVal, nHow ) );
 }
@@ -99,17 +99,17 @@ void Builder::addTargetSet( const char *sVar, const char *sVal, int nHow )
 //
 // Function functions
 //
-bool Builder::isFunction( const char *sFunc )
+bool BuildParser::isFunction( const char *sFunc )
 {
 	return fFunction.hasPlugin( sFunc );
 }
 
-void Builder::newFunctionCall( const char *sName )
+void BuildParser::newFunctionCall( const char *sName )
 {
 	pTmpFunc = fFunction.instantiate( sName );
 }
 
-void Builder::addFunctionParam( const char *sParam )
+void BuildParser::addFunctionParam( const char *sParam )
 {
 	pTmpFunc->addParam( sParam );
 }
@@ -117,22 +117,22 @@ void Builder::addFunctionParam( const char *sParam )
 //
 // List functions
 //
-void Builder::newList()
+void BuildParser::newList()
 {
 	lTmp.clear();
 }
 
-void Builder::addListString( const char *str )
+void BuildParser::addListString( const char *str )
 {
 	lTmp.push_back( BuildListItem(str, NULL) );
 }
 
-void Builder::addListFunc()
+void BuildParser::addListFunc()
 {
 	lTmp.push_back( BuildListItem("", pTmpFunc ) );
 }
 
-void Builder::filterList()
+void BuildParser::filterList()
 {
 	StringList lTmp2;
 	StringList lIn = buildToStringList( lTmp, StringList() );
@@ -144,7 +144,7 @@ void Builder::filterList()
 	}
 }
 
-StringList Builder::buildToStringList( const BuildList &lSrc, const StringList &lIn )
+StringList BuildParser::buildToStringList( const BuildList &lSrc, const StringList &lIn )
 {
 	StringList lOut;
 
@@ -166,18 +166,18 @@ StringList Builder::buildToStringList( const BuildList &lSrc, const StringList &
 //
 // Rule functions
 //
-void Builder::addRule( const char *sName )
+void BuildParser::addRule( const char *sName )
 {
 	lRuleTmp.push_back( RuleInfo() );
 	lRuleTmp.back().sName = sName;
 }
 
-void Builder::addRuleMatches()
+void BuildParser::addRuleMatches()
 {
 	lRuleTmp.back().pMatches = pTmpFunc;
 }
 
-void Builder::addRuleProduces()
+void BuildParser::addRuleProduces()
 {
 	lRuleTmp.back().lProduces.insert(
 		lRuleTmp.back().lProduces.end(),
@@ -185,7 +185,7 @@ void Builder::addRuleProduces()
 		);
 }
 
-void Builder::addRuleRequires()
+void BuildParser::addRuleRequires()
 {
 	lRuleTmp.back().lRequires.insert(
 		lRuleTmp.back().lRequires.end(),
@@ -193,12 +193,12 @@ void Builder::addRuleRequires()
 		);
 }
 
-void Builder::addRuleInputFilter()
+void BuildParser::addRuleInputFilter()
 {
 	lRuleTmp.back().lFilter.push_back( pTmpFunc );
 }
 
-void Builder::addRulePerform()
+void BuildParser::addRulePerform()
 {
 	lRuleTmp.back().lPerform.push_back( pTmpPerform );
 }
@@ -206,17 +206,17 @@ void Builder::addRulePerform()
 //
 // Perform functions
 //
-bool Builder::isPerform( const char *sPerf )
+bool BuildParser::isPerform( const char *sPerf )
 {
 	return fPerform.hasPlugin( sPerf );
 }
 
-void Builder::newPerform( const char *sName )
+void BuildParser::newPerform( const char *sName )
 {
 	pTmpPerform = fPerform.instantiate( sName );
 }
 
-void Builder::addPerformParam( const char *sParam )
+void BuildParser::addPerformParam( const char *sParam )
 {
 	pTmpPerform->addParam( sParam );
 }
@@ -224,17 +224,17 @@ void Builder::addPerformParam( const char *sParam )
 //
 // Functions for dealing with actions
 //
-void Builder::addAction()
+void BuildParser::addAction()
 {
 	lActions.push_back( ActionTmp("", ActionTmpCmdList()) );
 }
 
-void Builder::addAction( const char *sName )
+void BuildParser::addAction( const char *sName )
 {
 	lActions.push_back( ActionTmp(sName, ActionTmpCmdList()) );
 }
 
-void Builder::addCommand( int nType )
+void BuildParser::addCommand( int nType )
 {
 	lActions.back().second.push_back( ActionTmpCmd( nType, lTmp ) );
 }
@@ -242,7 +242,7 @@ void Builder::addCommand( int nType )
 //
 // Global variable functions
 //
-void Builder::addGlobalSet( const char *sVar, const char *sValue, int nHow )
+void BuildParser::addGlobalSet( const char *sVar, const char *sValue, int nHow )
 {
 	lGlobalVars.push_back( SetVar( sVar, sValue, nHow ) );
 }
@@ -250,7 +250,7 @@ void Builder::addGlobalSet( const char *sVar, const char *sValue, int nHow )
 //
 // Debug
 //
-void Builder::debugDump()
+void BuildParser::debugDump()
 {
 	printf("Actions:\n");
 	for( ActionTmpList::iterator i = lActions.begin();
@@ -331,7 +331,7 @@ void Builder::debugDump()
 	}
 }
 
-void Builder::printBuildList( const BuildList &lst )
+void BuildParser::printBuildList( const BuildList &lst )
 {
 	printf("[");
 	for( BuildList::const_iterator k = lst.begin();
@@ -356,7 +356,7 @@ void Builder::printBuildList( const BuildList &lst )
 //
 // Actually make a build object
 //
-Build *Builder::genBuild()
+Build *BuildParser::genBuild()
 {
 	Build *bld = new Build;
 

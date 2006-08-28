@@ -1,4 +1,4 @@
-#include "builder.h"
+#include "buildparser.h"
 //#include "viewerplain.h"
 //#include "viewerpercent.h"
 //#include "viewermake.h"
@@ -72,7 +72,7 @@ int main( int argc, char *argv[] )
 	Param prm;
 	prm.process( argc, argv );
 
-	Builder bld;//*prm.pViewer );
+	BuildParser bld;//*prm.pViewer );
 
 	//bld.setCache( prm.sCache );
 	//try

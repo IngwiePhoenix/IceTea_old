@@ -1,6 +1,6 @@
 %{
 # include <string>
-# include "builder.h"
+# include "buildparser.h"
 # include "build.tab.h"
 # include "stringrep.h"
 
@@ -116,7 +116,7 @@ std::string strbuf;
 
 %%
 
-void Builder::scanBegin()
+void BuildParser::scanBegin()
 {
 	yy_flex_debug = false;
 	if( !(yyin = fopen( file.c_str(), "r" )) )
@@ -125,7 +125,7 @@ void Builder::scanBegin()
 	}
 }
 
-void Builder::scanEnd()
+void BuildParser::scanEnd()
 {
 	fclose( yyin );
 }

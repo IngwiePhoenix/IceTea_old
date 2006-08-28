@@ -8,7 +8,7 @@
 #include "build.tab.h"
 
 class Build;
-class Builder;
+class BuildParser;
 class Function;
 class FunctionFactory;
 class Perform;
@@ -16,7 +16,7 @@ class PerformFactory;
 class Target;
 class TargetFactory;
 
-#define YY_DECL int yylex( YYSTYPE *yylval_param, YYLTYPE *yylloc_param, Builder &bld )
+#define YY_DECL int yylex( YYSTYPE *yylval_param, YYLTYPE *yylloc_param, BuildParser &bld )
 YY_DECL;
 
 typedef std::list<std::string> StringList;
@@ -46,15 +46,15 @@ enum eSetHow
 	setAdd
 };
 
-class Builder
+class BuildParser
 {
 	typedef std::pair<std::string, Function *> BuildListItem;
 	typedef std::list<BuildListItem> BuildList;
 	typedef Triplet<std::string, std::string, int> SetVar;
 	typedef std::list<SetVar> SetVarList;
 public:
-	Builder();
-	virtual ~Builder();
+	BuildParser();
+	virtual ~BuildParser();
 
 	void error( YYLTYPE *locp, const char *msg );
 	void error( const std::string &msg );

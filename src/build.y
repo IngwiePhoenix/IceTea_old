@@ -1,14 +1,14 @@
 %defines
 %{
 # include <string>
-# include "builder.h"
+# include "buildparser.h"
 # include "build.tab.h"
 # include "action.h"
-void yyerror( YYLTYPE *locp, Builder &bld, char const *msg );
+void yyerror( YYLTYPE *locp, BuildParser &bld, char const *msg );
 %}
 
-%parse-param { Builder &bld }
-%lex-param { Builder &bld }
+%parse-param { BuildParser &bld }
+%lex-param { BuildParser &bld }
 %pure-parser
 
 %locations
@@ -254,8 +254,7 @@ perfparams:
 		  ;
 %%
 
-void yyerror( YYLTYPE *locp, Builder &bld, char const *msg )
+void yyerror( YYLTYPE *locp, BuildParser &bld, char const *msg )
 {
 	bld.error( locp, msg );
 }
-
