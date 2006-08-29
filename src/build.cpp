@@ -138,5 +138,16 @@ void Build::debugDump()
 				);
 		}
 	}
+
+	printf("Rules:\n");
+	for( RuleMap::iterator i = mRule.begin(); i != mRule.end(); i++ )
+	{
+		printf("  %s:\n", (*i).first.c_str() );
+		printf("    Matches:  func\n");
+		printf("    Filters:  %d\n", (*i).second->getFilterList().size() );
+		printf("    Performs: %d\n", (*i).second->getPerformList().size() );
+		printf("    Produces:\n");
+		printf("    Requires:\n");
+	}
 }
 

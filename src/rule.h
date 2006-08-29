@@ -27,7 +27,7 @@ public:
 		this->sName = sName;
 	}
 
-	FunctionList &getFunctionList()
+	FunctionList &getFilterList()
 	{
 		return lFilter;
 	}
@@ -37,8 +37,14 @@ public:
 		return lPerform;
 	}
 
+	FunctionList &getMatchesList()
+	{
+		return lMatches;
+	}
+
 private:
 	std::string sName;
+	FunctionList lMatches;
 	FunctionList lFilter;
 	PerformList lPerform;
 };

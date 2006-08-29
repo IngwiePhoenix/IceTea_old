@@ -411,6 +411,36 @@ Build *BuildParser::genBuild()
 		}
 	}
 
+	for( RuleTmpList::iterator i = lRuleTmp.begin(); i != lRuleTmp.end(); i++ )
+	{
+		Rule *pRule = new Rule;
+		pRule->setName( (*i).sName );
+		pRule->getMatchesList().push_back( (*i).pMatches );
+
+		for( FunctionList::iterator j = (*i).lFilter.begin();
+			 j != (*i).lFilter.end(); j++ )
+		{
+			pRule->getFilterList().push_back( *j );
+		}
+
+		for( PerformList::iterator j = (*i).lPerform.begin();
+			 j != (*i).lPerform.end(); j++ )
+		{
+			pRule->getPerformList().push_back( *j );
+		}
+
+		/*StringList lITmp = buildToStringList(
+			(*i).lProduces, StringList()
+			);
+
+		for( StringList::iterator i = lITmp.begin(); i != lITmp.end(); i++ )
+		{
+			get
+		}*/
+
+		bld->addRule( pRule );
+	}
+
 	return bld;
 }
 

@@ -7,3 +7,4 @@ Rule::Rule()
 Rule::~Rule()
 {
 }
+
