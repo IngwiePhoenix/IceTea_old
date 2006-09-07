@@ -48,5 +48,7 @@ std::string StringProcBuild::replVars( const std::string &sSrc, const std::strin
 			sSrc.c_str()
 			);
 	}
+
+	return sDes;
 }
 

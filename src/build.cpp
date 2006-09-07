@@ -2,8 +2,8 @@
 
 subExceptionDef( BuildException );
 
-
-Build::Build()
+Build::Build() :
+	pStrProc( NULL )
 {
 }
 
@@ -11,10 +11,52 @@ Build::~Build()
 {
 }
 
+void Build::setStringProc( StringProc *pStrProc )
+{
+	delete this->pStrProc;
+	this->pStrProc = pStrProc;
+}
+
+std::string Build::replVars( const std::string &sSrc, const std::string &sCont )
+{
+	if( pStrProc == NULL )
+		throw BuildException(
+			"No valid string processor was registered with the Build object."
+			);
+
+	return pStrProc->replVars( sSrc, sCont );
+}
+
 void Build::execAction( const std::string &sWhat )
 {
 	if( mAction.find( sWhat ) == mAction.end() )
-		throw BuildException("No action matches %s.", sWhat.c_str() );
+		throw BuildException(
+			"No action matches %s, check your build.conf.",
+			sWhat.c_str()
+			);
+
+	Action *pAct = mAction[sWhat];
+
+	for( pAct->begin(); !pAct->isEnded(); pAct->next() )
+	{
+		if( mTarget.find( pAct->getWhat() ) == mTarget.end() )
+			throw BuildException(
+				"No target matches %s in action %s.",
+				pAct->getWhat().c_str(),
+				sWhat.c_str()
+				);
+		Target *pTarget = mTarget[pAct->getWhat()];
+		switch( pAct->getAct() )
+		{
+			case Action::actCheck:
+				pTarget->check( *this );
+				break;
+
+			case Action::actClean:
+				pTarget->clean( *this );
+				break;
+		}
+	}
 
 	return;
 }
@@ -40,6 +82,14 @@ void Build::addRequires( const std::string &who, const std::string &what )
 void Build::addRule( Rule *pRule )
 {
 	mRule[pRule->getName()] = pRule;
+}
+
+Rule *Build::getRule( const std::string &name )
+{
+	if( mRule.find( name ) == mRule.end() )
+		throw BuildException("No rule named %s found.", name.c_str() );
+
+	return mRule[name];
 }
 
 void Build::addAction( Action *pAction )

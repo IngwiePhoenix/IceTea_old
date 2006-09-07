@@ -11,6 +11,9 @@ public:
 	TargetFile();
 	virtual ~TargetFile();
 
+	virtual void check( Build &bld );
+	virtual void clean( Build &bld );
+
 private:
 
 };

@@ -8,3 +8,7 @@ Rule::~Rule()
 {
 }
 
+void Rule::execute()
+{
+}
+

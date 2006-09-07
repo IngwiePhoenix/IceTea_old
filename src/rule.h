@@ -17,6 +17,8 @@ public:
 	Rule();
 	virtual ~Rule();
 
+	void execute();
+
 	std::string getName()
 	{
 		return sName;

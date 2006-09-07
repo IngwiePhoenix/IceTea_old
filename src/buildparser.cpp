@@ -5,6 +5,7 @@
 #include "action.h"
 #include "build.h"
 #include "rule.h"
+#include "stringprocbuild.h"
 
 BuildParser::BuildParser() :
 	fFunction( FunctionFactory::getInstance() ),
@@ -343,6 +344,7 @@ void BuildParser::printBuildList( const BuildList &lst )
 Build *BuildParser::genBuild()
 {
 	Build *bld = new Build;
+	bld->setStringProc( new StringProcBuild( bld ) );
 
 	for( SetVarList::iterator i = lGlobalVars.begin();
 		 i != lGlobalVars.end(); i++ )

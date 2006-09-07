@@ -10,6 +10,7 @@
 #include "rule.h"
 #include "target.h"
 #include "action.h"
+#include "stringproc.h"
 
 subExceptionDecl( BuildException );
 
@@ -36,7 +37,12 @@ public:
 	void setAdd( const std::string &cont, const std::string &var, const std::string &val );
 	std::string getVar( const std::string &cont, const std::string &var );
 
+	Rule *getRule( const std::string &name );
+
 	void debugDump();
+
+	void setStringProc( StringProc *pStrProc );
+	std::string replVars( const std::string &sSrc, const std::string &sCont );
 
 private:
 	typedef std::map<std::string, Target *> TargetMap;
@@ -53,6 +59,7 @@ private:
 	ContextMap mContVars;
 	RuleMap mRule;
 	ActionMap mAction;
+	StringProc *pStrProc;
 
 	//std::map<std::string, Rule *> mRule;
 	//Action *pActDefault;
