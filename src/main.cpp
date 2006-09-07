@@ -87,18 +87,20 @@ int main( int argc, char *argv[] )
 	//}
 
 	//if( prm.bDebug )
-	{
-		printf("\n\n----------\nDebug dump\n----------\n");
-		bld.debugDump();
-	}
-		printf("\n\n----------\nDebug dump\n----------\n");
-		pBuild->debugDump();
+	//{
+	//	printf("\n\n----------\nDebug dump\n----------\n");
+	//	bld.debugDump();
+	//}
+	//	printf("\n\n----------\nDebug dump\n----------\n");
+	//	pBuild->debugDump();
 	//else
 	{
-		//if( prm.sAction > 0 )
-		//	bld.build( prm.sAction );
-		//else
-		//	bld.build();
+		if( prm.sAction > 0 )
+			pBuild->execAction( prm.sAction.getString() );
+		else
+			pBuild->execAction("");
 	}
+
+	delete pBuild;
 }
 

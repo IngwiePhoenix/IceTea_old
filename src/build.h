@@ -19,6 +19,8 @@ public:
 	Build();
 	virtual ~Build();
 
+	void execAction( const std::string &sWhat );
+
 	/**
 	 * Adds a target to the build.  If the target already exists, this will
 	 * attempt to merge them as best it can.  If there are any conflicts, it
@@ -28,6 +30,7 @@ public:
 	void addTarget( Target *pTarget );
 	void addRequires( const std::string &who, const std::string &what );
 	void addRule( Rule *pRule );
+	void addAction( Action *pAction );
 
 	void set( const std::string &cont, const std::string &var, const std::string &val );
 	void setAdd( const std::string &cont, const std::string &var, const std::string &val );
@@ -42,12 +45,14 @@ private:
 	typedef std::map<std::string, std::string> VarMap;
 	typedef std::map<std::string, VarMap> ContextMap;
 	typedef std::map<std::string, Rule *> RuleMap;
+	typedef std::map<std::string, Action *> ActionMap;
 
 	TargetMap mTarget;
 	ReqMap mRequires;
 	VarMap mVars;
 	ContextMap mContVars;
 	RuleMap mRule;
+	ActionMap mAction;
 
 	//std::map<std::string, Rule *> mRule;
 	//Action *pActDefault;

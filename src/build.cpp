@@ -11,6 +11,14 @@ Build::~Build()
 {
 }
 
+void Build::execAction( const std::string &sWhat )
+{
+	if( mAction.find( sWhat ) == mAction.end() )
+		throw BuildException("No action matches %s.", sWhat.c_str() );
+
+	return;
+}
+
 void Build::addTarget( Target *pTarget )
 {
 	TargetMap::iterator i = mTarget.find( pTarget->getName() );
@@ -32,6 +40,11 @@ void Build::addRequires( const std::string &who, const std::string &what )
 void Build::addRule( Rule *pRule )
 {
 	mRule[pRule->getName()] = pRule;
+}
+
+void Build::addAction( Action *pAction )
+{
+	mAction[pAction->getName()] = pAction;
 }
 
 void Build::set( const std::string &cont, const std::string &var, const std::string &val )
@@ -148,6 +161,17 @@ void Build::debugDump()
 		printf("    Performs: %d\n", (*i).second->getPerformList().size() );
 		printf("    Produces:\n");
 		printf("    Requires:\n");
+	}
+
+	printf("Actions:\n");
+	for( ActionMap::iterator i = mAction.begin(); i != mAction.end(); i++ )
+	{
+		printf("  %s: ", (*i).first.c_str() );
+		for( (*i).second->begin(); !(*i).second->isEnded(); (*i).second->next() )
+		{
+			printf("%d:%s ", (*i).second->getAct(), (*i).second->getWhat().c_str() );
+		}
+		printf("\n");
 	}
 }
 

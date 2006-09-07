@@ -441,6 +441,29 @@ Build *BuildParser::genBuild()
 		bld->addRule( pRule );
 	}
 
+	for( ActionTmpList::iterator i = lActions.begin();
+		 i != lActions.end(); i++ )
+	{
+		Action *pAct = new Action;
+		pAct->setName( (*i).first );
+
+		for( ActionTmpCmdList::iterator j = (*i).second.begin();
+			 j != (*i).second.end(); j++ )
+		{
+			StringList lWhat = buildToStringList(
+				(*j).second, StringList()
+				);
+
+			for( StringList::iterator k = lWhat.begin();
+				 k != lWhat.end(); k++ )
+			{
+				pAct->addCommand( (Action::eAction)((*j).first), *k );
+			}
+		}
+
+		bld->addAction( pAct );
+	}
+
 	return bld;
 }
 
