@@ -11,6 +11,8 @@ public:
 	PerformCommand();
 	virtual ~PerformCommand();
 
+	virtual Perform *duplicate( Build &bld, const std::string &cont );
+
 private:
 
 };
