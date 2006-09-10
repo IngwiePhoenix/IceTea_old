@@ -14,7 +14,7 @@ PerformCommand::~PerformCommand()
 Perform *PerformCommand::duplicate( Build &bld, const std::string &cont )
 {
 	Perform *pRet = new PerformCommand();
-	pRet->copyData( this, bld, cont );
+	pRet->copyData( this, bld, cont, NULL );
 	return pRet;
 }
 

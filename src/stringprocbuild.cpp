@@ -10,7 +10,7 @@ StringProcBuild::~StringProcBuild()
 {
 }
 
-std::string StringProcBuild::replVars( const std::string &sSrc, const std::string &sCont )
+std::string StringProcBuild::replVars( const std::string &sSrc, const std::string &sCont, VarMap *mExtra )
 {
 	std::string sDes, sBuf;
 	int nMode = 0;
@@ -31,7 +31,7 @@ std::string StringProcBuild::replVars( const std::string &sSrc, const std::strin
 		{
 			if( sSrc[j] == '}' )
 			{
-				sDes += getBuild()->getVar( sCont, sBuf );
+				sDes += getBuild()->getVar( sCont, sBuf, mExtra );
 				nMode = 0;
 			}
 			else

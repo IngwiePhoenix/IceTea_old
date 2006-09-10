@@ -13,6 +13,7 @@
 #include "stringproc.h"
 
 subExceptionDecl( BuildException );
+typedef std::map<std::string, std::string> VarMap;
 
 class Build
 {
@@ -35,20 +36,19 @@ public:
 
 	void set( const std::string &cont, const std::string &var, const std::string &val );
 	void setAdd( const std::string &cont, const std::string &var, const std::string &val );
-	std::string getVar( const std::string &cont, const std::string &var );
+	std::string getVar( const std::string &cont, const std::string &var, VarMap *mExtra );
 
 	Rule *getRule( const std::string &name );
 
 	void debugDump();
 
 	void setStringProc( StringProc *pStrProc );
-	std::string replVars( const std::string &sSrc, const std::string &sCont );
+	std::string replVars( const std::string &sSrc, const std::string &sCont, VarMap *mExtra );
 
 private:
 	typedef std::map<std::string, Target *> TargetMap;
 	typedef std::list<std::string> StringList;
 	typedef std::map<std::string, StringList> ReqMap;
-	typedef std::map<std::string, std::string> VarMap;
 	typedef std::map<std::string, VarMap> ContextMap;
 	typedef std::map<std::string, Rule *> RuleMap;
 	typedef std::map<std::string, Action *> ActionMap;

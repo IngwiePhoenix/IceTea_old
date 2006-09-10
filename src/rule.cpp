@@ -8,7 +8,10 @@ Rule::~Rule()
 {
 }
 
-void Rule::execute()
+StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf )
 {
+	StringList lOutput;
+
+	return lOutput;
 }
 

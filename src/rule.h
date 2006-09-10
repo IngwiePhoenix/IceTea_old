@@ -7,9 +7,11 @@
 
 class Function;
 class Perform;
+class Build;
 
 typedef std::list<Function *> FunctionList;
 typedef std::list<Perform *> PerformList;
+typedef std::list<std::string> StringList;
 
 class Rule
 {
@@ -17,7 +19,7 @@ public:
 	Rule();
 	virtual ~Rule();
 
-	void execute();
+	StringList execute( Build &bld, StringList &lInput, PerformList &lPerf );
 
 	std::string getName()
 	{

@@ -17,14 +17,14 @@ void Build::setStringProc( StringProc *pStrProc )
 	this->pStrProc = pStrProc;
 }
 
-std::string Build::replVars( const std::string &sSrc, const std::string &sCont )
+std::string Build::replVars( const std::string &sSrc, const std::string &sCont, VarMap *mExtra )
 {
 	if( pStrProc == NULL )
 		throw BuildException(
 			"No valid string processor was registered with the Build object."
 			);
 
-	return pStrProc->replVars( sSrc, sCont );
+	return pStrProc->replVars( sSrc, sCont, mExtra );
 }
 
 void Build::execAction( const std::string &sWhat )
@@ -113,16 +113,25 @@ void Build::setAdd( const std::string &cont, const std::string &var, const std::
 {
 	if( cont == "" )
 	{
-		mVars[var] = getVar( cont, var ) + " " + val;
+		mVars[var] = getVar( cont, var, NULL ) + " " + val;
 	}
 	else
 	{
-		mContVars[cont][var] = getVar( cont, var ) + " " + val;
+		mContVars[cont][var] = getVar( cont, var, NULL ) + " " + val;
 	}
 }
 
-std::string Build::getVar( const std::string &cont, const std::string &var )
+std::string Build::getVar( const std::string &cont, const std::string &var, VarMap *mExtra )
 {
+	if( mExtra != NULL )
+	{
+		if( mExtra->find(var) == mExtra->end() )
+		{
+			return getVar( cont, var, NULL );
+		}
+		return (*mExtra)[var];
+	}
+	
 	if( cont == "" )
 	{
 		if( mVars.find(var) == mVars.end() )
@@ -142,7 +151,7 @@ std::string Build::getVar( const std::string &cont, const std::string &var )
 	{
 		if( mContVars[cont].find(var) == mContVars[cont].end() )
 		{
-			mContVars[cont][var] = getVar( "", var );
+			mContVars[cont][var] = getVar( "", var, NULL );
 		}
 		return mContVars[cont][var];
 	}
