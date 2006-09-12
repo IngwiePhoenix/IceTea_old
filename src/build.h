@@ -61,6 +61,11 @@ public:
 		return pView;
 	}
 
+	TargetMap &getTargetMap()
+	{
+		return mTarget;
+	}
+
 private:
 	TargetMap mTarget;
 	ReqMap mRequires;

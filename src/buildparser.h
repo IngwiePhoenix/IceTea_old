@@ -5,6 +5,7 @@
 #include <string>
 #include <list>
 #include <utility>
+#include <map>
 #include "build.tab.h"
 #include "parser.h"
 
@@ -23,6 +24,7 @@ YY_DECL;
 typedef std::list<std::string> StringList;
 typedef std::list<Function *> FunctionList;
 typedef std::list<Perform *> PerformList;
+typedef std::map<std::string,std::string> VarMap;
 
 template<class tx, class ty, class tz>
 class Triplet
@@ -115,7 +117,8 @@ public: // List functions
 	void addListFunc();
 	void filterList();
 
-	StringList buildToStringList( const BuildList &lSrc, const StringList &lIn );
+	StringList buildToStringList( const BuildList &lSrc, const StringList &lIn, Build *pPass=NULL );
+	StringList buildToStringListDup( const BuildList &lSrc, const StringList &lIn, Build &bld, const std::string &sCont, VarMap *mExtra, Build *pPass=NULL );
 
 private: // List variables
 	BuildList lTmp;

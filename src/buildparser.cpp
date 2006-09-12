@@ -129,7 +129,7 @@ void BuildParser::filterList()
 	}
 }
 
-StringList BuildParser::buildToStringList( const BuildList &lSrc, const StringList &lIn )
+StringList BuildParser::buildToStringList( const BuildList &lSrc, const StringList &lIn, Build *pPass )
 {
 	StringList lOut;
 
@@ -137,7 +137,28 @@ StringList BuildParser::buildToStringList( const BuildList &lSrc, const StringLi
 	{
 		if( (*i).second )
 		{
-			(*i).second->execute( NULL, lIn, lOut );
+			(*i).second->execute( pPass, lIn, lOut );
+		}
+		else
+		{
+			lOut.push_back( (*i).first );
+		}
+	}
+
+	return lOut;
+}
+
+StringList BuildParser::buildToStringListDup( const BuildList &lSrc, const StringList &lIn, Build &bld, const std::string &sCont, VarMap *mExtra, Build *pPass )
+{
+	StringList lOut;
+
+	for( BuildList::const_iterator i = lSrc.begin(); i != lSrc.end(); i++ )
+	{
+		if( (*i).second )
+		{
+			Function *pTmp = (*i).second->duplicate( bld, sCont, mExtra );
+			pTmp->execute( pPass, lIn, lOut );
+			delete pTmp;
 		}
 		else
 		{
@@ -384,8 +405,12 @@ Build *BuildParser::genBuild()
 				pTarget->setName( *j );
 				pTarget->setRule( (*i).second.sRule );
 
-				StringList lInputs = buildToStringList(
-					(*i).second.lInput, StringList()
+				VarMap mExtra;
+				mExtra["target"] = (*j);
+
+				StringList lInputs = buildToStringListDup(
+					(*i).second.lInput, StringList(),
+					*bld, *j, &mExtra
 					);
 				pTarget->getInput().insert(
 					pTarget->getInput().end(),
@@ -480,7 +505,7 @@ Build *BuildParser::genBuild()
 			 j != (*i).second.end(); j++ )
 		{
 			StringList lWhat = buildToStringList(
-				(*j).second, StringList()
+				(*j).second, StringList(), bld
 				);
 
 			for( StringList::iterator k = lWhat.begin();
