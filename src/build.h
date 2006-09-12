@@ -11,6 +11,7 @@
 #include "target.h"
 #include "action.h"
 #include "stringproc.h"
+#include "cache.h"
 
 subExceptionDecl( BuildException );
 typedef std::map<std::string, std::string> VarMap;
@@ -66,6 +67,10 @@ public:
 		return mTarget;
 	}
 
+	void setCache( const std::string &sFileName );
+	bool getCached( const std::string &sID, int nTime, StringList &lOut );
+	void updateCache( const std::string &sID, FunctionList &lFunc, StringList &lOut );
+
 private:
 	TargetMap mTarget;
 	ReqMap mRequires;
@@ -75,6 +80,9 @@ private:
 	ActionMap mAction;
 	StringProc *pStrProc;
 	Viewer *pView;
+	Cache cRequires;
+	bool bCacheUpdated;
+	std::string sCacheName;
 
 	//std::map<std::string, Rule *> mRule;
 	//Action *pActDefault;

@@ -72,19 +72,20 @@ int main( int argc, char *argv[] )
 	Param prm;
 	prm.process( argc, argv );
 
-	BuildParser bld;//*prm.pViewer );
+	BuildParser bld;
+	Build *pBuild;
 
-	//bld.setCache( prm.sCache );
-	//try
-	//{
-	Build *pBuild = bld.load( prm.sFile.c_str() );
-	//}
-	//catch( BuildException &e )
-	//{
-	//	fputs( e.what(), stderr );
-	//	fputs( "\n", stderr );
-	//	return 1;
-	//}
+	try
+	{
+		pBuild = bld.load( prm.sFile.c_str() );
+		pBuild->setCache( prm.sCache );
+	}
+	catch( BuildException &e )
+	{
+		fputs( e.what(), stderr );
+		fputs( "\n", stderr );
+		return 1;
+	}
 
 	//if( prm.bDebug )
 	//{

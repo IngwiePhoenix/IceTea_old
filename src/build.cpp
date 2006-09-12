@@ -1,18 +1,47 @@
 #include "build.h"
 #include "function.h"
 #include "viewerfactory.h"
+#include "serializerbinary.h"
 
 subExceptionDef( BuildException );
 
 Build::Build() :
 	pStrProc( NULL ),
-	pView( NULL )
+	pView( NULL ),
+	bCacheUpdated( false )
 {
 	pView = ViewerFactory::getInstance().instantiate("plain");
 }
 
 Build::~Build()
 {
+	if( sCacheName.size() > 0 && bCacheUpdated )
+	{
+		try
+		{
+			SerializerBinary ar( sCacheName.c_str(), Serializer::save );
+
+			ar << cRequires;
+		}
+		catch( ExceptionBase &e )
+		{
+		}
+	}
+}
+
+void Build::setCache( const std::string &sFileName )
+{
+	sCacheName = sFileName;
+
+	try
+	{
+		SerializerBinary ar( sCacheName.c_str(), Serializer::load );
+
+		ar >> cRequires;
+	}
+	catch( ExceptionBase &e )
+	{
+	}
 }
 
 void Build::setStringProc( StringProc *pStrProc )
@@ -269,5 +298,38 @@ RuleList Build::findChainRules( Rule *pHead )
 StringList &Build::getRequires( std::string sName )
 {
 	return mRequires[sName];
+}
+
+bool Build::getCached( const std::string &sID, int nTime, StringList &lOut )
+{
+	Cache::Entry *pEnt = cRequires.get( sID );
+	if( pEnt == NULL )
+		return false;
+	if( pEnt->tCreated < nTime )
+		return false;
+
+	lOut.insert( lOut.end(), pEnt->lData.begin(), pEnt->lData.end() );
+
+	return true;
+}
+
+void Build::updateCache( const std::string &sID, FunctionList &lFunc, StringList &lOut )
+{
+	Cache::Entry *pEnt = new Cache::Entry;
+	getView()->beginRequiresCheck( false, sID );
+	for( FunctionList::iterator f = lFunc.begin(); f != lFunc.end(); f++ )
+	{
+		StringList lTmpIn;
+		lTmpIn.push_back( sID );
+		(*f)->execute( this, lTmpIn, pEnt->lData );
+	}
+	getView()->endRequiresCheck();
+
+	lOut.insert( lOut.end(), pEnt->lData.begin(), pEnt->lData.end() );
+	cRequires.put( sID, pEnt );
+
+	pEnt->tCreated = time( NULL );
+
+	bCacheUpdated = true;
 }
 

@@ -27,9 +27,8 @@ void TargetFile::check( Build &bld )
 	{
 		time_t tTarget = getTime( bld, (*i)->getTarget() );
 		StringList &reqs = bld.getRequires( (*i)->getTarget() );
-		FunctionList::iterator f = (*i)->getReqFuncs().begin();
-		bool bBuilt = false;
-aastrt:	for( StringList::iterator j = reqs.begin(); j != reqs.end(); j++ )
+		bool bExtras = false;
+		for( StringList::iterator j = reqs.begin(); j != reqs.end(); j++ )
 		{
 			if( getTime( bld, *j ) > tTarget )
 			{
@@ -37,22 +36,21 @@ aastrt:	for( StringList::iterator j = reqs.begin(); j != reqs.end(); j++ )
 				(*i)->execute( bld );
 				bld.getView()->endPerform();
 				updateTime( (*i)->getTarget() );
-				bBuilt = true;
 				break;
 			}
-		}
-		if( bBuilt == true )
-			continue;
-
-		if( f != (*i)->getReqFuncs().end() )
-		{
-			StringList lTmpIn;
-			lTmpIn.push_back( (*i)->getTarget() );
-			bld.getView()->beginRequiresCheck( false, (*i)->getTarget() );
-			(*f)->execute( &bld, lTmpIn, reqs );
-			bld.getView()->endRequiresCheck();
-			f++;
-			goto aastrt;
+			if( bExtras == false )
+			{
+				StringList::iterator jj = j;
+				jj++;
+				if( jj == reqs.end() )
+				{
+					if( !bld.getCached( (*i)->getTarget(), tTarget, reqs ) )
+					{
+						bld.updateCache( (*i)->getTarget(), (*i)->getReqFuncs(), reqs );
+					}
+					bExtras = true;
+				}
+			}
 		}
 	}
 }
