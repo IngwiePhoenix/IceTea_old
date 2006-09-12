@@ -67,6 +67,8 @@ public:
 		return mTarget;
 	}
 
+	void setView( const std::string &sView );
+
 	void setCache( const std::string &sFileName );
 	bool getCached( const std::string &sID, int nTime, StringList &lOut );
 	void updateCache( const std::string &sID, FunctionList &lFunc, StringList &lOut );

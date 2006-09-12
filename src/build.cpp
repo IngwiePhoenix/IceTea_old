@@ -10,7 +10,6 @@ Build::Build() :
 	pView( NULL ),
 	bCacheUpdated( false )
 {
-	pView = ViewerFactory::getInstance().instantiate("plain");
 }
 
 Build::~Build()
@@ -27,6 +26,11 @@ Build::~Build()
 		{
 		}
 	}
+}
+
+void Build::setView( const std::string &sView )
+{
+	pView = ViewerFactory::getInstance().instantiate( sView.c_str() );
 }
 
 void Build::setCache( const std::string &sFileName )
@@ -70,6 +74,8 @@ void Build::execAction( const std::string &sWhat )
 
 	Action *pAct = mAction[sWhat];
 
+	pView->beginAction( sWhat, pAct->size() );
+
 	for( pAct->begin(); !pAct->isEnded(); pAct->next() )
 	{
 		if( mTarget.find( pAct->getWhat() ) == mTarget.end() )
@@ -79,7 +85,7 @@ void Build::execAction( const std::string &sWhat )
 				sWhat.c_str()
 				);
 		Target *pTarget = mTarget[pAct->getWhat()];
-		pView->beginCommand( pAct->getAct(), pAct->getWhat(), 0 );
+		pView->beginCommand( pAct->getAct(), pAct->getWhat() );
 		switch( pAct->getAct() )
 		{
 			case Action::actCheck:
@@ -92,6 +98,8 @@ void Build::execAction( const std::string &sWhat )
 		}
 		pView->endCommand();
 	}
+
+	pView->endAction();
 
 	return;
 }

@@ -23,6 +23,8 @@ void TargetFile::check( Build &bld )
 	pRule->setTarget( getName() );
 	StringList lFinal = pRule->execute( bld, getInput(), lPerf );
 
+	bld.getView()->beginPerforms( lPerf.size() );
+
 	for( PerformList::iterator i = lPerf.begin(); i != lPerf.end(); i++ )
 	{
 		time_t tTarget = getTime( bld, (*i)->getTarget() );
@@ -53,6 +55,8 @@ void TargetFile::check( Build &bld )
 			}
 		}
 	}
+	
+	bld.getView()->endPerforms();
 }
 
 void TargetFile::clean( Build &bld )

@@ -11,7 +11,7 @@ public:
 	ViewerPlain();
 	virtual ~ViewerPlain();
 
-	virtual void beginCommand( Action::eAction nAct, const std::string &sTarget, int nPerforms );
+	virtual void beginCommand( Action::eAction nAct, const std::string &sTarget );
 	virtual void endCommand();
 
 	virtual void beginRequiresCheck( bool bCached, const std::string &sName );

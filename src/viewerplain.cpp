@@ -12,7 +12,7 @@ ViewerPlain::~ViewerPlain()
 {
 }
 
-void ViewerPlain::beginCommand( Action::eAction nAct, const std::string &sTarget, int nPerforms )
+void ViewerPlain::beginCommand( Action::eAction nAct, const std::string &sTarget )
 {
 	printf("--- %s ---\n", sTarget.c_str() );
 }

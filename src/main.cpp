@@ -12,7 +12,8 @@ public:
 	Param() :
 		sFile("build.conf"),
 		sCache(".build.cache"),
-		bDebug( false )
+		bDebug( false ),
+		sView("plain")
 	{
 		addHelpBanner("Build r?\n\n");
 		addParam("file", 'f', &sFile, 
@@ -24,7 +25,7 @@ public:
 		addParam("cache", &sCache,
 				"Set an alternative cache file." );
 		addParam('d', &bDebug,
-				"Print out a debug dump of the read build.conf", "true" );
+				"Print out a debug dump of the build.conf", NULL, "true" );
 		addParam("help", mkproc(ParamProc::help),
 				"This help");
 		//pViewer = new ViewerPlain;
@@ -48,6 +49,7 @@ public:
 
 	int procViewPercent( int argc, char *argv[] )
 	{
+		sView = "percent";
 		//delete pViewer;
 		//pViewer = new ViewerPercent;
 	}
@@ -60,6 +62,7 @@ public:
 
 	std::string sCache;
 	std::string sFile;
+	std::string sView;
 	StaticString sAction;
 	//Viewer *pViewer;
 	bool bDebug;
@@ -79,6 +82,19 @@ int main( int argc, char *argv[] )
 	{
 		pBuild = bld.load( prm.sFile.c_str() );
 		pBuild->setCache( prm.sCache );
+		pBuild->setView( prm.sView );
+		if( prm.bDebug )
+		{
+			printf("\n\n----------\nDebug dump\n----------\n");
+			bld.debugDump();
+		}
+		else
+		{
+			if( prm.sAction > 0 )
+				pBuild->execAction( prm.sAction.getString() );
+			else
+				pBuild->execAction("");
+		}
 	}
 	catch( BuildException &e )
 	{
@@ -86,21 +102,6 @@ int main( int argc, char *argv[] )
 		fputs( "\n", stderr );
 		return 1;
 	}
-
-	//if( prm.bDebug )
-	//{
-	//	printf("\n\n----------\nDebug dump\n----------\n");
-	//	bld.debugDump();
-	//}
-	//else
-	{
-		if( prm.sAction > 0 )
-			pBuild->execAction( prm.sAction.getString() );
-		else
-			pBuild->execAction("");
-	}
-	//printf("\n\n----------\nDebug dump\n----------\n");
-	//pBuild->debugDump();
 
 	delete pBuild;
 }

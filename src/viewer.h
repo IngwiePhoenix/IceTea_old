@@ -16,8 +16,10 @@ public:
 	virtual void beginAction( const std::string &sName, int nCommands );
 	virtual void endAction();
 
-	virtual void beginCommand( Action::eAction nAct, const std::string &sTarget, int nPerforms );
+	virtual void beginCommand( Action::eAction nAct, const std::string &sTarget );
 	virtual void endCommand();
+	virtual void beginPerforms( int nCount );
+	virtual void endPerforms();
 
 	virtual void beginRequiresCheck( bool bCached, const std::string &sName );
 	virtual void endRequiresCheck();

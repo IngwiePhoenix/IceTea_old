@@ -16,7 +16,15 @@ void Viewer::endAction()
 {
 }
 
-void Viewer::beginCommand( Action::eAction nAct, const std::string &sTarget, int nPerforms )
+void Viewer::beginCommand( Action::eAction nAct, const std::string &sTarget )
+{
+}
+
+void Viewer::beginPerforms( int nCount )
+{
+}
+
+void Viewer::endPerforms()
 {
 }
 

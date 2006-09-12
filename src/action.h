@@ -33,6 +33,11 @@ public:
 	bool isEnded();
 	void next();
 
+	int size()
+	{
+		return lCmds.size();
+	}
+
 	eAction getAct();
 	std::string getWhat();
 
