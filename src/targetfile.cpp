@@ -61,7 +61,25 @@ void TargetFile::check( Build &bld )
 
 void TargetFile::clean( Build &bld )
 {
-	printf("Target file cleaning:  %s\n", getName().c_str() );
+	Rule *pRule = bld.getRule( getRule() );
+	PerformList lPerf;
+	pRule->setTarget( getName() );
+	StringList lFinal = pRule->execute( bld, getInput(), lPerf );
+	
+	bld.getView()->beginPerforms( lPerf.size() );
+
+	for( PerformList::iterator i = lPerf.begin(); i != lPerf.end(); i++ )
+	{
+		if( access( (*i)->getTarget().c_str(), W_OK ) == 0 )
+		{
+			bld.getView()->beginPerform( *i );
+			unlink( (*i)->getTarget().c_str() );
+			bld.getView()->endPerform();
+		}
+
+	}
+	
+	bld.getView()->endPerforms();
 }
 
 time_t TargetFile::getTime( Build &bld, std::string str )
