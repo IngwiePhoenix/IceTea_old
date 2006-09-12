@@ -62,17 +62,17 @@ void BuildParser::setTargetType( const char *sType )
 
 void BuildParser::addTargetInput()
 {
-	lTargetTmp.back().second.lInput.insert(
-		lTargetTmp.back().second.lInput.end(),
-		lTmp.begin(), lTmp.end()
+	lTargetTmp.back().second.lInput.first.insert(
+		lTargetTmp.back().second.lInput.first.end(),
+		lTmp.first.begin(), lTmp.first.end()
 		);
 }
 
 void BuildParser::addTargetRequires()
 {
-	lTargetTmp.back().second.lRequires.insert(
-		lTargetTmp.back().second.lRequires.end(),
-		lTmp.begin(), lTmp.end()
+	lTargetTmp.back().second.lRequires.first.insert(
+		lTargetTmp.back().second.lRequires.first.end(),
+		lTmp.first.begin(), lTmp.first.end()
 		);
 }
 
@@ -104,28 +104,46 @@ void BuildParser::addFunctionParam( const char *sParam )
 //
 void BuildParser::newList()
 {
-	lTmp.clear();
+	lTmp.first.clear();
+	lTmp.second = NULL;
 }
 
 void BuildParser::addListString( const char *str )
 {
-	lTmp.push_back( BuildListItem(str, NULL) );
+	lTmp.first.push_back( BuildListItem(str, NULL) );
 }
 
 void BuildParser::addListFunc()
 {
-	lTmp.push_back( BuildListItem("", pTmpFunc ) );
+	lTmp.first.push_back( BuildListItem("", pTmpFunc ) );
 }
 
 void BuildParser::filterList()
 {
+	lTmp.second = pTmpFunc;
+	//StringList lTmp2;
+	//StringList lIn = buildToStringList( lTmp, StringList() );
+	//pTmpFunc->execute( NULL, lIn, lTmp2 );
+	//lTmp.clear();
+	//for( StringList::iterator i = lTmp2.begin(); i != lTmp2.end(); i++ )
+	//{
+	//	lTmp.push_back( BuildListItem( *i, NULL ) );
+	//}
+}
+
+void BuildParser::buildListFilter( BuildList &lSrc )
+{
+	if( lSrc.second  == NULL )
+		return;
+
 	StringList lTmp2;
-	StringList lIn = buildToStringList( lTmp, StringList() );
+	StringList lIn = buildToStringList( lSrc, StringList() );
 	pTmpFunc->execute( NULL, lIn, lTmp2 );
-	lTmp.clear();
+	lSrc.first.clear();
+	delete lSrc.second;
 	for( StringList::iterator i = lTmp2.begin(); i != lTmp2.end(); i++ )
 	{
-		lTmp.push_back( BuildListItem( *i, NULL ) );
+		lSrc.first.push_back( BuildListItem( *i, NULL ) );
 	}
 }
 
@@ -133,7 +151,8 @@ StringList BuildParser::buildToStringList( const BuildList &lSrc, const StringLi
 {
 	StringList lOut;
 
-	for( BuildList::const_iterator i = lSrc.begin(); i != lSrc.end(); i++ )
+	for( BuildListCore::const_iterator i = lSrc.first.begin();
+		 i != lSrc.first.end(); i++ )
 	{
 		if( (*i).second )
 		{
@@ -152,7 +171,8 @@ StringList BuildParser::buildToStringListDup( const BuildList &lSrc, const Strin
 {
 	StringList lOut;
 
-	for( BuildList::const_iterator i = lSrc.begin(); i != lSrc.end(); i++ )
+	for( BuildListCore::const_iterator i = lSrc.first.begin();
+		 i != lSrc.first.end(); i++ )
 	{
 		if( (*i).second )
 		{
@@ -186,17 +206,17 @@ void BuildParser::addRuleMatches()
 
 void BuildParser::addRuleProduces()
 {
-	lRuleTmp.back().lProduces.insert(
-		lRuleTmp.back().lProduces.end(),
-		lTmp.begin(), lTmp.end()
+	lRuleTmp.back().lProduces.first.insert(
+		lRuleTmp.back().lProduces.first.end(),
+		lTmp.first.begin(), lTmp.first.end()
 		);
 }
 
 void BuildParser::addRuleRequires()
 {
-	lRuleTmp.back().lRequires.insert(
-		lRuleTmp.back().lRequires.end(),
-		lTmp.begin(), lTmp.end()
+	lRuleTmp.back().lRequires.first.insert(
+		lRuleTmp.back().lRequires.first.end(),
+		lTmp.first.begin(), lTmp.first.end()
 		);
 }
 
@@ -346,10 +366,10 @@ void BuildParser::debugDump()
 void BuildParser::printBuildList( const BuildList &lst )
 {
 	printf("[");
-	for( BuildList::const_iterator k = lst.begin();
-		 k != lst.end(); k++ )
+	for( BuildListCore::const_iterator k = lst.first.begin();
+		 k != lst.first.end(); k++ )
 	{
-		if( k != lst.begin() )
+		if( k != lst.first.begin() )
 		{
 			printf(", ");
 		}
@@ -462,8 +482,8 @@ Build *BuildParser::genBuild()
 			pRule->getPerformList().push_back( *j );
 		}
 
-		for( BuildList::iterator j = (*i).lProduces.begin();
-			 j != (*i).lProduces.end(); j++ )
+		for( BuildListCore::iterator j = (*i).lProduces.first.begin();
+			 j != (*i).lProduces.first.end(); j++ )
 		{
 			if( (*j).second )
 			{
@@ -479,8 +499,8 @@ Build *BuildParser::genBuild()
 			pRule->setAggregate( (*i).pAggregate );
 		}
 
-		for( BuildList::iterator j = (*i).lRequires.begin();
-			 j != (*i).lRequires.end(); j++ )
+		for( BuildListCore::iterator j = (*i).lRequires.first.begin();
+			 j != (*i).lRequires.first.end(); j++ )
 		{
 			if( (*j).second )
 			{

@@ -30,6 +30,8 @@ void FunctionDirectoriesIn::execute( Build *bld, const StringList &lInput, Strin
 	{
 		if( e->d_type == DT_DIR )
 		{
+			if( e->d_name[0] == '.' || e->d_name[0] == '\0' )
+				continue;
 			lOutput.push_back( e->d_name );
 		}
 	}

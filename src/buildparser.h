@@ -52,7 +52,8 @@ enum eSetHow
 class BuildParser : public Parser
 {
 	typedef std::pair<std::string, Function *> BuildListItem;
-	typedef std::list<BuildListItem> BuildList;
+	typedef std::list<BuildListItem> BuildListCore;
+	typedef std::pair<BuildListCore, Function *> BuildList;
 	typedef Triplet<std::string, std::string, int> SetVar;
 	typedef std::list<SetVar> SetVarList;
 public:
@@ -117,6 +118,7 @@ public: // List functions
 	void addListFunc();
 	void filterList();
 
+	void buildListFilter( BuildList &lSrc );
 	StringList buildToStringList( const BuildList &lSrc, const StringList &lIn, Build *pPass=NULL );
 	StringList buildToStringListDup( const BuildList &lSrc, const StringList &lIn, Build &bld, const std::string &sCont, VarMap *mExtra, Build *pPass=NULL );
 
