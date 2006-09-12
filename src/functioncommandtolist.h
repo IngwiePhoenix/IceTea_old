@@ -11,7 +11,8 @@ public:
 	FunctionCommandToList();
 	virtual ~FunctionCommandToList();
 	
-	virtual void execute( const StringList &lInput, StringList &lOutput );
+	virtual void execute( Build *bld, const StringList &lInput, StringList &lOutput );
+	virtual Function *duplicate( Build &bld, const std::string &cont, VarMap *mExtra );
 
 private:
 

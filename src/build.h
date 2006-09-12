@@ -14,6 +14,15 @@
 
 subExceptionDecl( BuildException );
 typedef std::map<std::string, std::string> VarMap;
+typedef std::map<std::string, Target *> TargetMap;
+typedef std::list<std::string> StringList;
+typedef std::map<std::string, StringList> ReqMap;
+typedef std::map<std::string, VarMap> ContextMap;
+typedef std::map<std::string, Rule *> RuleMap;
+typedef std::list<Rule *> RuleList;
+typedef std::map<std::string, Action *> ActionMap;
+
+class Viewer;
 
 class Build
 {
@@ -44,15 +53,15 @@ public:
 
 	void setStringProc( StringProc *pStrProc );
 	std::string replVars( const std::string &sSrc, const std::string &sCont, VarMap *mExtra );
+	RuleList findChainRules( Rule *pHead );
+	StringList &getRequires( std::string sName );
+
+	Viewer *getView()
+	{
+		return pView;
+	}
 
 private:
-	typedef std::map<std::string, Target *> TargetMap;
-	typedef std::list<std::string> StringList;
-	typedef std::map<std::string, StringList> ReqMap;
-	typedef std::map<std::string, VarMap> ContextMap;
-	typedef std::map<std::string, Rule *> RuleMap;
-	typedef std::map<std::string, Action *> ActionMap;
-
 	TargetMap mTarget;
 	ReqMap mRequires;
 	VarMap mVars;
@@ -60,6 +69,7 @@ private:
 	RuleMap mRule;
 	ActionMap mAction;
 	StringProc *pStrProc;
+	Viewer *pView;
 
 	//std::map<std::string, Rule *> mRule;
 	//Action *pActDefault;

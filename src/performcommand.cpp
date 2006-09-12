@@ -11,10 +11,15 @@ PerformCommand::~PerformCommand()
 {
 }
 
-Perform *PerformCommand::duplicate( Build &bld, const std::string &cont )
+Perform *PerformCommand::duplicate( Build &bld, const std::string &cont, VarMap *mExtra )
 {
 	Perform *pRet = new PerformCommand();
-	pRet->copyData( this, bld, cont, NULL );
+	pRet->copyData( this, bld, cont, mExtra );
 	return pRet;
+}
+
+void PerformCommand::execute( Build &bld )
+{
+	system( lParam.front().c_str() );
 }
 

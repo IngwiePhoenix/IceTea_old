@@ -12,7 +12,7 @@ FunctionRegexp::~FunctionRegexp()
 {
 }
 
-void FunctionRegexp::execute( const StringList &lInput, StringList &lOutput )
+void FunctionRegexp::execute( Build *bld, const StringList &lInput, StringList &lOutput )
 {
 	if( lParams.size() == 1 )
 	{
@@ -24,11 +24,28 @@ void FunctionRegexp::execute( const StringList &lInput, StringList &lOutput )
 			if( re.execute( (*i).c_str() ) )
 			{
 				lOutput.push_back( *i );
+				if( bld )
+				{
+					int jmax = re.getNumSubStrings();
+					for( int j = 0; j < jmax; j++ )
+					{
+						char buf[30];
+						sprintf( buf, "re:%d", j );
+						bld->set( *i, buf, re.getSubString( j ) );
+					}
+				}
 			}
 		}
 	}
 	else
 	{
 	}
+}
+
+Function *FunctionRegexp::duplicate( Build &bld, const std::string &cont, VarMap *mExtra )
+{
+	Function *pRet = new FunctionRegexp();
+	pRet->copyData( this, bld, cont, mExtra );
+	return pRet;
 }
 

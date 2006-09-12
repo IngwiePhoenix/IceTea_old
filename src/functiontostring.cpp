@@ -11,7 +11,23 @@ FunctionToString::~FunctionToString()
 {
 }
 
-void FunctionToString::execute( const StringList &lInput, StringList &lOutput )
+void FunctionToString::execute( Build *bld, const StringList &lInput, StringList &lOutput )
 {
+	std::string sOut;
+
+	for( StringList::const_iterator i = lInput.begin(); i != lInput.end(); i++ )
+	{
+		if( i != lInput.begin() ) sOut += " ";
+		sOut += *i;
+	}
+
+	lOutput.push_back( sOut );
+}
+
+Function *FunctionToString::duplicate( Build &bld, const std::string &cont, VarMap *mExtra )
+{
+	Function *pRet = new FunctionToString();
+	pRet->copyData( this, bld, cont, mExtra );
+	return pRet;
 }
 

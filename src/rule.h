@@ -21,6 +21,11 @@ public:
 
 	StringList execute( Build &bld, StringList &lInput, PerformList &lPerf );
 
+	void setTarget( const std::string &sTarget )
+	{
+		this->sTarget = sTarget;
+	}
+
 	std::string getName()
 	{
 		return sName;
@@ -46,11 +51,36 @@ public:
 		return lMatches;
 	}
 
+	StringList &getProducesList()
+	{
+		return lProduces;
+	}
+
+	void setAggregate( Function *pAggregate )
+	{
+		this->pAggregate = pAggregate;
+	}
+
+	StringList &getReqStrList()
+	{
+		return lReqStrs;
+	}
+
+	FunctionList &getReqFuncList()
+	{
+		return lReqFuncs;
+	}
+
 private:
 	std::string sName;
 	FunctionList lMatches;
 	FunctionList lFilter;
 	PerformList lPerform;
+	StringList lProduces;
+	std::string sTarget;
+	Function *pAggregate;
+	StringList lReqStrs;
+	FunctionList lReqFuncs;
 };
 
 #endif

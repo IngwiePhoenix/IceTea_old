@@ -1,20 +1,15 @@
-#ifndef VIEWER_H
-#define VIEWER_H
+#ifndef VIEWER_PLAIN_H
+#define VIEWER_PLAIN_H
 
 #include <stdint.h>
-#include <string>
-#include "action.h"
 
-class Perform;
+#include "viewer.h"
 
-class Viewer
+class ViewerPlain : public Viewer
 {
 public:
-	Viewer();
-	virtual ~Viewer();
-
-	virtual void beginAction( const std::string &sName, int nCommands );
-	virtual void endAction();
+	ViewerPlain();
+	virtual ~ViewerPlain();
 
 	virtual void beginCommand( Action::eAction nAct, const std::string &sTarget, int nPerforms );
 	virtual void endCommand();
@@ -23,9 +18,6 @@ public:
 	virtual void endRequiresCheck();
 	virtual void beginPerform( Perform *pPerform );
 	virtual void endPerform();
-	virtual void beginExecute();
-	virtual void endExecute();
-	virtual void executeCmd( const std::string &sCmd );
 
 private:
 

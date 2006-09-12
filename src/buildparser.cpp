@@ -121,7 +121,7 @@ void BuildParser::filterList()
 {
 	StringList lTmp2;
 	StringList lIn = buildToStringList( lTmp, StringList() );
-	pTmpFunc->execute( lIn, lTmp2 );
+	pTmpFunc->execute( NULL, lIn, lTmp2 );
 	lTmp.clear();
 	for( StringList::iterator i = lTmp2.begin(); i != lTmp2.end(); i++ )
 	{
@@ -137,7 +137,7 @@ StringList BuildParser::buildToStringList( const BuildList &lSrc, const StringLi
 	{
 		if( (*i).second )
 		{
-			(*i).second->execute( lIn, lOut );
+			(*i).second->execute( NULL, lIn, lOut );
 		}
 		else
 		{
@@ -155,6 +155,7 @@ void BuildParser::addRule( const char *sName )
 {
 	lRuleTmp.push_back( RuleInfo() );
 	lRuleTmp.back().sName = sName;
+	lRuleTmp.back().pAggregate = NULL;
 }
 
 void BuildParser::addRuleMatches()
@@ -186,6 +187,11 @@ void BuildParser::addRuleInputFilter()
 void BuildParser::addRulePerform()
 {
 	lRuleTmp.back().lPerform.push_back( pTmpPerform );
+}
+
+void BuildParser::setRuleAggregate()
+{
+	lRuleTmp.back().pAggregate = pTmpFunc;
 }
 
 //
@@ -431,14 +437,35 @@ Build *BuildParser::genBuild()
 			pRule->getPerformList().push_back( *j );
 		}
 
-		/*StringList lITmp = buildToStringList(
-			(*i).lProduces, StringList()
-			);
-
-		for( StringList::iterator i = lITmp.begin(); i != lITmp.end(); i++ )
+		for( BuildList::iterator j = (*i).lProduces.begin();
+			 j != (*i).lProduces.end(); j++ )
 		{
-			get
-		}*/
+			if( (*j).second )
+			{
+				throw BuildException(
+					"You cannot have functions in produces lists (rule %s).",
+					(*i).sName.c_str() );
+			}
+			pRule->getProducesList().push_back( (*j).first );
+		}
+
+		if( (*i).pAggregate )
+		{
+			pRule->setAggregate( (*i).pAggregate );
+		}
+
+		for( BuildList::iterator j = (*i).lRequires.begin();
+			 j != (*i).lRequires.end(); j++ )
+		{
+			if( (*j).second )
+			{
+				pRule->getReqFuncList().push_back( (*j).second );
+			}
+			else
+			{
+				pRule->getReqStrList().push_back( (*j).first );
+			}
+		}
 
 		bld->addRule( pRule );
 	}

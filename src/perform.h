@@ -17,7 +17,8 @@ public:
 	virtual ~Perform();
 
 	void addParam( const char *sParam );
-	virtual Perform *duplicate( Build &bld, const std::string &cont ) = 0;
+	virtual Perform *duplicate( Build &bld, const std::string &cont, VarMap *mExtra ) = 0;
+	virtual void execute( Build &bld ) = 0;
 	void copyData( Perform *pSrc, Build &bld, const std::string &cont, VarMap *mExtra );
 	std::string getTarget()
 	{
@@ -28,9 +29,26 @@ public:
 		this->sTarget = sTarget;
 	}
 
-private:
+	std::list<class Function *> &getReqFuncs()
+	{
+		return lReqFuncs;
+	}
+
+	void setRule( const std::string &sRule )
+	{
+		this->sRule = sRule;
+	}
+
+	std::string &getRule()
+	{
+		return sRule;
+	}
+
+protected:
 	std::list<std::string> lParam;
 	std::string sTarget;
+	std::string sRule;
+	std::list<class Function *> lReqFuncs;
 };
 
 #endif

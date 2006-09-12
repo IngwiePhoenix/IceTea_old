@@ -14,7 +14,7 @@ FunctionFilesIn::~FunctionFilesIn()
 {
 }
 
-void FunctionFilesIn::execute( const StringList &lInput, StringList &lOutput )
+void FunctionFilesIn::execute( Build *bld, const StringList &lInput, StringList &lOutput )
 {
 	DIR *d = opendir( lParams.front().c_str() );
 	if( d == NULL )
@@ -36,5 +36,12 @@ void FunctionFilesIn::execute( const StringList &lInput, StringList &lOutput )
 	}
 
 	closedir( d );
+}
+
+Function *FunctionFilesIn::duplicate( Build &bld, const std::string &cont, VarMap *mExtra )
+{
+	Function *pRet = new FunctionFilesIn();
+	pRet->copyData( this, bld, cont, mExtra );
+	return pRet;
 }
 

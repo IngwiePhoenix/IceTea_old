@@ -34,6 +34,7 @@ std::string strbuf;
 "input"								return TOK_INPUT;
 "filter"							return TOK_FILTER;
 "prefix"							return TOK_PREFIX;
+"aggregate"							return TOK_AGGREGATE;
 
 \n+									{
 	yylloc->last_line += yyleng;

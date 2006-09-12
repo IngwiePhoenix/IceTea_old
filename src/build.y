@@ -39,6 +39,7 @@ void yyerror( YYLTYPE *locp, BuildParser &bld, char const *msg );
 %token TOK_MATCHES				"matches"
 %token TOK_PERFORM				"perform"
 %token TOK_PRODUCES				"produces"
+%token TOK_AGGREGATE			"aggregate"
 
 %token ',' ':' '=' '(' ')'
 
@@ -85,6 +86,10 @@ rulecmd: TOK_MATCHES func
 	   | TOK_PERFORM perf
 	   {
 		   bld.addRulePerform();
+	   }
+	   | TOK_AGGREGATE func
+	   {
+		   bld.setRuleAggregate();
 	   }
 	   ;
 

@@ -91,8 +91,6 @@ int main( int argc, char *argv[] )
 	//	printf("\n\n----------\nDebug dump\n----------\n");
 	//	bld.debugDump();
 	//}
-	//	printf("\n\n----------\nDebug dump\n----------\n");
-	//	pBuild->debugDump();
 	//else
 	{
 		if( prm.sAction > 0 )
@@ -100,6 +98,8 @@ int main( int argc, char *argv[] )
 		else
 			pBuild->execAction("");
 	}
+	//printf("\n\n----------\nDebug dump\n----------\n");
+	//pBuild->debugDump();
 
 	delete pBuild;
 }

@@ -127,6 +127,7 @@ public: // Rules functions
 	void addRuleRequires();
 	void addRuleInputFilter();
 	void addRulePerform();
+	void setRuleAggregate();
 
 private: // Rule variables
 	class RuleInfo
@@ -138,6 +139,7 @@ private: // Rule variables
 		BuildList lRequires;
 		FunctionList lFilter;
 		PerformList lPerform;
+		Function *pAggregate;
 	};
 
 	typedef std::list<RuleInfo> RuleTmpList;

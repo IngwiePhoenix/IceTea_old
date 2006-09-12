@@ -1,10 +1,14 @@
 #include "build.h"
+#include "function.h"
+#include "viewerfactory.h"
 
 subExceptionDef( BuildException );
 
 Build::Build() :
-	pStrProc( NULL )
+	pStrProc( NULL ),
+	pView( NULL )
 {
+	pView = ViewerFactory::getInstance().instantiate("plain");
 }
 
 Build::~Build()
@@ -46,6 +50,7 @@ void Build::execAction( const std::string &sWhat )
 				sWhat.c_str()
 				);
 		Target *pTarget = mTarget[pAct->getWhat()];
+		pView->beginCommand( pAct->getAct(), pAct->getWhat(), 0 );
 		switch( pAct->getAct() )
 		{
 			case Action::actCheck:
@@ -56,6 +61,7 @@ void Build::execAction( const std::string &sWhat )
 				pTarget->clean( *this );
 				break;
 		}
+		pView->endCommand();
 	}
 
 	return;
@@ -232,5 +238,36 @@ void Build::debugDump()
 		}
 		printf("\n");
 	}
+}
+
+RuleList Build::findChainRules( Rule *pHead )
+{
+	RuleList lOut;
+	FunctionList &lMatches = pHead->getMatchesList();
+
+	for( RuleMap::iterator i = mRule.begin(); i != mRule.end(); i++ )
+	{
+		if( (*i).second == pHead )
+			continue;
+
+		for( FunctionList::iterator j = lMatches.begin();
+			 j != lMatches.end(); j++ )
+		{
+			StringList lTmp;
+			(*j)->execute( NULL, (*i).second->getProducesList(), lTmp );
+			if( !lTmp.empty() )
+			{
+				lOut.push_back( (*i).second );
+				break;
+			}
+		}
+	}
+
+	return lOut;
+}
+
+StringList &Build::getRequires( std::string sName )
+{
+	return mRequires[sName];
 }
 
