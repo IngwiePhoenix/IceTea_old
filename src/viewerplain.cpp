@@ -14,12 +14,12 @@ ViewerPlain::~ViewerPlain()
 
 void ViewerPlain::beginCommand( Action::eAction nAct, const std::string &sTarget, int nPerforms )
 {
-	printf("--- check %s ---\n", sTarget.c_str() );
+	printf("--- %s ---\n", sTarget.c_str() );
 }
 
 void ViewerPlain::endCommand()
 {
-	printf("---\n");
+	printf("\n");
 }
 
 void ViewerPlain::beginRequiresCheck( bool bCached, const std::string &sName )
