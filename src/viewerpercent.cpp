@@ -43,7 +43,7 @@ void ViewerPercent::beginPerforms( int nCount )
 
 void ViewerPercent::endPerforms()
 {
-	int nLen = printf("\r[%2d/%-2d] %s [", 
+	int nLen = printf("\r[%d/%d] %s [", 
 		nCurCommand, nTotalCommands,
 		sTarget.c_str() );
 	for( int j = 0; j < nWidth; j++ )
@@ -77,7 +77,7 @@ void ViewerPercent::endRequiresCheck()
 void ViewerPercent::beginPerform( Perform *pPerform )
 {
 	nCurPerform++;
-	int nLen = printf("\r[%2d/%-2d] %s [", 
+	int nLen = printf("\r[%d/%d] %s [", 
 		nCurCommand, nTotalCommands,
 		sTarget.c_str() );
 	int jmax = nCurPerform*nWidth/nTotalPerforms;
