@@ -66,6 +66,7 @@ void BuildParser::addTargetInput()
 		lTargetTmp.back().second.lInput.first.end(),
 		lTmp.first.begin(), lTmp.first.end()
 		);
+	lTargetTmp.back().second.lInput.second = lTmp.second;
 }
 
 void BuildParser::addTargetRequires()
@@ -74,6 +75,7 @@ void BuildParser::addTargetRequires()
 		lTargetTmp.back().second.lRequires.first.end(),
 		lTmp.first.begin(), lTmp.first.end()
 		);
+	lTargetTmp.back().second.lRequires.second = lTmp.second;
 }
 
 void BuildParser::addTargetSet( const char *sVar, const char *sVal, int nHow )
@@ -133,7 +135,7 @@ void BuildParser::filterList()
 
 void BuildParser::buildListFilter( BuildList &lSrc )
 {
-	if( lSrc.second  == NULL )
+	if( lSrc.second == NULL )
 		return;
 
 	StringList lTmp2;
@@ -164,6 +166,13 @@ StringList BuildParser::buildToStringList( const BuildList &lSrc, const StringLi
 		}
 	}
 
+	if( lSrc.second )
+	{
+		StringList lTmp;
+		lSrc.second->execute( pPass, lOut, lTmp );
+		lOut.swap( lTmp );
+	}
+
 	return lOut;
 }
 
@@ -184,6 +193,13 @@ StringList BuildParser::buildToStringListDup( const BuildList &lSrc, const Strin
 		{
 			lOut.push_back( (*i).first );
 		}
+	}
+
+	if( lSrc.second )
+	{
+		StringList lTmp;
+		lSrc.second->execute( pPass, lOut, lTmp );
+		lOut.swap( lTmp );
 	}
 
 	return lOut;
