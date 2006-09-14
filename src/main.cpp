@@ -83,7 +83,7 @@ int main( int argc, char *argv[] )
 		if( prm.bDebug )
 		{
 			printf("\n\n----------\nDebug dump\n----------\n");
-			bld.debugDump();
+			pBuild->debugDump();
 		}
 		else
 		{
