@@ -144,11 +144,11 @@ void Build::set( const std::string &cont, const std::string &var, const std::str
 {
 	if( cont == "" )
 	{
-		mVars[var] = val;
+		mVars[var] = replVars( val, cont, NULL );
 	}
 	else
 	{
-		mContVars[cont][var] = val;
+		mContVars[cont][var] = replVars( val, cont, NULL );
 	}
 }
 
@@ -156,11 +156,11 @@ void Build::setAdd( const std::string &cont, const std::string &var, const std::
 {
 	if( cont == "" )
 	{
-		mVars[var] = getVar( cont, var, NULL ) + " " + val;
+		mVars[var] = getVar( cont, var, NULL ) + " " + replVars( val, cont, NULL );
 	}
 	else
 	{
-		mContVars[cont][var] = getVar( cont, var, NULL ) + " " + val;
+		mContVars[cont][var] = getVar( cont, var, NULL ) + " " + replVars( val, cont, NULL );
 	}
 }
 

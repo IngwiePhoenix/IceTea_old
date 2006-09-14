@@ -1,6 +1,7 @@
 #include "performcommand.h"
 #include "plugger.h"
 #include "build.h"
+#include "viewer.h"
 
 PluginInterface2(command, PerformCommand, Perform, "Mike Buland", 0, 1 );
 
@@ -21,6 +22,7 @@ Perform *PerformCommand::duplicate( Build &bld, const std::string &cont, VarMap 
 
 void PerformCommand::execute( Build &bld )
 {
+	bld.getView()->executeCmd( lParam.front() );
 	int n = system( lParam.front().c_str() );
 	if( n != 0 )
 		throw BuildException(

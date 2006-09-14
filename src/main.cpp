@@ -50,14 +50,11 @@ public:
 	int procViewPercent( int argc, char *argv[] )
 	{
 		sView = "percent";
-		//delete pViewer;
-		//pViewer = new ViewerPercent;
 	}
 
 	int procViewMake( int argc, char *argv[] )
 	{
-		//delete pViewer;
-		//pViewer = new ViewerMake;
+		sView = "make";
 	}
 
 	std::string sCache;
