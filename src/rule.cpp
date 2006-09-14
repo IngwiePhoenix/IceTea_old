@@ -98,14 +98,14 @@ StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf )
 				for( PerformList::iterator k = lPerform.begin();
 					 k != lPerform.end(); k++ )
 				{
-					Perform *p = (*k)->duplicate( bld, (*i), &mTmp );
+					Perform *p = (*k)->duplicate( bld, target, &mTmp );
 					p->setTarget( target );
 					p->setRule( sName );
 					for( FunctionList::iterator f = lReqFuncs.begin();
 						 f != lReqFuncs.end(); f++ )
 					{
 						p->getReqFuncs().push_back(
-							(*f)->duplicate( bld, (*i), &mTmp )
+							(*f)->duplicate( bld, target, &mTmp )
 							);
 					}
 					lPerf.push_back( p );

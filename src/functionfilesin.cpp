@@ -29,9 +29,10 @@ void FunctionFilesIn::execute( Build *bld, const StringList &lInput, StringList 
 
 	while( (e = readdir( d )) )
 	{
-		if( e->d_type == DT_REG )
+		if( e->d_type != DT_DIR )
 		{
-			lOutput.push_back( prefix + e->d_name );
+			if( e->d_name[0] != '.')
+				lOutput.push_back( prefix + e->d_name );
 		}
 	}
 
