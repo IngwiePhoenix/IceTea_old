@@ -13,6 +13,7 @@ public:
 		sFile("build.conf"),
 		sCache(".build.cache"),
 		bDebug( false ),
+		bPostDebug( false ),
 		sView("plain")
 	{
 		addHelpBanner("Build r?\n\n");
@@ -25,7 +26,9 @@ public:
 		addParam("cache", &sCache,
 				"Set an alternative cache file." );
 		addParam('d', &bDebug,
-				"Print out a debug dump of the build.conf", NULL, "true" );
+				"Display debug info instead of building", NULL, "true" );
+		addParam('D', &bPostDebug,
+				"Display debug info after building", NULL, "true" );
 		addParam("help", mkproc(ParamProc::help),
 				"This help");
 		//pViewer = new ViewerPlain;
@@ -63,6 +66,7 @@ public:
 	StaticString sAction;
 	//Viewer *pViewer;
 	bool bDebug;
+	bool bPostDebug;
 
 private:
 };
@@ -92,11 +96,21 @@ int main( int argc, char *argv[] )
 			else
 				pBuild->execAction("");
 		}
+		if( prm.bPostDebug )
+		{
+			printf("\n\n----------\nDebug dump\n----------\n");
+			pBuild->debugDump();
+		}
 	}
 	catch( BuildException &e )
 	{
 		fputs( e.what(), stderr );
 		fputs( "\n", stderr );
+		if( prm.bPostDebug )
+		{
+			printf("\n\n----------\nDebug dump\n----------\n");
+			pBuild->debugDump();
+		}
 		return 1;
 	}
 

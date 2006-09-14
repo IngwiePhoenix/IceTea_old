@@ -72,6 +72,7 @@ void TargetFile::clean( Build &bld )
 	{
 		if( access( (*i)->getTarget().c_str(), W_OK ) == 0 )
 		{
+			(*i)->setRule("clean");
 			bld.getView()->beginPerform( *i );
 			unlink( (*i)->getTarget().c_str() );
 			bld.getView()->endPerform();

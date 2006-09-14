@@ -81,8 +81,9 @@ StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf )
 	{
 		for( StringList::iterator i = lMine.begin(); i != lMine.end(); i++ )
 		{
-			for( StringList::iterator j = lProduces.begin();
-				 j != lProduces.end(); j++ )
+			//for( StringList::iterator j = lProduces.begin();
+			//	 j != lProduces.end(); j++ )
+			StringList::iterator j = lProduces.begin();
 			{
 				VarMap mTmp;
 				std::string target = bld.replVars( (*j), (*i), NULL );
