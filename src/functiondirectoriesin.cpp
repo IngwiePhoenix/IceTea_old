@@ -24,7 +24,17 @@ void FunctionDirectoriesIn::execute( Build *bld, const StringList &lInput, Strin
 
 	struct dirent *e;
 
-	//std::string prefix = lParams.front() + "/";
+	std::string prefix;
+	if( lParams.size() >= 2 )
+	{
+		StringList::iterator i = lParams.begin();
+		i++;
+		prefix = *i;
+	}
+	else
+	{
+		prefix = lParams.front() + "/";
+	}
 
 	while( (e = readdir( d )) )
 	{
@@ -32,7 +42,7 @@ void FunctionDirectoriesIn::execute( Build *bld, const StringList &lInput, Strin
 		{
 			if( e->d_name[0] == '.' || e->d_name[0] == '\0' )
 				continue;
-			lOutput.push_back( e->d_name );
+			lOutput.push_back( prefix + e->d_name );
 		}
 	}
 

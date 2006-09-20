@@ -25,7 +25,17 @@ void FunctionFilesIn::execute( Build *bld, const StringList &lInput, StringList 
 
 	struct dirent *e;
 
-	std::string prefix = lParams.front() + "/";
+	std::string prefix;
+	if( lParams.size() >= 2 )
+	{
+		StringList::iterator i = lParams.begin();
+		i++;
+		prefix = *i;
+	}
+	else
+	{
+		prefix = lParams.front() + "/";
+	}
 
 	while( (e = readdir( d )) )
 	{
