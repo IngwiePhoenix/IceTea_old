@@ -20,6 +20,7 @@ StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf )
 
 	for( RuleList::iterator i = rl.begin(); i != rl.end(); i++ )
 	{
+		(*i)->setTarget( sTarget );
 		StringList tmp = (*i)->execute( bld, lInput, lPerf );
 		lOutput.insert( lOutput.end(), tmp.begin(), tmp.end() );
 	}
@@ -89,6 +90,7 @@ StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf )
 			{
 				VarMap mTmp;
 				StringList cont;
+				cont.push_front( sTarget );
 				cont.push_front( (*i) );
 				std::string target = bld.replVars( (*j), &cont, NULL );
 				mTmp["target"] = target;
@@ -104,6 +106,7 @@ StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf )
 					 k != lPerform.end(); k++ )
 				{
 					StringList cont2;
+					cont2.push_front( sTarget );
 					cont2.push_front( (*i) );
 					cont2.push_front( target );
 					Perform *p = (*k)->duplicate( bld, &cont2, &mTmp );
