@@ -39,6 +39,41 @@ void FunctionRegexp::execute( Build *bld, const StringList &lInput, StringList &
 	}
 	else
 	{
+		if( !bld )
+		{
+			throw BuildException("You apparently can't use regexp with two params here.  Isn't that odd?");
+		}
+
+		RegExp re( lParams.front().c_str() );
+		lParams.pop_front();
+		std::string p2 = lParams.front();
+
+		for( StringList::const_iterator i = lInput.begin();
+			 i != lInput.end(); i++ )
+		{
+			if( re.execute( (*i).c_str() ) )
+			{
+				VarMap ext;
+				int jmax = re.getNumSubStrings();
+				for( int j = 0; j < jmax; j++ )
+				{
+					char buf[30];
+					sprintf( buf, "re:%d", j );
+					ext[buf] = re.getSubString( j );
+				}
+
+				std::string sNew = bld->replVars( p2, NULL, &ext );
+				lOutput.push_back( sNew );
+
+				for( int j = 0; j < jmax; j++ )
+				{
+					char buf[30];
+					sprintf( buf, "re:%d", j );
+					bld->set( sNew, buf, re.getSubString( j ) );
+				}
+				bld->copyContext( *i, sNew );
+			}
+		}
 	}
 }
 

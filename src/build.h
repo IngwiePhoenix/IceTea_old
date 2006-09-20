@@ -46,6 +46,7 @@ public:
 
 	void set( const std::string &cont, const std::string &var, const std::string &val );
 	void setAdd( const std::string &cont, const std::string &var, const std::string &val );
+	void copyContext( const std::string &src, const std::string &dest );
 	std::string getVar( const StringList *cont, const std::string &var, VarMap *mExtra );
 
 	Rule *getRule( const std::string &name );

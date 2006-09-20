@@ -42,7 +42,18 @@ void FunctionDirectoriesIn::execute( Build *bld, const StringList &lInput, Strin
 		{
 			if( e->d_name[0] == '.' || e->d_name[0] == '\0' )
 				continue;
-			lOutput.push_back( prefix + e->d_name );
+			std::string sOut = prefix + e->d_name;
+			lOutput.push_back( sOut );
+			if( bld )
+			{
+				std::string sV = lParams.front() + "/";
+				sV += e->d_name;
+				bld->set( sOut, "fulldir", sV );
+			}
+			else
+			{
+				printf("no build access.\n");
+			}
 		}
 	}
 

@@ -168,6 +168,17 @@ void Build::setAdd( const std::string &cont, const std::string &var, const std::
 	}
 }
 
+void Build::copyContext( const std::string &src, const std::string &dest )
+{
+	if( mContVars.find(src) == mContVars.end() )
+		return;
+
+	VarMap &d = mContVars[dest];
+	VarMap &s = mContVars[src];
+	for( VarMap::iterator i = s.begin(); i != s.end(); i++ )
+		d[(*i).first] = (*i).second;
+}
+
 std::string Build::getVar( const StringList *cont, const std::string &var, VarMap *mExtra )
 {
 	if( mExtra != NULL )

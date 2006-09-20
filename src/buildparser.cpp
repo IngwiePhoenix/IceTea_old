@@ -430,7 +430,7 @@ Build *BuildParser::genBuild()
 		 i != lTargetTmp.end(); i++ )
 	{
 		StringList lTargetNames = buildToStringList(
-			(*i).first, StringList()
+			(*i).first, StringList(), bld
 			);
 		for( StringList::iterator j = lTargetNames.begin();
 			 j != lTargetNames.end(); j++ )
