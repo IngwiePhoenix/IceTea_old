@@ -46,14 +46,14 @@ public:
 
 	void set( const std::string &cont, const std::string &var, const std::string &val );
 	void setAdd( const std::string &cont, const std::string &var, const std::string &val );
-	std::string getVar( const std::string &cont, const std::string &var, VarMap *mExtra );
+	std::string getVar( const StringList *cont, const std::string &var, VarMap *mExtra );
 
 	Rule *getRule( const std::string &name );
 
 	void debugDump();
 
 	void setStringProc( StringProc *pStrProc );
-	std::string replVars( const std::string &sSrc, const std::string &sCont, VarMap *mExtra );
+	std::string replVars( const std::string &sSrc, const StringList *pCont, VarMap *mExtra );
 	RuleList findChainRules( Rule *pHead );
 	StringList &getRequires( std::string sName );
 

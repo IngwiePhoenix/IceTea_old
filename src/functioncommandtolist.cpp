@@ -59,7 +59,7 @@ void FunctionCommandToList::execute( Build *bld, const StringList &lInput, Strin
 	//rView.endExtraRequiresCheck();
 }
 
-Function *FunctionCommandToList::duplicate( Build &bld, const std::string &cont, VarMap *mExtra )
+Function *FunctionCommandToList::duplicate( Build &bld, const StringList *cont, VarMap *mExtra )
 {
 	Function *pRet = new FunctionCommandToList();
 	pRet->copyData( this, bld, cont, mExtra );

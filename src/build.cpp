@@ -54,14 +54,14 @@ void Build::setStringProc( StringProc *pStrProc )
 	this->pStrProc = pStrProc;
 }
 
-std::string Build::replVars( const std::string &sSrc, const std::string &sCont, VarMap *mExtra )
+std::string Build::replVars( const std::string &sSrc, const StringList *pCont, VarMap *mExtra )
 {
 	if( pStrProc == NULL )
 		throw BuildException(
 			"No valid string processor was registered with the Build object."
 			);
 
-	return pStrProc->replVars( sSrc, sCont, mExtra );
+	return pStrProc->replVars( sSrc, pCont, mExtra );
 }
 
 void Build::execAction( const std::string &sWhat )
@@ -144,11 +144,13 @@ void Build::set( const std::string &cont, const std::string &var, const std::str
 {
 	if( cont == "" )
 	{
-		mVars[var] = replVars( val, cont, NULL );
+		mVars[var] = replVars( val, NULL, NULL );
 	}
 	else
 	{
-		mContVars[cont][var] = replVars( val, cont, NULL );
+		StringList cl;
+		cl.push_front( cont );
+		mContVars[cont][var] = replVars( val, &cl, NULL );
 	}
 }
 
@@ -156,15 +158,17 @@ void Build::setAdd( const std::string &cont, const std::string &var, const std::
 {
 	if( cont == "" )
 	{
-		mVars[var] = getVar( cont, var, NULL ) + " " + replVars( val, cont, NULL );
+		mVars[var] = getVar( NULL, var, NULL ) + " " + replVars( val, NULL, NULL );
 	}
 	else
 	{
-		mContVars[cont][var] = getVar( cont, var, NULL ) + " " + replVars( val, cont, NULL );
+		StringList cl;
+		cl.push_front( cont );
+		mContVars[cont][var] = getVar( &cl, var, NULL ) + " " + replVars( val, &cl, NULL );
 	}
 }
 
-std::string Build::getVar( const std::string &cont, const std::string &var, VarMap *mExtra )
+std::string Build::getVar( const StringList *cont, const std::string &var, VarMap *mExtra )
 {
 	if( mExtra != NULL )
 	{
@@ -175,7 +179,7 @@ std::string Build::getVar( const std::string &cont, const std::string &var, VarM
 		return (*mExtra)[var];
 	}
 	
-	if( cont == "" )
+	if( cont == NULL )
 	{
 		if( mVars.find(var) == mVars.end() )
 		{
@@ -192,11 +196,18 @@ std::string Build::getVar( const std::string &cont, const std::string &var, VarM
 	}
 	else
 	{
-		if( mContVars[cont].find(var) == mContVars[cont].end() )
+		if( cont->empty() )
 		{
-			mContVars[cont][var] = getVar( "", var, NULL );
+			return getVar( NULL, var, NULL );
 		}
-		return mContVars[cont][var];
+		std::string sTop = cont->front();
+		if( mContVars[sTop].find(var) == mContVars[sTop].end() )
+		{
+			((StringList *)cont)->pop_front();
+			mContVars[sTop][var] = getVar( cont, var, NULL );
+			((StringList *)cont)->push_front( sTop );
+		}
+		return mContVars[sTop][var];
 	}
 }
 

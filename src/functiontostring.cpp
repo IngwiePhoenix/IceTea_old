@@ -24,7 +24,7 @@ void FunctionToString::execute( Build *bld, const StringList &lInput, StringList
 	lOutput.push_back( sOut );
 }
 
-Function *FunctionToString::duplicate( Build &bld, const std::string &cont, VarMap *mExtra )
+Function *FunctionToString::duplicate( Build &bld, const StringList *cont, VarMap *mExtra )
 {
 	Function *pRet = new FunctionToString();
 	pRet->copyData( this, bld, cont, mExtra );

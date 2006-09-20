@@ -12,8 +12,8 @@ public:
 
 	void addParam( const char *str );
 	virtual void execute( Build *bld, const StringList &lInput, StringList &lOutput )=0;
-	virtual Function *duplicate( Build &bld, const std::string &cont, VarMap *mExtra ) = 0;
-	void copyData( Function *pSrc, Build &bld, const std::string &cont, VarMap *mExtra );
+	virtual Function *duplicate( Build &bld, const StringList *cont, VarMap *mExtra ) = 0;
+	void copyData( Function *pSrc, Build &bld, const StringList *cont, VarMap *mExtra );
 
 protected:
 	StringList lParams;

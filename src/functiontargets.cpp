@@ -26,7 +26,7 @@ void FunctionTargets::execute( Build *bld, const StringList &lInput, StringList 
 	}
 }
 
-Function *FunctionTargets::duplicate( Build &bld, const std::string &cont, VarMap *mExtra )
+Function *FunctionTargets::duplicate( Build &bld, const StringList *cont, VarMap *mExtra )
 {
 	Function *pRet = new FunctionTargets();
 	pRet->copyData( this, bld, cont, mExtra );

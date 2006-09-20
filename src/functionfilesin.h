@@ -12,7 +12,7 @@ public:
 	virtual ~FunctionFilesIn();
 	
 	virtual void execute( Build *bld, const StringList &lInput, StringList &lOutput );
-	virtual Function *duplicate( Build &bld, const std::string &cont, VarMap *mExtra );
+	virtual Function *duplicate( Build &bld, const StringList *cont, VarMap *mExtra );
 
 private:
 

@@ -70,7 +70,9 @@ StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf )
 		for( PerformList::iterator k = lPerform.begin();
 			 k != lPerform.end(); k++ )
 		{
-			Perform *p = (*k)->duplicate( bld, target, &mTmp );
+			StringList cont;
+			cont.push_front( target );
+			Perform *p = (*k)->duplicate( bld, &cont, &mTmp );
 			p->setTarget( target );
 			p->setRule( sName );
 			//p->setReqFuncs( &lReqFuncs );
@@ -86,7 +88,9 @@ StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf )
 			StringList::iterator j = lProduces.begin();
 			{
 				VarMap mTmp;
-				std::string target = bld.replVars( (*j), (*i), NULL );
+				StringList cont;
+				cont.push_front( (*i) );
+				std::string target = bld.replVars( (*j), &cont, NULL );
 				mTmp["target"] = target;
 				lNewOut.push_back( target );
 				mTmp["match"] = (*i);
@@ -99,14 +103,17 @@ StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf )
 				for( PerformList::iterator k = lPerform.begin();
 					 k != lPerform.end(); k++ )
 				{
-					Perform *p = (*k)->duplicate( bld, target, &mTmp );
+					StringList cont2;
+					cont2.push_front( (*i) );
+					cont2.push_front( target );
+					Perform *p = (*k)->duplicate( bld, &cont2, &mTmp );
 					p->setTarget( target );
 					p->setRule( sName );
 					for( FunctionList::iterator f = lReqFuncs.begin();
 						 f != lReqFuncs.end(); f++ )
 					{
 						p->getReqFuncs().push_back(
-							(*f)->duplicate( bld, target, &mTmp )
+							(*f)->duplicate( bld, &cont2, &mTmp )
 							);
 					}
 					lPerf.push_back( p );

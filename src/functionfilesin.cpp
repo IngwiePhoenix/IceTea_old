@@ -39,7 +39,7 @@ void FunctionFilesIn::execute( Build *bld, const StringList &lInput, StringList 
 	closedir( d );
 }
 
-Function *FunctionFilesIn::duplicate( Build &bld, const std::string &cont, VarMap *mExtra )
+Function *FunctionFilesIn::duplicate( Build &bld, const StringList *cont, VarMap *mExtra )
 {
 	Function *pRet = new FunctionFilesIn();
 	pRet->copyData( this, bld, cont, mExtra );

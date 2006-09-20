@@ -185,7 +185,9 @@ StringList BuildParser::buildToStringListDup( const BuildList &lSrc, const Strin
 	{
 		if( (*i).second )
 		{
-			Function *pTmp = (*i).second->duplicate( bld, sCont, mExtra );
+			StringList l;
+			l.push_back( sCont );
+			Function *pTmp = (*i).second->duplicate( bld, &l, mExtra );
 			pTmp->execute( pPass, lIn, lOut );
 			delete pTmp;
 		}

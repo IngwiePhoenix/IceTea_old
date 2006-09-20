@@ -11,7 +11,7 @@ public:
 	StringProcBuild( Build *pBld );
 	virtual ~StringProcBuild();
 
-	virtual std::string replVars( const std::string &sSrc, const std::string &sCont, VarMap *mExtra );
+	virtual std::string replVars( const std::string &sSrc, const StringList *pCont, VarMap *mExtra );
 
 private:
 

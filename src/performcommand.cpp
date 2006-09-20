@@ -13,7 +13,7 @@ PerformCommand::~PerformCommand()
 {
 }
 
-Perform *PerformCommand::duplicate( Build &bld, const std::string &cont, VarMap *mExtra )
+Perform *PerformCommand::duplicate( Build &bld, const StringList *cont, VarMap *mExtra )
 {
 	Perform *pRet = new PerformCommand();
 	pRet->copyData( this, bld, cont, mExtra );

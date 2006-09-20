@@ -14,7 +14,7 @@ void Perform::addParam( const char *sParam )
 	lParam.push_back( sParam );
 }
 
-void Perform::copyData( Perform *pSrc, Build &bld, const std::string &cont, VarMap *mExtra )
+void Perform::copyData( Perform *pSrc, Build &bld, const StringList *cont, VarMap *mExtra )
 {
 	lParam.clear();
 	for( std::list<std::string>::iterator i = pSrc->lParam.begin();

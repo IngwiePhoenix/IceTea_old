@@ -7,6 +7,7 @@
 #include <map>
 
 typedef std::map<std::string,std::string> VarMap;
+typedef std::list<std::string> StringList;
 
 class Build;
 
@@ -17,9 +18,9 @@ public:
 	virtual ~Perform();
 
 	void addParam( const char *sParam );
-	virtual Perform *duplicate( Build &bld, const std::string &cont, VarMap *mExtra ) = 0;
+	virtual Perform *duplicate( Build &bld, const StringList *cont, VarMap *mExtra ) = 0;
 	virtual void execute( Build &bld ) = 0;
-	void copyData( Perform *pSrc, Build &bld, const std::string &cont, VarMap *mExtra );
+	void copyData( Perform *pSrc, Build &bld, const StringList *cont, VarMap *mExtra );
 	std::string getTarget()
 	{
 		return sTarget;

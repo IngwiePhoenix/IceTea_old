@@ -11,7 +11,7 @@ public:
 	PerformCommand();
 	virtual ~PerformCommand();
 
-	virtual Perform *duplicate( Build &bld, const std::string &cont, VarMap *mExtra );
+	virtual Perform *duplicate( Build &bld, const StringList *cont, VarMap *mExtra );
 	virtual void execute( Build &bld );
 
 private:

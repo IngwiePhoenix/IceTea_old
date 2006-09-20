@@ -42,7 +42,7 @@ void FunctionRegexp::execute( Build *bld, const StringList &lInput, StringList &
 	}
 }
 
-Function *FunctionRegexp::duplicate( Build &bld, const std::string &cont, VarMap *mExtra )
+Function *FunctionRegexp::duplicate( Build &bld, const StringList *cont, VarMap *mExtra )
 {
 	Function *pRet = new FunctionRegexp();
 	pRet->copyData( this, bld, cont, mExtra );
