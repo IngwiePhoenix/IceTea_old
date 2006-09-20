@@ -19,7 +19,14 @@ public:
 	virtual void beginPerform( Perform *pPerform );
 	virtual void endPerform();
 
+	virtual void endAction();
+
+	void printHead();
+
 private:
+	bool bCmdClean;
+	bool bRunClean;
+	std::string sTarget;
 
 };
 
