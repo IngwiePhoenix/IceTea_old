@@ -6,6 +6,8 @@
 #include <string>
 #include <list>
 
+#include "action.h"
+
 typedef std::list<std::string> StringList;
 
 class Build;
@@ -16,6 +18,7 @@ public:
 	Target();
 	virtual ~Target();
 
+	void run( Action::eAction nAct, Build &bld );
 	virtual void check( Build &bld ) = 0;
 	virtual void clean( Build &bld ) = 0;
 
@@ -44,10 +47,17 @@ public:
 		return lInput;
 	}
 
+	bool wasRun()
+	{
+		return bRun;
+	}
+
+
 private:
 	std::string sName;
 	std::string sRule;
 	StringList lInput;
+	bool bRun;
 };
 
 #endif

@@ -86,16 +86,8 @@ void Build::execAction( const std::string &sWhat )
 				);
 		Target *pTarget = mTarget[pAct->getWhat()];
 		pView->beginCommand( pAct->getAct(), pAct->getWhat() );
-		switch( pAct->getAct() )
-		{
-			case Action::actCheck:
-				pTarget->check( *this );
-				break;
-
-			case Action::actClean:
-				pTarget->clean( *this );
-				break;
-		}
+		if( !pTarget->wasRun() )
+			pTarget->run( pAct->getAct(), *this );
 		pView->endCommand();
 	}
 
@@ -361,5 +353,14 @@ void Build::updateCache( const std::string &sID, FunctionList &lFunc, StringList
 	pEnt->tCreated = time( NULL );
 
 	bCacheUpdated = true;
+}
+
+void Build::chainTarget( const std::string &sName )
+{
+	TargetMap::iterator i = mTarget.find(sName);
+	if( i == mTarget.end() ) return;
+
+	if( !(*i).second->wasRun() )
+		(*i).second->run( Action::actCheck, *this );
 }
 

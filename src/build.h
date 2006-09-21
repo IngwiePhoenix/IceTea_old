@@ -74,6 +74,8 @@ public:
 	bool getCached( const std::string &sID, int nTime, StringList &lOut );
 	void updateCache( const std::string &sID, FunctionList &lFunc, StringList &lOut );
 
+	void chainTarget( const std::string &sName );
+
 private:
 	TargetMap mTarget;
 	ReqMap mRequires;

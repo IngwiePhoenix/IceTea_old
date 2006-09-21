@@ -32,6 +32,7 @@ void TargetFile::check( Build &bld )
 		bool bExtras = false;
 		for( StringList::iterator j = reqs.begin(); j != reqs.end(); j++ )
 		{
+			bld.chainTarget( *j );
 			if( getTime( bld, *j ) > tTarget )
 			{
 				bld.getView()->beginPerform( *i );
