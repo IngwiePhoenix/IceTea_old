@@ -38,3 +38,11 @@ std::string Action::getWhat()
 	return (*i).sWhat;
 }
 
+void Action::setMode( eAction nAct )
+{
+	for( CmdList::iterator j = lCmds.begin(); j != lCmds.end(); j++ )
+	{
+		(*j).act = nAct;
+	}
+}
+

@@ -85,10 +85,10 @@ void Build::execAction( const std::string &sWhat )
 				sWhat.c_str()
 				);
 		Target *pTarget = mTarget[pAct->getWhat()];
-		pView->beginCommand( pAct->getAct(), pAct->getWhat() );
+		//pView->beginCommand( pAct->getAct(), pAct->getWhat() );
 		if( !pTarget->wasRun() )
 			pTarget->run( pAct->getAct(), *this );
-		pView->endCommand();
+		//pView->endCommand();
 	}
 
 	pView->endAction();
@@ -362,5 +362,28 @@ void Build::chainTarget( const std::string &sName )
 
 	if( !(*i).second->wasRun() )
 		(*i).second->run( Action::actCheck, *this );
+}
+
+void Build::printInfo()
+{
+	printf("---- Build Info ----\n");
+	printf("Valid actions:  ");
+	for( ActionMap::iterator i = mAction.begin(); i != mAction.end(); i++ )
+	{
+		if( i != mAction.begin() ) printf(", ");
+		if( (*i).first == "" )
+			printf("*default*");
+		else
+			printf("%s", (*i).first.c_str() );
+	}
+	printf("\n\n");
+}
+
+void Build::setMode( Action::eAction nAct )
+{
+	for( ActionMap::iterator i = mAction.begin(); i != mAction.end(); i++ )
+	{
+		(*i).second->setMode( nAct );
+	}
 }
 

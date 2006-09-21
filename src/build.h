@@ -76,6 +76,10 @@ public:
 
 	void chainTarget( const std::string &sName );
 
+	void printInfo();
+
+	void setMode( Action::eAction nAct );
+
 private:
 	TargetMap mTarget;
 	ReqMap mRequires;

@@ -50,6 +50,8 @@ public:
 	{
 		return sName;
 	}
+	
+	void setMode( eAction nAct );
 
 private:
 	typedef std::list<Cmd> CmdList;
