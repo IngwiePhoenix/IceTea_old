@@ -23,6 +23,8 @@ public:
 	virtual void beginAction( const std::string &sName, int nCommands );
 	virtual void endAction();
 
+	void printPercent( const std::string &sCur );
+
 private:
 	int nTotalCommands;
 	int nCurCommand;
@@ -31,6 +33,7 @@ private:
 	std::string sTarget;
 	int nLastLen;
 	int nWidth;
+	int nTermWidth;
 };
 
 #endif

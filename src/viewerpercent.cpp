@@ -2,6 +2,10 @@
 #include "perform.h"
 #include "plugger.h"
 
+#include <sys/ioctl.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 PluginInterface2( percent, ViewerPercent, Viewer, "Mike Buland", 0, 1 );
 
 ViewerPercent::ViewerPercent() :
@@ -27,6 +31,12 @@ void ViewerPercent::beginCommand( Action::eAction nAct, const std::string &sTarg
 {
 	this->sTarget = sTarget;
 	nCurCommand++;
+
+	struct winsize scrn;
+
+	ioctl( fileno( stdout ), TIOCGWINSZ, &scrn );
+
+	nTermWidth = scrn.ws_col;
 }
 
 void ViewerPercent::endCommand()
@@ -43,27 +53,9 @@ void ViewerPercent::beginPerforms( int nCount )
 
 void ViewerPercent::endPerforms()
 {
-	int nLen = printf("\r[%d/%d] %s [", 
-		nCurCommand, nTotalCommands,
-		sTarget.c_str() );
-	for( int j = 0; j < nWidth; j++ )
-	{
-		fputc('#', stdout );
-	}
-	nLen += nWidth;
-	nLen += printf("] 100%%");
+	nCurPerform = nTotalPerforms;
 
-	if( nLastLen > nLen )
-	{
-		int jmax = nLastLen-nLen;
-		for( int j = 0; j < jmax; j++ )
-		{
-			fputc(' ', stdout );
-		}
-	}
-	nLastLen = 0;
-
-	fflush( stdout );
+	printPercent("");
 }
 
 void ViewerPercent::beginRequiresCheck( bool bCached, const std::string &sName )
@@ -77,33 +69,55 @@ void ViewerPercent::endRequiresCheck()
 void ViewerPercent::beginPerform( Perform *pPerform )
 {
 	nCurPerform++;
-	int nLen = printf("\r[%d/%d] %s [", 
+	printPercent( pPerform->getTarget() );
+}
+
+void ViewerPercent::printPercent( const std::string &sCur )
+{
+	char buf[2048];
+	char *bi = buf;
+	int nLen = sprintf( buf, "\r[%d/%d] %s [", 
 		nCurCommand, nTotalCommands,
 		sTarget.c_str() );
+	bi += nLen;
 	int jmax = nCurPerform*nWidth/nTotalPerforms;
 	for( int j = 0; j < jmax; j++ )
 	{
-		fputc('#', stdout );
+		*bi = '#';
+		bi++;
 	}
 	jmax = nWidth-jmax;
 	for( int j = 0; j < jmax; j++ )
 	{
-		fputc(' ', stdout );
+		*bi = ' ';
+		bi++;
 	}
 	nLen += nWidth;
-	nLen += printf("] %-2d%% %s",
+	nLen += sprintf( bi, "] %-2d%% %s",
 		nCurPerform*100/nTotalPerforms,
-		pPerform->getTarget().c_str() );
-
-	if( nLastLen > nLen )
+		sCur.c_str() );
+	bi = buf + nLen;
+	if( (int)(bi - buf) >= nTermWidth )
 	{
-		jmax = nLastLen-nLen;
-		for( int j = 0; j < jmax; j++ )
-		{
-			fputc(' ', stdout );
-		}
+		nLastLen = nLen = nTermWidth;
+		strcpy( buf+nTermWidth-3, "...");
 	}
-	nLastLen = nLen;
+	else
+	{
+		if( nLastLen > nLen )
+		{
+			jmax = nLastLen-nLen;
+			for( int j = 0; j < jmax; j++ )
+			{
+				*bi = ' ';
+				bi++;
+			}
+		}
+		nLastLen = nLen;
+		*bi = '\0';
+	}
+
+	fputs( buf, stdout );
 
 	fflush( stdout );
 }
