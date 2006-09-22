@@ -19,7 +19,7 @@ public:
 	class Entry
 	{
 	public:
-		int tCreated;
+		uint32_t tCreated;
 		std::list<std::string> lData;
 	};
 

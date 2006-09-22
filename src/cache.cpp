@@ -19,24 +19,24 @@ void Cache::serialize( class Serializer &ar )
 {
 	if( ar.isLoading() )
 	{
-		int sCache, sData, sIndex;
+		uint32_t sCache, sData, sIndex;
 
 		ar >> sIndex;
 		StaticString *Index = new StaticString[sIndex];
-		for( int i = 0; i < sIndex; i++ )
+		for( uint32_t i = 0; i < sIndex; i++ )
 		{
 			ar >> Index[i];
 		}
 
 		ar >> sCache;
-		int nTmp;
-		for( int i = 0; i < sCache; i++ )
+		uint32_t nTmp;
+		for( uint32_t i = 0; i < sCache; i++ )
 		{
 			Entry *e = new Entry;
 			ar >> e->tCreated;
 			ar >> sData;
 			std::list<std::string> &lData = e->lData;
-			for( int j = 0; j < sData; j++ )
+			for( uint32_t j = 0; j < sData; j++ )
 			{
 				ar >> nTmp;
 				lData.push_back( Index[nTmp].getString() );
@@ -45,17 +45,17 @@ void Cache::serialize( class Serializer &ar )
 			mCache[Index[nTmp].getString()] = e;
 		}
 		/*
-		int sCache, sData;
+		uint32_t sCache, sData;
 		ar >> sCache;
 		std::string sTmp;
 
-		for( int i = 0; i < sCache; i++ )
+		for( uint32_t i = 0; i < sCache; i++ )
 		{
 			Entry *e = new Entry;
 			ar >> e->tCreated;
 			ar >> sData;
 			std::list<std::string> &lData = e->lData;
-			for( int j = 0; j < sData; j++ )
+			for( uint32_t j = 0; j < sData; j++ )
 			{
 				ar >> sTmp;
 				lData.push_back( sTmp );
@@ -67,7 +67,7 @@ void Cache::serialize( class Serializer &ar )
 	}
 	else
 	{
-		std::map<std::string, int> mIndex;
+		std::map<std::string, uint32_t> mIndex;
 		for( std::map<std::string, Entry *>::iterator i = mCache.begin();
 			 i != mCache.end(); i++ )
 		{
@@ -81,8 +81,8 @@ void Cache::serialize( class Serializer &ar )
 		}
 
 		ar << mIndex.size();
-		int cnt = 0;
-		for( std::map<std::string, int>::iterator i = mIndex.begin();
+		uint32_t cnt = 0;
+		for( std::map<std::string, uint32_t>::iterator i = mIndex.begin();
 			 i != mIndex.end(); i++ )
 		{
 			(*i).second = cnt;
