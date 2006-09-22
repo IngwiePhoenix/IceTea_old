@@ -86,7 +86,7 @@ int main( int argc, char *argv[] )
 	prm.process( argc, argv );
 
 	BuildParser bld;
-	Build *pBuild;
+	Build *pBuild = NULL;
 
 	try
 	{
