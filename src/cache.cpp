@@ -97,7 +97,7 @@ void Cache::serialize( class Serializer &ar )
 		{
 			ar << (*i).second->tCreated;
 			std::list<std::string> &lData = (*i).second->lData;
-			ar << lData.size();
+			ar << (uint32_t)lData.size();
 			for( std::list<std::string>::iterator j = lData.begin();
 				 j != lData.end(); j++ )
 			{
