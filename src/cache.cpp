@@ -80,7 +80,7 @@ void Cache::serialize( class Serializer &ar )
 			}
 		}
 
-		ar << mIndex.size();
+		ar << (uint32_t)mIndex.size();
 		uint32_t cnt = 0;
 		for( std::map<std::string, uint32_t>::iterator i = mIndex.begin();
 			 i != mIndex.end(); i++ )
@@ -91,7 +91,7 @@ void Cache::serialize( class Serializer &ar )
 			ar << s;
 		}
 
-		ar << mCache.size();
+		ar << (uint32_t)mCache.size();
 		for( std::map<std::string, Entry *>::iterator i = mCache.begin();
 			 i != mCache.end(); i++ )
 		{
