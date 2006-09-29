@@ -17,13 +17,16 @@ public:
 		bPostDebug( false ),
 		sView("plain"),
 		bInfo( false ),
-		bCleanMode( false )
+		bCleanMode( false ),
+		sDir("")
 	{
 		addHelpBanner("Build r?\n\n");
 		addParam("file", 'f', &sFile, 
 				"Set the input script, default: build.conf");
 		addParam("info", 'i', &bInfo,
 				"Display useful info about the loaded config file.", NULL, "true" );
+		addParam("chdir", 'C', &sDir,
+				"Change to the specified dir before doing anything else." );
 		addParam("clean", 'c', &bCleanMode,
 				"Clean instead of checking the given action.", NULL, "true" );
 		addParam('p', mkproc(Param::procViewPercent),
@@ -70,6 +73,7 @@ public:
 	std::string sCache;
 	std::string sFile;
 	std::string sView;
+	std::string sDir;
 	StaticString sAction;
 	//Viewer *pViewer;
 	bool bDebug;
@@ -88,8 +92,17 @@ int main( int argc, char *argv[] )
 	BuildParser bld;
 	Build *pBuild = NULL;
 
+	char *olddir = NULL;
+
 	try
 	{
+		if( prm.sDir != "" )
+		{
+			olddir = new char[4096];
+			getcwd( olddir, 4096 );
+			chdir( prm.sDir.c_str() );
+		}
+
 		pBuild = bld.load( prm.sFile.c_str() );
 		pBuild->setCache( prm.sCache );
 		pBuild->setView( prm.sView );
@@ -100,6 +113,7 @@ int main( int argc, char *argv[] )
 		{
 			pBuild->printInfo();
 			delete pBuild;
+			if( olddir ) { chdir( olddir ); delete[] olddir; }
 			return 0;
 		}
 		if( prm.bDebug )
@@ -130,10 +144,12 @@ int main( int argc, char *argv[] )
 			pBuild->debugDump();
 		}
 		delete pBuild;
+		if( olddir ) { chdir( olddir ); delete[] olddir; }
 		return 1;
 	}
 
 	delete pBuild;
+	if( olddir ) { chdir( olddir ); delete[] olddir; }
 
 	return 0;
 }
