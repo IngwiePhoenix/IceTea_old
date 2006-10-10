@@ -448,7 +448,7 @@ Build *BuildParser::genBuild()
 
 				StringList lInputs = buildToStringListDup(
 					(*i).second.lInput, StringList(),
-					*bld, *j, &mExtra
+					*bld, *j, &mExtra /*, bld <-- should this be here? */
 					);
 				pTarget->getInput().insert(
 					pTarget->getInput().end(),
