@@ -193,7 +193,9 @@ StringList BuildParser::buildToStringListDup( const BuildList &lSrc, const Strin
 		}
 		else
 		{
-			lOut.push_back( (*i).first );
+			StringList l;
+			l.push_back( sCont );
+			lOut.push_back( bld.replVars( (*i).first, &l, mExtra ) );
 		}
 	}
 
