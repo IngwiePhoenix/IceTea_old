@@ -27,12 +27,21 @@ void TargetFile::check( Build &bld )
 
 	for( PerformList::iterator i = lPerf.begin(); i != lPerf.end(); i++ )
 	{
+		StringList &reqs = bld.getRequires( (*i)->getTarget() );
+		for( StringList::iterator j = reqs.begin(); j != reqs.end(); j++ )
+		{
+			bld.chainTarget( *j );
+		}
+	}
+
+	for( PerformList::iterator i = lPerf.begin(); i != lPerf.end(); i++ )
+	{
 		time_t tTarget = getTime( bld, (*i)->getTarget() );
 		StringList &reqs = bld.getRequires( (*i)->getTarget() );
 		bool bExtras = false;
 		for( StringList::iterator j = reqs.begin(); j != reqs.end(); j++ )
 		{
-			bld.chainTarget( *j );
+			//bld.chainTarget( *j );
 			if( getTime( bld, *j ) > tTarget )
 			{
 				bld.getView()->beginPerform( *i );
