@@ -15,7 +15,7 @@ public:
 		sCache(".build.cache"),
 		bDebug( false ),
 		bPostDebug( false ),
-		sView("plain"),
+		sView("plainpct"),
 		bInfo( false ),
 		bCleanMode( false ),
 		sDir("")
@@ -31,6 +31,8 @@ public:
 				"Clean instead of checking the given action.", NULL, "true" );
 		addParam('p', mkproc(Param::procViewPercent),
 				"Switch to percent view.");
+		addParam('P', mkproc(Param::procViewPlain),
+				"Switch to plain view.");
 		addParam('m', mkproc(Param::procViewMake),
 				"Switch to 'make' style view.");
 		addParam("cache", &sCache,
@@ -63,6 +65,11 @@ public:
 	int procViewPercent( int argc, char *argv[] )
 	{
 		sView = "percent";
+	}
+	
+	int procViewPlain( int argc, char *argv[] )
+	{
+		sView = "plain";
 	}
 
 	int procViewMake( int argc, char *argv[] )
