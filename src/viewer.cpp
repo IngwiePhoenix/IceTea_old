@@ -40,11 +40,19 @@ void Viewer::endRequiresCheck()
 {
 }
 
+void Viewer::skipRequiresCheck( bool bCached, const std::string &sName )
+{
+}
+
 void Viewer::beginPerform( Perform *pPerform )
 {
 }
 
 void Viewer::endPerform()
+{
+}
+
+void Viewer::skipPerform( Perform *pPerform )
 {
 }
 

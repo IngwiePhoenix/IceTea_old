@@ -20,6 +20,9 @@ public:
 	virtual void endPerform();
 	virtual void beginPerforms( int nCount );
 
+	virtual void skipRequiresCheck( bool bCached, const std::string &sName );
+	virtual void skipPerform( Perform *pPerform );
+
 	virtual void beginAction( const std::string &sName, int nCommands );
 
 	virtual void endAction();
@@ -28,7 +31,7 @@ public:
 	void indent();
 
 private:
-	bool bDidReq;
+	//bool bDidReq;
 	int iTP, iCP, iTC, iCC;
 	
 	bool bRunClean;

@@ -38,16 +38,19 @@ void TargetFile::check( Build &bld )
 	{
 		time_t tTarget = getTime( bld, (*i)->getTarget() );
 		StringList &reqs = bld.getRequires( (*i)->getTarget() );
-		bool bExtras = false;
+		bool bExtras = false, bBuilt = false, bUpdate = false;
 		for( StringList::iterator j = reqs.begin(); j != reqs.end(); j++ )
 		{
 			//bld.chainTarget( *j );
 			if( getTime( bld, *j ) > tTarget )
 			{
+				if( bUpdate == false )
+					bld.getView()->skipRequiresCheck( false, (*i)->getTarget() ) ;
 				bld.getView()->beginPerform( *i );
 				(*i)->execute( bld );
 				bld.getView()->endPerform();
 				updateTime( (*i)->getTarget() );
+				bBuilt = true;
 				break;
 			}
 			if( bExtras == false )
@@ -59,10 +62,19 @@ void TargetFile::check( Build &bld )
 					if( !bld.getCached( (*i)->getTarget(), tTarget, reqs ) )
 					{
 						bld.updateCache( (*i)->getTarget(), (*i)->getReqFuncs(), reqs );
+						bUpdate = true;
 					}
 					bExtras = true;
 				}
 			}
+		}
+		if( bBuilt == false )
+		{
+			if( bUpdate == false )
+			{
+				bld.getView()->skipRequiresCheck( false, (*i)->getTarget() );
+			}
+			bld.getView()->skipPerform( *i );
 		}
 	}
 	

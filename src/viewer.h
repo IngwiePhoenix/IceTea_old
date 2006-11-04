@@ -23,8 +23,10 @@ public:
 
 	virtual void beginRequiresCheck( bool bCached, const std::string &sName );
 	virtual void endRequiresCheck();
+	virtual void skipRequiresCheck( bool bCached, const std::string &sName );
 	virtual void beginPerform( Perform *pPerform );
 	virtual void endPerform();
+	virtual void skipPerform( Perform *pPerform );
 	virtual void beginExecute();
 	virtual void endExecute();
 	virtual void executeCmd( const std::string &sCmd );

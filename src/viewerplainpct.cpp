@@ -67,7 +67,15 @@ void ViewerPlainPct::beginRequiresCheck( bool bCached, const std::string &sName 
 void ViewerPlainPct::endRequiresCheck()
 {
 	iCP++;
-	bDidReq = true;
+	//bDidReq = true;
+}
+
+void ViewerPlainPct::skipRequiresCheck( bool bCached, const std::string &sName )
+{
+	iCP++;
+/*	printHead();
+	indent();
+	printf("[%3d%%] !     deps: %s\n", (int)round(((double)iCP/(double)iTP)*100.0), sName.c_str() );*/
 }
 
 void ViewerPlainPct::beginPerform( Perform *pPerform )
@@ -79,16 +87,24 @@ void ViewerPlainPct::beginPerform( Perform *pPerform )
 
 void ViewerPlainPct::endPerform()
 {
-	if(!bDidReq)
+	//if(!bDidReq)
 		iCP++;
-	bDidReq = false;
+	//bDidReq = false;
+}
+
+void ViewerPlainPct::skipPerform( Perform *pPerform )
+{
+	iCP++;
+/*	printHead();
+	indent();
+	printf("[%3d%%] ! %8s: %s\n", (int)round(((double)iCP/(double)iTP)*100.0), pPerform->getRule().c_str(), pPerform->getTarget().c_str() );*/
 }
 
 void ViewerPlainPct::beginPerforms( int nCount )
 {
-	iTP = nCount;
+	iTP = nCount*2;
 	iCP = 1;
-	bDidReq = false;
+	//bDidReq = false;
 }
 
 void ViewerPlainPct::beginAction( const std::string &sName, int nCommands )
