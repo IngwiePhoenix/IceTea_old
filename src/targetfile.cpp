@@ -86,7 +86,7 @@ void TargetFile::clean( Build &bld )
 	Rule *pRule = bld.getRule( getRule() );
 	PerformList lPerf;
 	pRule->setTarget( getName() );
-	StringList lFinal = pRule->execute( bld, getInput(), lPerf );
+	StringList lFinal = pRule->execute( bld, getInput(), lPerf, false );
 	
 	bld.getView()->beginPerforms( lPerf.size() );
 
@@ -99,7 +99,6 @@ void TargetFile::clean( Build &bld )
 			unlink( (*i)->getTarget().c_str() );
 			bld.getView()->endPerform();
 		}
-
 	}
 	
 	bld.getView()->endPerforms();

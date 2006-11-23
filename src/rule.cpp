@@ -12,7 +12,7 @@ Rule::~Rule()
 {
 }
 
-StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf )
+StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf, bool bFirstOnly )
 {
 	StringList lOutput;
 
@@ -21,7 +21,7 @@ StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf )
 	for( RuleList::iterator i = rl.begin(); i != rl.end(); i++ )
 	{
 		(*i)->setTarget( sTarget );
-		StringList tmp = (*i)->execute( bld, lInput, lPerf );
+		StringList tmp = (*i)->execute( bld, lInput, lPerf, bFirstOnly );
 		lOutput.insert( lOutput.end(), tmp.begin(), tmp.end() );
 	}
 
@@ -84,9 +84,9 @@ StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf )
 	{
 		for( StringList::iterator i = lMine.begin(); i != lMine.end(); i++ )
 		{
-			//for( StringList::iterator j = lProduces.begin();
-			//	 j != lProduces.end(); j++ )
-			StringList::iterator j = lProduces.begin();
+			for( StringList::iterator j = lProduces.begin();
+				 j != lProduces.end(); j++ )
+			//StringList::iterator j = lProduces.begin();
 			{
 				VarMap mTmp;
 				StringList cont;
@@ -121,6 +121,8 @@ StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf )
 					}
 					lPerf.push_back( p );
 				}
+				if( bFirstOnly )
+					break;
 			}
 		}
 	}

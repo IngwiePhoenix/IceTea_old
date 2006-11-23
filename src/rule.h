@@ -19,7 +19,7 @@ public:
 	Rule();
 	virtual ~Rule();
 
-	StringList execute( Build &bld, StringList &lInput, PerformList &lPerf );
+	StringList execute( Build &bld, StringList &lInput, PerformList &lPerf, bool bFirstOnly=true );
 
 	void setTarget( const std::string &sTarget )
 	{
