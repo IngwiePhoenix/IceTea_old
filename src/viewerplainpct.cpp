@@ -33,7 +33,8 @@ void ViewerPlainPct::endCommand()
 	if( sCmd.front().bCmdClean == false )
 		printf("\n");
 	sCmd.pop_front();
-	iCC++;
+	if(sCmd.empty())
+		iCC++;
 }
 
 void ViewerPlainPct::indent()
@@ -53,58 +54,62 @@ void ViewerPlainPct::printHead()
 		bRunClean = false;
 		sCmd.front().bCmdClean = false;
 		indent();
-		printf("--- [%d/%d] %s ---\n", iCC, iTC, sCmd.front().sTarget.c_str() );
+		if(sCmd.size() > 1)
+			printf("--- %s ---\n", sCmd.front().sTarget.c_str() );
+		else
+			printf("--- [%d/%d] %s ---\n", iCC, iTC, sCmd.front().sTarget.c_str() );
 	}
+}
+
+void ViewerPlainPct::printPerform(const char *sRule, const char *sTarget)
+{
+	int iPct = (int)round(
+			((double)sCmd.front().iCP/(double)sCmd.front().iTP)*100.0
+			);
+	if(sCmd.size() > 1)
+		printf( "[%3d%%] %8s: %s\n", iPct, sRule, sTarget );
+	else
+		printf( "[%3d%%] %8s: %s\n", iPct, sRule, sTarget );
 }
 
 void ViewerPlainPct::beginRequiresCheck( bool bCached, const std::string &sName )
 {
 	printHead();
 	indent();
-	printf("[%3d%%]     deps: %s\n", (int)round(((double)iCP/(double)iTP)*100.0), sName.c_str() );
+	printPerform("deps", sName.c_str());
 }
 
 void ViewerPlainPct::endRequiresCheck()
 {
-	iCP++;
-	//bDidReq = true;
+	sCmd.front().iCP++;
 }
 
 void ViewerPlainPct::skipRequiresCheck( bool bCached, const std::string &sName )
 {
-	iCP++;
-/*	printHead();
-	indent();
-	printf("[%3d%%] !     deps: %s\n", (int)round(((double)iCP/(double)iTP)*100.0), sName.c_str() );*/
+	sCmd.front().iCP++;
 }
 
 void ViewerPlainPct::beginPerform( Perform *pPerform )
 {
 	printHead();
 	indent();
-	printf("[%3d%%] %8s: %s\n", (int)round(((double)iCP/(double)iTP)*100.0), pPerform->getRule().c_str(), pPerform->getTarget().c_str() );
+	printPerform(pPerform->getRule().c_str(), pPerform->getTarget().c_str());
 }
 
 void ViewerPlainPct::endPerform()
 {
-	//if(!bDidReq)
-		iCP++;
-	//bDidReq = false;
+	sCmd.front().iCP++;
 }
 
 void ViewerPlainPct::skipPerform( Perform *pPerform )
 {
-	iCP++;
-/*	printHead();
-	indent();
-	printf("[%3d%%] ! %8s: %s\n", (int)round(((double)iCP/(double)iTP)*100.0), pPerform->getRule().c_str(), pPerform->getTarget().c_str() );*/
+	sCmd.front().iCP++;
 }
 
 void ViewerPlainPct::beginPerforms( int nCount )
 {
-	iTP = nCount*2;
-	iCP = 1;
-	//bDidReq = false;
+	sCmd.front().iTP = nCount*2;
+	sCmd.front().iCP = 1;
 }
 
 void ViewerPlainPct::beginAction( const std::string &sName, int nCommands )

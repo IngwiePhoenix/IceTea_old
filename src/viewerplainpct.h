@@ -1,5 +1,5 @@
-#ifndef VIEWER_PLAIN_H
-#define VIEWER_PLAIN_H
+#ifndef VIEWER_PLAIN_PCT_H
+#define VIEWER_PLAIN_PCT_H
 
 #include <stdint.h>
 #include <list>
@@ -27,12 +27,12 @@ public:
 
 	virtual void endAction();
 
+	void printPerform(const char *sRule, const char *sTarget);
 	void printHead();
 	void indent();
 
 private:
-	//bool bDidReq;
-	int iTP, iCP, iTC, iCC;
+	int iTC, iCC;
 	
 	bool bRunClean;
 	typedef struct
@@ -40,6 +40,7 @@ private:
 		int nLevel;
 		bool bCmdClean;
 		std::string sTarget;
+		int iTP, iCP;
 	} Cmd;
 	typedef std::list<Cmd> CmdStack;
 	CmdStack sCmd;

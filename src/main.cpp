@@ -33,6 +33,8 @@ public:
 				"Switch to percent view.");
 		addParam('P', mkproc(Param::procViewPlain),
 				"Switch to plain view.");
+		addParam("color", mkproc(Param::procColorPercent),
+				"Switch to colored percent view.");
 		addParam('m', mkproc(Param::procViewMake),
 				"Switch to 'make' style view.");
 		addParam("cache", &sCache,
@@ -75,6 +77,11 @@ public:
 	int procViewMake( int argc, char *argv[] )
 	{
 		sView = "make";
+	}
+
+	int procColorPercent( int argc, char *argv[] )
+	{
+		sView = "colorpct";
 	}
 
 	std::string sCache;

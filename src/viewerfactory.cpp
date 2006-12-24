@@ -4,6 +4,7 @@ extern struct PluginInfo plain;
 extern struct PluginInfo percent;
 extern struct PluginInfo make;
 extern struct PluginInfo plainpct;
+extern struct PluginInfo colorpct;
 
 ViewerFactory::ViewerFactory()
 {
@@ -11,6 +12,7 @@ ViewerFactory::ViewerFactory()
 	registerBuiltinPlugin( &percent );
 	registerBuiltinPlugin( &make );
 	registerBuiltinPlugin( &plainpct );
+	registerBuiltinPlugin( &colorpct );
 }
 
 ViewerFactory::~ViewerFactory()
