@@ -55,9 +55,9 @@ void ViewerColorPct::printHead()
 		sCmd.front().bCmdClean = false;
 		indent();
 		if(sCmd.size() > 1)
-			printf("\033[37;22m--- \033[34m%s\033[37m ---\033[0m\n", sCmd.front().sTarget.c_str() );
+			printf("\033[37;22m--- \033[36m%s\033[37m ---\033[0m\n", sCmd.front().sTarget.c_str() );
 		else
-			printf("\033[37;1m--- [\033[32m%d/%d\033[37m] \033[34m%s\033[37m ---\033[0m\n", iCC, iTC, sCmd.front().sTarget.c_str() );
+			printf("\033[37;1m--- [\033[32m%d/%d\033[37m] \033[36m%s\033[37m ---\033[0m\n", iCC, iTC, sCmd.front().sTarget.c_str() );
 	}
 }
 
