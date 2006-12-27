@@ -55,9 +55,9 @@ void ViewerColorPct::printHead()
 		sCmd.front().bCmdClean = false;
 		indent();
 		if(sCmd.size() > 1)
-			printf("\033[37;22m--- \033[34m%s\033[37m ---\n\033[0m", sCmd.front().sTarget.c_str() );
+			printf("\033[37;22m--- \033[34m%s\033[37m ---\033[0m\n", sCmd.front().sTarget.c_str() );
 		else
-			printf("\033[37;1m--- [\033[32m%d/%d\033[37m] \033[34m%s\033[37m ---\n\033[0m", iCC, iTC, sCmd.front().sTarget.c_str() );
+			printf("\033[37;1m--- [\033[32m%d/%d\033[37m] \033[34m%s\033[37m ---\033[0m\n", iCC, iTC, sCmd.front().sTarget.c_str() );
 	}
 }
 
@@ -67,9 +67,9 @@ void ViewerColorPct::printPerform(const char *sRule, const char *sTarget)
 			((double)sCmd.front().iCP/(double)sCmd.front().iTP)*100.0
 			);
 	if(sCmd.size() > 1)
-		printf( "\033[37;22m[\033[32m%3d%%\033[37m] \033[35m%8s\033[37m: %s\n\033[0m", iPct, sRule, sTarget );
+		printf( "\033[37;22m[\033[32m%3d%%\033[37m] \033[35m%8s\033[37m: %s\033[0m\n", iPct, sRule, sTarget );
 	else
-		printf( "\033[37;1m[\033[32m%3d%%\033[37m] \033[35m%8s\033[37m: %s\n\033[0m", iPct, sRule, sTarget );
+		printf( "\033[37;1m[\033[32m%3d%%\033[37m] \033[35m%8s\033[37m: %s\033[0m\n", iPct, sRule, sTarget );
 }
 
 void ViewerColorPct::beginRequiresCheck( bool bCached, const std::string &sName )
