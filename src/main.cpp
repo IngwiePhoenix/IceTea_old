@@ -15,7 +15,7 @@ public:
 		sCache(".build.cache"),
 		bDebug( false ),
 		bPostDebug( false ),
-		sView("plainpct"),
+		sView("colorpct"),
 		bInfo( false ),
 		bCleanMode( false ),
 		sDir("")
