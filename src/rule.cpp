@@ -3,6 +3,8 @@
 #include "function.h"
 #include "perform.h"
 
+#include <set>
+
 Rule::Rule() :
 	pAggregate( NULL )
 {
@@ -44,6 +46,23 @@ StringList Rule::execute( Build &bld, StringList &lInput, PerformList &lPerf, bo
 	{
 		bHasProduces = false;
 		lProduces.push_back( sTarget );
+	}
+
+	{
+		std::set<std::string> sUsed;
+		for( StringList::iterator i = lInput.begin(); i != lInput.end(); i++ )
+		{
+isuck:		if( i == lInput.end() ) break;
+			if( sUsed.find( *i ) != sUsed.end() )
+			{
+				StringList::iterator j = i;
+				j++;
+				lInput.erase( i );
+				i = j;
+				goto isuck;
+			}
+			sUsed.insert( *i );
+		}
 	}
 
 	StringList lNewOut;

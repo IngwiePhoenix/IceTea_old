@@ -6,6 +6,8 @@
 #include "function.h"
 #include "viewer.h"
 
+#include <set>
+
 PluginInterface2(file, TargetFile, Target, "Mike Buland", 0, 1 );
 
 TargetFile::TargetFile()
@@ -22,6 +24,24 @@ void TargetFile::check( Build &bld )
 	PerformList lPerf;
 	pRule->setTarget( getName() );
 	StringList lFinal = pRule->execute( bld, getInput(), lPerf );
+
+	{
+		std::set<std::string> sUsed;
+		for( PerformList::iterator i = lPerf.begin(); i != lPerf.end(); i++ )
+		{
+isuck:		if( i == lPerf.end() ) break;
+			if( sUsed.find( (*i)->getTarget() ) != sUsed.end() )
+			{
+				PerformList::iterator j = i;
+				j++;
+				delete *i;
+				lPerf.erase( i );
+				i = j;
+				goto isuck;
+			}
+			sUsed.insert( (*i)->getTarget() );
+		}
+	}
 
 	bld.getView()->beginPerforms( lPerf.size() );
 
