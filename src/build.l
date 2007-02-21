@@ -9,6 +9,7 @@ std::string strbuf;
 
 %x strsq
 %x strdq
+%x cmdstr
 %x comment
 %option noyywrap nounput batch debug
 
@@ -78,6 +79,10 @@ std::string strbuf;
 	BEGIN( strsq );
 	strbuf = "";
 }
+\`									{
+	BEGIN( cmdstr );
+	strbuf = "";
+}
 
 <strdq>[^\\\n\"]+					{
 	strbuf += yytext;
@@ -87,15 +92,20 @@ std::string strbuf;
 	strbuf += yytext;
 }
 
-<strdq,strsq>\\n					strbuf += "\n";
-<strdq,strsq>\\t					strbuf += "\t";
-<strdq,strsq>\\r					strbuf += "\r";
-<strdq,strsq>\\b					strbuf += "\b";
-<strdq,strsq>\\f					strbuf += "\f";
-<strdq,strsq>\\\\					strbuf += "\\";
-<strdq,strsq>\\\"					strbuf += "\"";
-<strdq,strsq>\\\'					strbuf += "\'";
-<strdq,strsq>\\.					bld.error( yylloc, "Invalid escape sequence.");
+<cmdstr>[^\\\n\`]+					{
+	strbuf += yytext;
+}
+
+<strdq,strsq,cmdstr>\\n				strbuf += "\n";
+<strdq,strsq,cmdstr>\\t				strbuf += "\t";
+<strdq,strsq,cmdstr>\\r				strbuf += "\r";
+<strdq,strsq,cmdstr>\\b				strbuf += "\b";
+<strdq,strsq,cmdstr>\\f				strbuf += "\f";
+<strdq,strsq,cmdstr>\\\\			strbuf += "\\";
+<strdq,strsq,cmdstr>\\\"			strbuf += "\"";
+<strdq,strsq,cmdstr>\\\'			strbuf += "\'";
+<strdq,strsq,cmdstr>\\\`			strbuf += "`";
+<strdq,strsq,cmdstr>\\.			bld.error( yylloc, "Invalid escape sequence.");
 
 <strdq>\"							{
 	BEGIN( INITIAL );
@@ -106,6 +116,28 @@ std::string strbuf;
 <strsq>\'							{
 	BEGIN( INITIAL );
 	yylval->strval = stringdup( strbuf.c_str() );
+	return STRING;
+}
+
+<cmdstr>\`							{
+	BEGIN( INITIAL );
+	FILE *fpg = popen( strbuf.c_str(), "r" );
+	strbuf = "";
+	for(;;)
+	{
+		char buf[1024];
+		int nRead = fread( buf, 1, 1024, fpg );
+		if( nRead == 0 ) break;
+		for( int j = 0; j < nRead; j++ )
+		{
+			if( buf[j] == '\n' || buf[j] == '\r' )
+				buf[j] = ' ';
+		}
+		strbuf.append( buf, nRead );
+		if( nRead < 1024 ) break;
+	}
+	yylval->strval = stringdup( strbuf.c_str() );
+	pclose( fpg );
 	return STRING;
 }
 
