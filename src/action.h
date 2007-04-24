@@ -20,14 +20,15 @@ public:
 
 	typedef struct Cmd
 	{
-		Cmd( eAction act, const std::string &sWhat ) :
-			act( act ), sWhat( sWhat )
+		Cmd( eAction act, const std::string &sWhat, bool bIsGroup ) :
+			act( act ), sWhat( sWhat ), bIsGroup( bIsGroup )
 		{}
 		eAction act;
 		std::string sWhat;
+		bool bIsGroup;
 	} Cmd;
 
-	void addCommand( eAction act, const std::string &sWhat );
+	void addCommand( eAction act, const std::string &sWhat, bool bIsGroup );
 
 	void begin();
 	bool isEnded();
@@ -40,6 +41,7 @@ public:
 
 	eAction getAct();
 	std::string getWhat();
+	bool isGroup();
 
 	void setName( const std::string &sName )
 	{

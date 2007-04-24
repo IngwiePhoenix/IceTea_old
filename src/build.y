@@ -125,7 +125,13 @@ actioncmd: TOK_CHECK list
 			 bld.addCommand( Action::actClean );
 		 }
 		 | TOK_CHECK TOK_GROUP STRING
+		 {
+			 bld.addGrpCommand( $3, Action::actCheck );
+		 }
 		 | TOK_CLEAN TOK_GROUP STRING
+		 {
+			 bld.addGrpCommand( $3, Action::actClean );
+		 }
 		 ;
 
 // Target interpretation

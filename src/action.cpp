@@ -8,9 +8,9 @@ Action::~Action()
 {
 }
 
-void Action::addCommand( eAction act, const std::string &sWhat )
+void Action::addCommand( eAction act, const std::string &sWhat, bool bIsGroup )
 {
-	lCmds.push_back( Cmd( act, sWhat ) );
+	lCmds.push_back( Cmd( act, sWhat, bIsGroup ) );
 }
 
 void Action::begin()
@@ -36,6 +36,11 @@ Action::eAction Action::getAct()
 std::string Action::getWhat()
 {
 	return (*i).sWhat;
+}
+
+bool Action::isGroup()
+{
+	return (*i).bIsGroup;
 }
 
 void Action::setMode( eAction nAct )

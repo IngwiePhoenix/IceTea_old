@@ -283,7 +283,7 @@ void BuildParser::addPerformParam( const char *sParam )
 //
 void BuildParser::addAction()
 {
-	lActions.push_back( ActionTmp("", ActionTmpCmdList()) );
+	lActions.push_back( ActionTmp("", ActionTmpCmdList() ) );
 }
 
 void BuildParser::addAction( const char *sName )
@@ -294,6 +294,11 @@ void BuildParser::addAction( const char *sName )
 void BuildParser::addCommand( int nType )
 {
 	lActions.back().second.push_back( ActionTmpCmd( nType, lTmp ) );
+}
+
+void BuildParser::addGrpCommand( const char *sGroup, int nType )
+{
+	lActions.back().second.push_back( ActionTmpCmd( nType, sGroup ) );
 }
 
 //
@@ -324,8 +329,15 @@ void BuildParser::debugDump()
 		for( ActionTmpCmdList::iterator j = (*i).second.begin();
 			 j != (*i).second.end(); j++ )
 		{
-			printf("    %d ", (*j).first );
-			printBuildList( (*j).second );
+			printf("    %d ", (*j).nAct );
+			if( (*j).bGroup )
+			{
+				printf("!%s", (*j).sGroup.c_str() );
+			}
+			else
+			{
+				printBuildList( (*j).lCmds );
+			}
 			printf("\n");
 		}
 	}
@@ -555,14 +567,23 @@ Build *BuildParser::genBuild()
 		for( ActionTmpCmdList::iterator j = (*i).second.begin();
 			 j != (*i).second.end(); j++ )
 		{
-			StringList lWhat = buildToStringList(
-				(*j).second, StringList(), bld
-				);
-
-			for( StringList::iterator k = lWhat.begin();
-				 k != lWhat.end(); k++ )
+			if( (*j).bGroup )
 			{
-				pAct->addCommand( (Action::eAction)((*j).first), *k );
+				pAct->addCommand(
+					(Action::eAction)((*j).nAct), (*j).sGroup, true
+					);
+			}
+			else
+			{
+				StringList lWhat = buildToStringList(
+					(*j).lCmds, StringList(), bld
+					);
+
+				for( StringList::iterator k = lWhat.begin();
+					 k != lWhat.end(); k++ )
+				{
+					pAct->addCommand( (Action::eAction)((*j).nAct), *k, false );
+				}
 			}
 		}
 

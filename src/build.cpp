@@ -78,17 +78,36 @@ void Build::execAction( const std::string &sWhat )
 
 	for( pAct->begin(); !pAct->isEnded(); pAct->next() )
 	{
-		if( mTarget.find( pAct->getWhat() ) == mTarget.end() )
-			throw BuildException(
-				"No target matches %s in action %s.",
-				pAct->getWhat().c_str(),
-				sWhat.c_str()
-				);
-		Target *pTarget = mTarget[pAct->getWhat()];
-		//pView->beginCommand( pAct->getAct(), pAct->getWhat() );
-		if( !pTarget->wasRun() )
-			pTarget->run( pAct->getAct(), *this );
-		//pView->endCommand();
+		if( pAct->isGroup() )
+		{
+			if( mGroup.find( pAct->getWhat() ) == mGroup.end() )
+				throw BuildException(
+					"No group matches %s in action %s.",
+					pAct->getWhat().c_str(),
+					sWhat.c_str()
+					);
+			TargetList &sl = mGroup[pAct->getWhat()];
+			for( TargetList::iterator i = sl.begin(); i != sl.end(); i++ )
+			{
+				Target *pTarget = *i;
+				if( !pTarget->wasRun() )
+					pTarget->run( pAct->getAct(), *this );
+			}
+		}
+		else
+		{
+			if( mTarget.find( pAct->getWhat() ) == mTarget.end() )
+				throw BuildException(
+					"No target matches %s in action %s.",
+					pAct->getWhat().c_str(),
+					sWhat.c_str()
+					);
+			Target *pTarget = mTarget[pAct->getWhat()];
+			//pView->beginCommand( pAct->getAct(), pAct->getWhat() );
+			if( !pTarget->wasRun() )
+				pTarget->run( pAct->getAct(), *this );
+			//pView->endCommand();
+		}
 	}
 
 	pView->endAction();

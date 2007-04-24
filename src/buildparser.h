@@ -156,10 +156,24 @@ public: // Action functions
 	void addAction();
 	void addAction( const char *sName );
 	void addCommand( int nType );
+	void addGrpCommand( const char *sGroup, int nType );
 
 private: // Action variables
-	typedef std::pair<int, BuildList> ActionTmpCmd;
+	typedef struct ActionTmpCmd
+	{
+		ActionTmpCmd( int nAct, BuildList &l ) :
+			nAct( nAct ), bGroup( false ), lCmds( l ) { };
+		ActionTmpCmd( int nAct, const char *s ) :
+			nAct( nAct ), bGroup( true ), sGroup( s ) { };
+		int nAct;
+		bool bGroup;
+		BuildList lCmds;
+		std::string sGroup;
+	} ActionTmpCmd;
+	//typedef std::pair<int, BuildList> ActionTmpCmd;
+	//typedef std::pair<int, std::string> ActionTmpGrpCmd
 	typedef std::list<ActionTmpCmd> ActionTmpCmdList;
+	//typedef std::list<ActionTmpGrpCmd> ActionTmpGrpCmdList;
 	typedef std::pair<std::string, ActionTmpCmdList> ActionTmp;
 	typedef std::list<ActionTmp> ActionTmpList;
 	ActionTmpList lActions;
