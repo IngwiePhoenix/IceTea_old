@@ -289,6 +289,19 @@ void Build::debugDump()
 		}
 		printf("\n");
 	}
+
+	printf("Groups:\n");
+	for( GroupMap::iterator i = mGroup.begin(); i != mGroup.end(); i++ )
+	{
+		printf("  %s: ", (*i).first.c_str() );
+		for( TargetList::iterator j = (*i).second.begin();
+			 j != (*i).second.end(); j++ )
+		{
+			if( j != (*i).second.begin() ) printf(", ");
+			printf("%s", (*j)->getName().c_str() );
+		}
+		printf("\n");
+	}
 }
 
 RuleList Build::findChainRules( Rule *pHead )
@@ -385,5 +398,15 @@ void Build::setMode( Action::eAction nAct )
 	{
 		(*i).second->setMode( nAct );
 	}
+}
+
+void Build::addToGroup( const std::string &sGroup, Target *pTarget )
+{
+	if( mGroup.find( sGroup ) == mGroup.end() )
+	{
+		mGroup[sGroup] = TargetList();
+	}
+
+	mGroup[sGroup].push_back( pTarget );
 }
 

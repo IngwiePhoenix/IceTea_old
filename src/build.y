@@ -40,6 +40,7 @@ void yyerror( YYLTYPE *locp, BuildParser &bld, char const *msg );
 %token TOK_PERFORM				"perform"
 %token TOK_PRODUCES				"produces"
 %token TOK_AGGREGATE			"aggregate"
+%token TOK_GROUP				"group"
 
 %token ',' ':' '=' '(' ')'
 
@@ -123,6 +124,8 @@ actioncmd: TOK_CHECK list
 		 {
 			 bld.addCommand( Action::actClean );
 		 }
+		 | TOK_CHECK TOK_GROUP STRING
+		 | TOK_CLEAN TOK_GROUP STRING
 		 ;
 
 // Target interpretation
@@ -158,6 +161,10 @@ targetcmd: TOK_RULE STRING
 			 bld.addTargetRequires();
 		 }
 		 | TOK_SET targetset
+		 | TOK_GROUP STRING
+		 {
+			 bld.addTargetGroup( $2 );
+		 }
 		 ;
 
 targetset: STRING '=' STRING

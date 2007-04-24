@@ -22,6 +22,8 @@ typedef std::map<std::string, VarMap> ContextMap;
 typedef std::map<std::string, Rule *> RuleMap;
 typedef std::list<Rule *> RuleList;
 typedef std::map<std::string, Action *> ActionMap;
+typedef std::list<Target *> TargetList;
+typedef std::map<std::string, TargetList> GroupMap;
 
 class Viewer;
 
@@ -43,6 +45,7 @@ public:
 	void addRequires( const std::string &who, const std::string &what );
 	void addRule( Rule *pRule );
 	void addAction( Action *pAction );
+	void addToGroup( const std::string &sGroup, Target *pTarget );
 
 	void set( const std::string &cont, const std::string &var, const std::string &val );
 	void setAdd( const std::string &cont, const std::string &var, const std::string &val );
@@ -92,6 +95,7 @@ private:
 	Cache cRequires;
 	bool bCacheUpdated;
 	std::string sCacheName;
+	GroupMap mGroup;
 
 	//std::map<std::string, Rule *> mRule;
 	//Action *pActDefault;

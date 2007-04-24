@@ -77,6 +77,7 @@ public: // Target functions
 	void addTargetInput();
 	void addTargetRequires();
 	void addTargetSet( const char *sVar, const char *sVal, int nHow );
+	void addTargetGroup( const char *sGroup );
 
 private: // Target variables
 	TargetFactory &fTarget;
@@ -88,6 +89,7 @@ private: // Target variables
 		std::string sType;
 		BuildList lInput;
 		BuildList lRequires;
+		StringList lGroups;
 		SetVarList lVar;
 	};
 	typedef std::pair<BuildList,TargetInfo> TargetTmp;

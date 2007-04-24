@@ -83,6 +83,11 @@ void BuildParser::addTargetSet( const char *sVar, const char *sVal, int nHow )
 	lTargetTmp.back().second.lVar.push_back( SetVar( sVar, sVal, nHow ) );
 }
 
+void BuildParser::addTargetGroup( const char *sGroup )
+{
+	lTargetTmp.back().second.lGroups.push_back( sGroup );
+}
+
 //
 // Function functions
 //
@@ -458,6 +463,12 @@ Build *BuildParser::genBuild()
 					);
 				
 				bld->addTarget( pTarget );
+
+				for( StringList::iterator c = (*i).second.lGroups.begin();
+					 c != (*i).second.lGroups.end(); c++ )
+				{
+					bld->addToGroup( *c, pTarget );
+				}
 			}
 			StringList lReqs = buildToStringList(
 				(*i).second.lRequires, StringList()

@@ -36,6 +36,7 @@ std::string strbuf;
 "filter"							return TOK_FILTER;
 "prefix"							return TOK_PREFIX;
 "aggregate"							return TOK_AGGREGATE;
+"group"								return TOK_GROUP;
 
 \n+									{
 	yylloc->last_line += yyleng;
