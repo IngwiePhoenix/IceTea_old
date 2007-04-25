@@ -429,3 +429,8 @@ void Build::addToGroup( const std::string &sGroup, Target *pTarget )
 	mGroup[sGroup].push_back( pTarget );
 }
 
+bool Build::hasAction( const std::string &str )
+{
+	return mAction.find( str ) != mAction.end();
+}
+

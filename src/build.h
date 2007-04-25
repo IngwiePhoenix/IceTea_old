@@ -45,6 +45,7 @@ public:
 	void addRequires( const std::string &who, const std::string &what );
 	void addRule( Rule *pRule );
 	void addAction( Action *pAction );
+	bool hasAction( const std::string &str );
 	void addToGroup( const std::string &sGroup, Target *pTarget );
 
 	void set( const std::string &cont, const std::string &var, const std::string &val );

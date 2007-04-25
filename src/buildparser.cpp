@@ -590,6 +590,24 @@ Build *BuildParser::genBuild()
 		bld->addAction( pAct );
 	}
 
+	// Now create an auto check-action for each group where there isn't already
+	// an action.
+	for( TargetTmpList::iterator i = lTargetTmp.begin();
+		 i != lTargetTmp.end(); i++ )
+	{
+		for( StringList::iterator j = (*i).second.lGroups.begin();
+			 j != (*i).second.lGroups.end(); j++ )
+		{
+			if( !bld->hasAction( (*j) ) )
+			{
+				Action *pAct = new Action;
+				pAct->setName( *j );
+				pAct->addCommand( Action::actCheck, *j, true );
+				bld->addAction( pAct );
+			}
+		}
+	}
+
 	return bld;
 }
 
