@@ -42,6 +42,7 @@ void ViewerPercent::beginCommand( Action::eAction nAct, const std::string &sTarg
 void ViewerPercent::endCommand()
 {
 	printf("\n");
+	fflush(stdout);
 }
 
 void ViewerPercent::beginPerforms( int nCount )
