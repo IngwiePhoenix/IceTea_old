@@ -1,6 +1,6 @@
 #include "viewerplain.h"
 #include "perform.h"
-#include "plugger.h"
+#include "bu/plugger.h"
 
 PluginInterface2( plain, ViewerPlain, Viewer, "Mike Buland", 0, 1 );
 

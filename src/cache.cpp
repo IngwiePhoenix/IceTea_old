@@ -1,6 +1,6 @@
 #include "cache.h"
-#include "serializer.h"
-#include "staticstring.h"
+#include "bu/fstring.h"
+#include "bu/archive.h"
 
 Cache::Cache()
 {
@@ -15,14 +15,14 @@ Cache::~Cache()
 	}
 }
 
-void Cache::serialize( class Serializer &ar )
+void Cache::archive( class Bu::Archive &ar )
 {
 	if( ar.isLoading() )
 	{
 		uint32_t sCache, sData, sIndex;
 
 		ar >> sIndex;
-		StaticString *Index = new StaticString[sIndex];
+		Bu::FString *Index = new Bu::FString[sIndex];
 		for( uint32_t i = 0; i < sIndex; i++ )
 		{
 			ar >> Index[i];
@@ -39,10 +39,10 @@ void Cache::serialize( class Serializer &ar )
 			for( uint32_t j = 0; j < sData; j++ )
 			{
 				ar >> nTmp;
-				lData.push_back( Index[nTmp].getString() );
+				lData.push_back( Index[nTmp].getStr() );
 			}
 			ar >> nTmp;
-			mCache[Index[nTmp].getString()] = e;
+			mCache[Index[nTmp].getStr()] = e;
 		}
 		/*
 		uint32_t sCache, sData;

@@ -1,6 +1,6 @@
 #include "targetfactory.h"
 
-extern struct PluginInfo file;
+extern struct Bu::PluginInfo file;
 
 TargetFactory::TargetFactory()
 {

@@ -1,6 +1,6 @@
 #include "performfactory.h"
 
-extern struct PluginInfo command;
+extern struct Bu::PluginInfo command;
 
 PerformFactory::PerformFactory()
 {

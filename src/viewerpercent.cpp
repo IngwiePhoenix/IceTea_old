@@ -1,6 +1,6 @@
 #include "viewerpercent.h"
 #include "perform.h"
-#include "plugger.h"
+#include "bu/plugger.h"
 
 #include <sys/ioctl.h>
 #include <stdio.h>

@@ -1,4 +1,4 @@
-SRC:=$(sort $(wildcard src/*.cpp))
+SRC:=$(sort $(wildcard src/*.cpp) $(wildcard src/bu/*.cpp))
 OBJ:=src/build.yy.o src/build.tab.o $(patsubst %.cpp,%.o,$(SRC)) 
 
 .PHONY: all clean

@@ -1,5 +1,5 @@
 #include "functiontargets.h"
-#include "plugger.h"
+#include "bu/plugger.h"
 #include "build.h"
 
 PluginInterface2(targets, FunctionTargets, Function, "Mike Buland", 0, 1 );

@@ -1,7 +1,8 @@
 #include "build.h"
 #include "function.h"
 #include "viewerfactory.h"
-#include "serializerbinary.h"
+#include "bu/archive.h"
+#include "bu/file.h"
 
 subExceptionDef( BuildException );
 
@@ -18,11 +19,12 @@ Build::~Build()
 	{
 		try
 		{
-			SerializerBinary ar( sCacheName.c_str(), Serializer::save );
+			Bu::File f( sCacheName.c_str(), "wb" );
+			Bu::Archive ar( f, Bu::Archive::save );
 
 			ar << cRequires;
 		}
-		catch( ExceptionBase &e )
+		catch( Bu::ExceptionBase &e )
 		{
 		}
 	}
@@ -39,11 +41,12 @@ void Build::setCache( const std::string &sFileName )
 
 	try
 	{
-		SerializerBinary ar( sCacheName.c_str(), Serializer::load );
+		Bu::File f( sCacheName.c_str(), "rb" );
+		Bu::Archive ar( f, Bu::Archive::load );
 
 		ar >> cRequires;
 	}
-	catch( ExceptionBase &e )
+	catch( Bu::ExceptionBase &e )
 	{
 	}
 }

@@ -1,7 +1,7 @@
 #include <dirent.h>
 
 #include "functiondirectoriesin.h"
-#include "plugger.h"
+#include "bu/plugger.h"
 
 PluginInterface2(directoriesIn, FunctionDirectoriesIn, Function, "Mike Buland", 0, 1 );
 

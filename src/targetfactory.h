@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-#include "plugger.h"
-#include "singleton.h"
+#include "bu/plugger.h"
+#include "bu/singleton.h"
 #include "target.h"
 
-class TargetFactory : public Plugger<Target>, public Singleton<TargetFactory>
+class TargetFactory : public Bu::Plugger<Target>, public Bu::Singleton<TargetFactory>
 {
 public:
 	TargetFactory();

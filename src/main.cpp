@@ -2,12 +2,12 @@
 //#include "viewerplain.h"
 //#include "viewerpercent.h"
 //#include "viewermake.h"
-#include "paramproc.h"
-#include "staticstring.h"
+#include "bu/paramproc.h"
+#include "bu/fstring.h"
 #include "build.h"
 #include "action.h"
 
-class Param : public ParamProc
+class Param : public Bu::ParamProc
 {
 public:
 	Param() :
@@ -88,7 +88,7 @@ public:
 	std::string sFile;
 	std::string sView;
 	std::string sDir;
-	StaticString sAction;
+	Bu::FString sAction;
 	//Viewer *pViewer;
 	bool bDebug;
 	bool bPostDebug;
@@ -138,7 +138,7 @@ int main( int argc, char *argv[] )
 		else
 		{
 			if( prm.sAction > 0 )
-				pBuild->execAction( prm.sAction.getString() );
+				pBuild->execAction( prm.sAction.getStr() );
 			else
 				pBuild->execAction("");
 		}

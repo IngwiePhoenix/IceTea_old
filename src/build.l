@@ -1,8 +1,15 @@
 %{
 # include <string>
+# include <string.h>
 # include "buildparser.h"
 # include "build.tab.h"
-# include "stringrep.h"
+
+char *stringdup( const char *sin )
+{
+	char *n = new char[strlen(sin)+1];
+	strcpy( n, sin );
+	return n;
+}
 
 std::string strbuf;
 %}

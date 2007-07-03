@@ -1,6 +1,6 @@
 #include "viewermake.h"
 #include "perform.h"
-#include "plugger.h"
+#include "bu/plugger.h"
 
 PluginInterface2( make, ViewerMake, Viewer, "Mike Buland", 0, 1 );
 

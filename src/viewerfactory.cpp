@@ -1,10 +1,10 @@
 #include "viewerfactory.h"
 
-extern struct PluginInfo plain;
-extern struct PluginInfo percent;
-extern struct PluginInfo make;
-extern struct PluginInfo plainpct;
-extern struct PluginInfo colorpct;
+extern struct Bu::PluginInfo plain;
+extern struct Bu::PluginInfo percent;
+extern struct Bu::PluginInfo make;
+extern struct Bu::PluginInfo plainpct;
+extern struct Bu::PluginInfo colorpct;
 
 ViewerFactory::ViewerFactory()
 {

@@ -1,5 +1,5 @@
 #include "functionregexp.h"
-#include "plugger.h"
+#include "bu/plugger.h"
 #include "regexp.h"
 
 PluginInterface2(regexp, FunctionRegexp, Function, "Mike Buland", 0, 1 );

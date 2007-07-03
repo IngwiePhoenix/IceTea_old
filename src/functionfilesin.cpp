@@ -1,7 +1,7 @@
 #include <dirent.h>
 
 #include "functionfilesin.h"
-#include "plugger.h"
+#include "bu/plugger.h"
 #include "build.h"
 
 PluginInterface2(filesIn, FunctionFilesIn, Function, "Mike Buland", 0, 1 );

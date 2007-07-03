@@ -1,11 +1,11 @@
 #include "functionfactory.h"
 
-extern struct PluginInfo directoriesIn;
-extern struct PluginInfo filesIn;
-extern struct PluginInfo regexp;
-extern struct PluginInfo toString;
-extern struct PluginInfo commandToList;
-extern struct PluginInfo targets;
+extern struct Bu::PluginInfo directoriesIn;
+extern struct Bu::PluginInfo filesIn;
+extern struct Bu::PluginInfo regexp;
+extern struct Bu::PluginInfo toString;
+extern struct Bu::PluginInfo commandToList;
+extern struct Bu::PluginInfo targets;
 
 FunctionFactory::FunctionFactory()
 {

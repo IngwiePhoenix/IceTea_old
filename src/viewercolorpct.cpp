@@ -1,7 +1,7 @@
 #include "viewercolorpct.h"
 #include "perform.h"
-#include "plugger.h"
-#include "math.h"
+#include "bu/plugger.h"
+#include <math.h>
 
 PluginInterface2( colorpct, ViewerColorPct, Viewer, "Mike Buland", 0, 1 );
 

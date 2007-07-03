@@ -1,6 +1,6 @@
 #include "regexp.h"
 #include "build.h" // For BuildException
-#include "staticstring.h"
+#include "bu/fstring.h"
 
 RegExp::RegExp() :
 	bCompiled( false ),
@@ -39,9 +39,9 @@ void RegExp::compile( const char *sSrc )
 		size_t length = regerror( nErr, &re, NULL, 0 );
 		char *buffer = new char[length];
 		(void) regerror( nErr, &re, buffer, length );
-		StaticString s( buffer );
+		Bu::FString s( buffer );
 		delete[] buffer;
-		throw BuildException( s.getString() );
+		throw BuildException( s.getStr() );
 	}
 	bCompiled = true;
 	this->sSrc = sSrc;
@@ -71,7 +71,7 @@ std::pair<int,int> RegExp::getSubStringRange( int nIndex )
 std::string RegExp::getSubString( int nIndex )
 {
 	return std::string(
-		sTest.getString()+aSubStr[nIndex].rm_so,
+		sTest.getStr()+aSubStr[nIndex].rm_so,
 		aSubStr[nIndex].rm_eo - aSubStr[nIndex].rm_so
 		);
 }

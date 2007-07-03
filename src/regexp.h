@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <regex.h>
 #include <utility>
-#include "staticstring.h"
+#include "bu/fstring.h"
 
 class RegExp
 {
@@ -21,12 +21,12 @@ public:
 	std::string getSubString( int nIndex );
 	const char *getSource()
 	{
-		return sSrc;
+		return sSrc.getStr();
 	}
 
 private:
-	StaticString sSrc;
-	StaticString sTest;
+	Bu::FString sSrc;
+	Bu::FString sTest;
 	regex_t re;
 	bool bCompiled;
 	int nSubStr;

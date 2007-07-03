@@ -1,5 +1,5 @@
 #include "targetfile.h"
-#include "plugger.h"
+#include "bu/plugger.h"
 #include "rule.h"
 #include "build.h"
 #include "perform.h"

@@ -1,5 +1,5 @@
 #include "functioncommandtolist.h"
-#include "plugger.h"
+#include "bu/plugger.h"
 
 PluginInterface2(commandToList, FunctionCommandToList, Function, "Mike Buland", 0, 1 );
 

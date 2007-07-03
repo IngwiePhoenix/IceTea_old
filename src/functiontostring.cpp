@@ -1,5 +1,5 @@
 #include "functiontostring.h"
-#include "plugger.h"
+#include "bu/plugger.h"
 
 PluginInterface2(toString, FunctionToString, Function, "Mike Buland", 0, 1 );
 

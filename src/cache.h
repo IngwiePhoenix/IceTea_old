@@ -3,18 +3,18 @@
 
 #include <stdint.h>
 #include <time.h>
-#include "serializable.h"
+#include "bu/archival.h"
 #include <list>
 #include <map>
 #include <string>
 
-class Cache : public Serializable
+class Cache : public Bu::Archival
 {
 public:
 	Cache();
 	virtual ~Cache();
 
-	virtual void serialize( class Serializer &ar );
+	virtual void archive( class Bu::Archive &ar );
 
 	class Entry
 	{

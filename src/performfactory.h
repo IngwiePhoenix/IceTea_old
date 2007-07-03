@@ -4,10 +4,10 @@
 #include <stdint.h>
 
 #include "perform.h"
-#include "plugger.h"
-#include "singleton.h"
+#include "bu/plugger.h"
+#include "bu/singleton.h"
 
-class PerformFactory : public Plugger<Perform>, public Singleton<PerformFactory>
+class PerformFactory : public Bu::Plugger<Perform>, public Bu::Singleton<PerformFactory>
 {
 public:
 	PerformFactory();

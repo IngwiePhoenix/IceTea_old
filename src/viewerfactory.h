@@ -4,10 +4,10 @@
 #include <stdint.h>
 
 #include "viewer.h"
-#include "plugger.h"
-#include "singleton.h"
+#include "bu/plugger.h"
+#include "bu/singleton.h"
 
-class ViewerFactory : public Plugger<Viewer>, public Singleton<ViewerFactory>
+class ViewerFactory : public Bu::Plugger<Viewer>, public Bu::Singleton<ViewerFactory>
 {
 public:
 	ViewerFactory();

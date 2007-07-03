@@ -1,6 +1,6 @@
 #include "viewerplainpct.h"
 #include "perform.h"
-#include "plugger.h"
+#include "bu/plugger.h"
 #include "math.h"
 
 PluginInterface2( plainpct, ViewerPlainPct, Viewer, "Mike Buland", 0, 1 );
