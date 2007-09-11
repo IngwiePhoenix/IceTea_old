@@ -84,10 +84,10 @@ public:
 		sView = "colorpct";
 	}
 
-	std::string sCache;
-	std::string sFile;
-	std::string sView;
-	std::string sDir;
+	Bu::FString sCache;
+	Bu::FString sFile;
+	Bu::FString sView;
+	Bu::FString sDir;
 	Bu::FString sAction;
 	//Viewer *pViewer;
 	bool bDebug;
@@ -118,8 +118,8 @@ int main( int argc, char *argv[] )
 		}
 
 		pBuild = bld.load( prm.sFile.c_str() );
-		pBuild->setCache( prm.sCache );
-		pBuild->setView( prm.sView );
+		pBuild->setCache( prm.sCache.getStr() );
+		pBuild->setView( prm.sView.getStr() );
 		if( prm.bCleanMode )
 			pBuild->setMode( Action::actClean );
 
