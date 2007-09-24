@@ -19,6 +19,8 @@ int nBC = 0;
 ">>"								{ ECHO; }
 " <<"								{ ECHO; }
 " >>"								{ ECHO; }
+"'<'"								{ ECHO; }
+"'>'"								{ ECHO; }
 
 "<anonymous>"						{ ECHO; }
 
