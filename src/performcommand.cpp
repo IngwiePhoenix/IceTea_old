@@ -3,6 +3,8 @@
 #include "build.h"
 #include "viewer.h"
 
+#include <stdlib.h>
+
 PluginInterface2(command, PerformCommand, Perform, "Mike Buland", 0, 1 );
 
 PerformCommand::PerformCommand()

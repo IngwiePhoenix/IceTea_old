@@ -7,6 +7,8 @@
 #include "build.h"
 #include "action.h"
 
+#include <stdlib.h>
+
 class Param : public Bu::ParamProc
 {
 public:
@@ -114,10 +116,10 @@ int main( int argc, char *argv[] )
 		{
 			olddir = new char[4096];
 			getcwd( olddir, 4096 );
-			chdir( prm.sDir.c_str() );
+			chdir( prm.sDir.getStr() );
 		}
 
-		pBuild = bld.load( prm.sFile.c_str() );
+		pBuild = bld.load( prm.sFile.getStr() );
 		pBuild->setCache( prm.sCache.getStr() );
 		pBuild->setView( prm.sView.getStr() );
 		if( prm.bCleanMode )
