@@ -1,4 +1,4 @@
-LIBBU:=$(foreach f,paramproc.h paramproc.cpp fstring.h fstring.cpp exceptions.h exceptions.cpp exceptionbase.cpp exceptionbase.h archive.cpp archive.h archival.cpp archival.h plugger.h plugger.cpp singleton.h hash.cpp hash.h file.h file.cpp stream.h stream.cpp list.h list.cpp set.h set.cpp trace.h trace.cpp,src/$f)
+LIBBU:=$(foreach f,paramproc.h paramproc.cpp fstring.h fstring.cpp exceptions.h exceptions.cpp exceptionbase.cpp exceptionbase.h archive.cpp archive.h archival.cpp archival.h plugger.h plugger.cpp singleton.h hash.cpp hash.h file.h file.cpp stream.h stream.cpp list.h list.cpp set.h set.cpp trace.h trace.cpp util.h,src/$f)
 SRC:=$(sort $(wildcard src/*.cpp) $(patsubst src/%,src/bu/%,$(filter %.cpp,$(LIBBU))))
 OBJ:=src/build.yy.o src/build.tab.o $(patsubst %.cpp,%.o,$(SRC)) 
 REV:=$(shell svn info | grep "Revision" | cut -d\  -f2)
