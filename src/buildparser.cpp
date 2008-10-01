@@ -362,7 +362,7 @@ void BuildParser::debugDump()
 		for( SetVarList::iterator j = (*i).second.lVar.begin();
 			 j != (*i).second.lVar.end(); j++ )
 		{
-			char *op;
+			const char *op;
 			switch( (*j).third )
 			{
 				case setSet: op = "="; break;
@@ -376,7 +376,7 @@ void BuildParser::debugDump()
 	for( SetVarList::iterator j = lGlobalVars.begin();
 		 j != lGlobalVars.end(); j++ )
 	{
-		char *op;
+		const char *op;
 		switch( (*j).third )
 		{
 			case setSet: op = "="; break;

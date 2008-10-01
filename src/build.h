@@ -6,7 +6,7 @@
 #include <map>
 #include <string>
 
-#include "bu/exceptions.h"
+#include "bu/exceptionbase.h"
 #include "rule.h"
 #include "target.h"
 #include "action.h"
