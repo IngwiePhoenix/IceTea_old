@@ -4,6 +4,8 @@
 #include "bu/archive.h"
 #include "bu/file.h"
 
+#include <stdlib.h>
+
 subExceptionDef( BuildException );
 
 Build::Build() :
@@ -19,7 +21,7 @@ Build::~Build()
 	{
 		try
 		{
-			Bu::File f( sCacheName.c_str(), "wb" );
+			Bu::File f( sCacheName.c_str(), Bu::File::Write );
 			Bu::Archive ar( f, Bu::Archive::save );
 
 			ar << cRequires;
@@ -41,7 +43,7 @@ void Build::setCache( const std::string &sFileName )
 
 	try
 	{
-		Bu::File f( sCacheName.c_str(), "rb" );
+		Bu::File f( sCacheName.c_str(), Bu::File::Read );
 		Bu::Archive ar( f, Bu::Archive::load );
 
 		ar >> cRequires;
