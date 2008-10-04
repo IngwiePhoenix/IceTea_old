@@ -21,7 +21,8 @@ Build::~Build()
 	{
 		try
 		{
-			Bu::File f( sCacheName.c_str(), Bu::File::Write );
+			Bu::File f( sCacheName.c_str(),
+				Bu::File::Write|Bu::File::Create|Bu::File::Truncate );
 			Bu::Archive ar( f, Bu::Archive::save );
 
 			ar << cRequires;
