@@ -139,7 +139,7 @@ int main( int argc, char *argv[] )
 		}
 		else
 		{
-			if( !prm.sAction.isSet() )
+			if( prm.sAction.isSet() )
 				pBuild->execAction( prm.sAction.getStr() );
 			else
 				pBuild->execAction("");
