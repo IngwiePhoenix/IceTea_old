@@ -57,7 +57,7 @@ public:
 
 	virtual int cmdParam( int argc, char *argv[] )
 	{
-		if( !sAction.isSet() )
+		if( sAction.isSet() )
 		{
 			printf("You can only specify one action per command line.\n\n");
 			exit( 1 );
