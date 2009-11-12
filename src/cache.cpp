@@ -15,7 +15,7 @@ Cache::~Cache()
 	}
 }
 
-void Cache::archive( class Bu::Archive &ar )
+void Cache::archive( class Bu::ArchiveBase &ar )
 {
 	if( ar.isLoading() )
 	{
@@ -87,7 +87,7 @@ void Cache::archive( class Bu::Archive &ar )
 		{
 			(*i).second = cnt;
 			cnt++;
-			std::string s = ((*i).first);
+			Bu::FString s( ((*i).first).c_str(), ((*i).first).size() );
 			ar << s;
 		}
 

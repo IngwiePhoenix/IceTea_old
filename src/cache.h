@@ -14,7 +14,7 @@ public:
 	Cache();
 	virtual ~Cache();
 
-	virtual void archive( class Bu::Archive &ar );
+	virtual void archive( class Bu::ArchiveBase &ar );
 
 	class Entry
 	{
