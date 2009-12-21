@@ -7,7 +7,7 @@ CXXFLAGS += "-ggdb -W -Wall";
 
 action "default"
 {
-	build: "build-m3";
+	build: "build";
 }
 
 action "man"
@@ -43,7 +43,7 @@ action "viminstall"
 	install: targets("viminstall");
 }
 
-target "build-m3"
+target "build"
 {
 	input [files("src/*.y"), files("src/*.l"), files("src/*.cpp")];
 	rule "exe";
