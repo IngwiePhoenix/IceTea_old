@@ -22,7 +22,7 @@ action "pkg"
 
 action "clean"
 {
-	clean: "build-m3";
+	clean: "build";
 }
 
 action "devinstall"
