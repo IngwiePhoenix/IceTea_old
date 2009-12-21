@@ -1,0 +1,129 @@
+#
+# default.bld for build mark 3.  This guy does it all, so watch out!
+# :)
+#
+
+CXXFLAGS += "-ggdb -W -Wall";
+
+action "default"
+{
+	build: "build-m3";
+}
+
+action "man"
+{
+	build: targets("all");
+}
+
+action "pkg"
+{
+	build: targets("pkg");
+}
+
+action "clean"
+{
+	clean: "build-m3";
+}
+
+action "devinstall"
+{
+	if "$(id -u)" != "0\n" then
+	{
+		error "You can only install as the root user, su then run this.";
+	}
+	install: targets("devinstall");
+}
+
+action "viminstall"
+{
+	if "$(id -u)" != "0\n" then
+	{
+		error "You can only install as the root user, su then run this.";
+	}
+	install: targets("viminstall");
+}
+
+target "build-m3"
+{
+	input [files("src/*.y"), files("src/*.l"), files("src/*.cpp")];
+	rule "exe";
+	LDFLAGS += "-Llibbu++ -lbu++ -ldl";
+	CXXFLAGS += "-Ilibbu++";
+	tag "tools";
+}
+
+target "build-r$(svnversion "-n").tar.bz2"
+{
+	input [
+		"build.conf",
+		"Doxyfile",
+		"default.bld",
+		"docs/build.1",
+		"docs/build.7",
+		"support/vim/syntax/build.vim",
+		"support/vim/ftdetect/build.vim",
+		"support/vim/ftplugin/build.vim",
+		files("src/*.y"),
+		files("src/*.l"),
+		files("src/*.cpp"),
+		files("src/*.h"),
+		files("share/autoinclude/*"),
+		files("share/include/*")
+		];
+	rule "tarball";
+	tag "pkg";
+}
+
+// We want to override the c rule, and just use c++ for it
+rule "c"
+{
+	input "*.c";
+	output replace(".c", ".o");
+	tag "auto-source";
+	requires getMakeDeps("g++ ${CXXFLAGS} -M ${INPUT}");	
+	profile "build"
+	{
+		execute("g++ ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}");
+	}
+}
+
+rule "tarball"
+{
+	input matches("*.cpp", "*.h", "*.c", "*.y", "*.l", "*.conf", "Doxyfile",
+		"*.1", "*.7", "*.vim");
+	profile "build"
+	{
+		OUTDIR = OUTPUT.replace(".tar.bz2","");
+		execute("tar --transform=\"s@^@${OUTDIR}/@\" -c ${INPUT} |"
+			" bzip2 -9 > ${OUTPUT}");
+	}
+}
+
+target "/usr/share/build"
+{
+	input "$(echo -n $PWD)/share";
+	tag "devinstall";
+	profile "install"
+	{
+		execute("ln -fsv ${INPUT} \"${OUTPUT}\"");
+	}
+}
+
+for vimdir in dirs("/usr/share/vim/vim*") do
+{
+	for ftype in ["ftplugin/build.vim", "ftdetect/build.vim",
+		"syntax/build.vim"] do
+	{
+		target vimdir + "/" + ftype
+		{
+			input "support/vim/" + ftype;
+			tag "viminstall";
+			display "install";
+			profile "install"
+			{
+				execute("cp -f ${INPUT} ${OUTPUT}");
+			}
+		}
+	}
+}
+

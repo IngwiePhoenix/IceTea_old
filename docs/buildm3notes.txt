@@ -1,0 +1,99 @@
+Rules
+Targets
+	Profiles
+		Build
+		Clean
+		Install
+		Package
+		etc.
+	Dependancies
+	Force Ruleset / mode
+	Input
+	Produces / Output
+Actions (functions)
+	Execute
+	Delete
+	Download
+	GetDependencies
+	ExecuteTest
+	RunTarget
+
+Mode Variables - switch modes for a variety of things (debug/release, platforms)
+
+Includes (including default includes)
+
+Bash style variable replacements / execute / etc.
+
+Functions?
+	files() returns list (globbing)
+	querySystemParam() 
+
+if blocks can be anywhere.
+
+semi-typed variables, default to string
+
+variables in a target:  INPUT, OUTPUT (by default instead of target and match)
+
+---- ast processing order ----
+1) import all environment variables
+2) import all cached data
+3) set all variables specified on the command line
+4) root level "script"
+4.1) execute root level items, for target, rule, and non-auto, non-global config
+		this means building the target, rule, and config tables.
+		for global config and auto-config, run them as we hit them.
+5) execute specified target(s) with specified profile
+
+---- pseudo code -----
+
+set CXXFLAGS += "param";   // ensure there are spaces so it works for a command
+set CXXFLAGS << "param";   // append like you'd expect, no extra changes
+
+unset PREFIX;			// may be handy to be able to unset things
+
+include "otherbuild.h"; // oh yeah includes
+
+notice "something good?"; // display a notice to the user, just info...
+warning "yeah yeah yeah..."; // display a warning message, but don't exit
+error "something or other"; // exit immediately with an error message
+
+target "libbu++.a"
+{
+	input files("src/*.cpp");
+	set CXXFLAGS="-ggdb";
+	condition file;
+	requires [];
+
+	hidden;  // Hides this from the user, but still callable
+}
+
+target ["file a", files("src/*.cpp), files("src/*y")].replace("bob", "sam")...
+{
+	condition always;
+}
+
+auto config "X"
+{
+}
+
+config "EXTRA_DEBUG"
+{
+	display "Debugging/Extra debugging";
+	type int; (or string, or bool, or list, or version)
+	default 0;
+	allow ["0-5","6"];
+
+}
+
+rule "cpp"
+{
+	input glob("*.cpp"); // or just a string, pretend it's a glob
+	output "${INPUT}".replace(".cpp",".o");
+	requires getDeps("g++ ${CXXFLAGS} -M ${OUTPUT} ${INPUT}", "make");
+	profile "build"
+	{
+		fnc1() tag "c++";
+		fnc2();
+	}
+}
+

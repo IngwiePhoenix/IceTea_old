@@ -1,0 +1,64 @@
+
+rule "exe"
+{
+	input "*.o";
+	profile "build"
+	{
+		execute("g++ -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
+	}
+}
+
+rule "lib"
+{
+	input "*.o";
+	profile "build"
+	{
+		execute("ar cr ${OUTPUT} ${INPUT}");
+	}
+}
+
+rule "cpp"
+{
+	input "*.cpp";
+	output replace(".cpp", ".o");
+	requires getMakeDeps("g++ ${CXXFLAGS} -M ${INPUT}");
+	profile "build"
+	{
+		execute("g++ ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
+	}
+}
+
+// Heh, we're not going to use this one.
+rule "c"
+{
+	input "*.c";
+	output replace(".c", ".o");
+	requires getMakeDeps("gcc ${CXXFLAGS} -M ${INPUT}");
+	profile "build"
+	{
+		execute("gcc ${CFLAGS} -c -o ${OUTPUT} ${INPUT}");
+	}
+}
+
+rule "bison"
+{
+	input "*.y";
+	output [INPUT.replace(".y", ".tab.c"), INPUT.replace(".y", ".tab.h")];
+	profile "build"
+	{
+		BASE = INPUT.replace(".y", "");
+		execute("bison -b${BASE} ${INPUT}");
+		// if you add a -v bison will produce a .output file
+	}
+}
+
+rule "flex"
+{
+	input "*.l";
+	output replace(".l", ".yy.c");
+	output replace(".l", ".yy.h");
+	profile "build"
+	{
+		execute("flex ${FLEXFLAGS} ${INPUT}");
+	}
+}

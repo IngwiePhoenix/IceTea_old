@@ -1,0 +1,96 @@
+
+function qt_uiToH()
+{
+	if "${UI_DIR}" == "" then
+	{
+		DIR = INPUT.dirName();
+	}
+	else
+	{
+		DIR = UI_DIR;
+	}
+	FILE = INPUT.fileName();
+	OUTFILE = FILE.replace(".ui",".h");
+	return "${DIR}/ui_${OUTFILE}";
+}
+
+rule "qt_ui"
+{
+	display "ui";
+	input "*.ui";
+	output INPUT.qt_uiToH();
+	tag "headers";
+	profile "build"
+	{
+		execute("${QTDIR}/bin/uic -o ${OUTPUT} ${INPUT}");
+	}
+}
+
+function qt_qrcToCpp()
+{
+	if "${RCC_DIR}" == "" then
+	{
+		DIR = INPUT.dirName();
+	}
+	else
+	{
+		DIR = RCC_DIR;
+	}
+	FILE = INPUT.fileName();
+	OUTFILE = FILE.replace(".qrc",".cpp");
+	return "${DIR}/qrc_${OUTFILE}";
+}
+
+rule "qt_rcc"
+{
+	display "rcc";
+	input "*.qrc";
+	output INPUT.qt_qrcToCpp();
+	profile "build"
+	{
+		NAME = INPUT.fileName().replace(".qrc","");
+		execute("${QTDIR}/bin/rcc -name ${NAME} -o ${OUTPUT} ${INPUT}");
+	}
+}
+
+function qt_isMocable()
+{
+	if INPUT.matches("*.h") then
+	{
+		if exists( INPUT ) then
+		{
+			if "$(grep Q_OBJECT ${INPUT})" != "" then
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+function qt_hToMocCpp()
+{
+	if "${MOC_DIR}" == "" then
+	{
+		DIR = INPUT.dirName();
+	}
+	else
+	{
+		DIR = MOC_DIR;
+	}
+	FILE = INPUT.fileName();
+	OUTFILE = FILE.replace(".h",".cpp");
+	return "${DIR}/moc_${OUTFILE}";
+}
+
+rule "qt_moc"
+{
+	display "moc";
+	input qt_isMocable();
+	output INPUT.qt_hToMocCpp();
+	profile "build"
+	{
+		execute("${QTDIR}/bin/moc -o${OUTPUT} ${INPUT}");
+	}
+}
+

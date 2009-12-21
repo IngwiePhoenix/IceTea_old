@@ -1,0 +1,84 @@
+.TH build 1 "October 30, 2009" "Xagasoft" "Geekgene"
+.SH NAME
+.P
+build.conf configuration files.
+.SH SYNOPSIS
+.P
+These files describe how to build something, generally software from source
+code, but it can really be anything.
+.SH DESCRIPTION
+.P
+For now, I'm just going to list some things here, here are the functions
+available to you for general use at the moment:
+.TP
+.B
+dirs()
+Takes any number of string parameters, matches the file system based on glob
+patterns and returns all directories that match the given patterns.
+.TP
+.B
+files()
+Takes any number of string parameters, matches the file system based on glob
+patterns and returns all files that match the given patterns.
+.TP
+.B
+execute()
+Takes one string parameter, and executes it as a command using your shell.
+.TP
+.B
+exists()
+Checks to see if the given file/directory/etc exists on the file system, if it
+does, true is returned, otherwise, false.
+.TP
+.B
+matches()
+Checks the input of the function to see if it matches a given wildcard pattern,
+the pattern may include any number of * (meaning match any number of any
+character) or ? (meaning match one of any character) symbols.  If the input is
+a string, then true or false is returned.  If the input is a list, a filtered
+version of the list is returned, containing only the elements that matched the
+pattern.
+.TP
+.B
+replace()
+Takes two string parameters and replaces all occurances of the first with the
+second in the input string or list of strings.
+.TP
+.B
+targets()
+Returns a list of target outputs, this will return every output for any target
+that it finds seperately, so targets with multiple outputs will be in the list
+more than once.  With no parametrs it returns a list of all explicitly defined
+targets, with a string parameter it returns all targets that have the given
+tag.
+.TP
+.B
+toString()
+Takes the input and converts it to a string, with no parameters it uses default
+formatting, this means that for lists it puts a space between each element.
+.TP
+.B
+unlink()
+Unlinks (deletes) the given file or files from the filesystem.  It can take any
+number of string or string list parameters.
+.TP
+.B
+getMakeDeps()
+Returns a list of files ready for use in a requires statement from the stdout of the command provided in the only string parameter.  The command should output the dependancies in makefile format.
+.TP
+.B
+fileName()
+Returns the file portion of the string provided as input.  That is, it returns everything after the last '/' character.  This may not always be a file, it could be a directory, or even just an arbitrary part of a string that may or may not have '/' in it.  If the input ends with a slash this will return an empty string.
+.TP
+.B
+dirName()
+Returns the directory portion of the string provided as input.  That is, it returns everything before the last '/' character.  Read the caveat for fileName about what this really means.  If the input ends with a slash this will return the entire string, except the trailing slash.
+.P
+Here, lets list functions we wish we had...
+.SH ENVIRONMENT
+.SH FILES
+.SH CONFORMING TO
+.SH NOTES
+.SH BUGS
+.SH EXAMPLE
+.SH SEE ALSO
