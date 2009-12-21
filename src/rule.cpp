@@ -73,9 +73,10 @@ void Rule::prepTarget( class Target *pTarget )
 	}
 }
 
-Target *Rule::createTarget( class Runner &r, const Bu::FString &sInput )
+Target *Rule::createTarget( class Runner &r, const Bu::FString &sInput,
+		Target *pParent )
 {
-	r.getContext().pushScope();
+	r.getContext().pushScope( pParent->getVars() );
 	r.getContext().addVariable("INPUT", sInput );
 	Target *pTrg = new Target( false );
 	for( AstBranchList::iterator i = lOutput.begin(); i; i++ )

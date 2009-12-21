@@ -144,13 +144,20 @@ void Context::pushScope()
 
 void Context::pushScope( const VarHash &hNewVars )
 {
+//	sio << "Pushing scope, merging contexts." << sio.nl << sio.nl;
 	VarHash h = hNewVars;
 	if( !sVars.isEmpty() )
 	{
+//		sio << "hNewVars = " << h << sio.nl << sio.nl
+//			<< "sVars = " << sVars.peek() << sio.nl;
 		for( VarHash::iterator i = sVars.peek().begin(); i; i++ )
 		{
+//			sio << "Checking '" << i.getKey() << "' (" << i.getValue() << ")." << sio.nl;
 			if( !h.has( i.getKey() ) )
+			{
+//				sio << "    Context doesn't have '" << i.getKey() << "' adding... '" << i.getValue() << "'." << sio.nl;
 				h.insert( i.getKey(), i.getValue() );
+			}
 		}
 	}
 	sVars.push( h );
@@ -158,7 +165,7 @@ void Context::pushScope( const VarHash &hNewVars )
 
 VarHash &Context::getScope()
 {
-	return sVars.first();
+	return sVars.peek();
 }
 
 void Context::popScope()
@@ -344,14 +351,14 @@ void Context::buildTargetTree( Runner &r )
 	}
 }
 
-void Context::buildTargetTree( class Runner &r, class Target * /*pTarget*/, const Bu::FString &sInput, Rule *pMaster, StrList &lNewIns )
+void Context::buildTargetTree( class Runner &r, class Target *pTarget, const Bu::FString &sInput, Rule *pMaster, StrList &lNewIns )
 {
 	Target *pNewTarget = NULL;
 	for( RuleHash::iterator i = hRule.begin(); i; i++ )
 	{
 		if( (*i)->hasOutputs() && (*i)->ruleMatches( r, sInput ) )
 		{
-			pNewTarget = (*i)->createTarget( r, sInput );
+			pNewTarget = (*i)->createTarget( r, sInput, pTarget );
 
 			Bu::Hash<ptrdiff_t, bool> hDone;
 			for( StrList::const_iterator oi =

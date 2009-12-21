@@ -79,7 +79,6 @@ rule "cpp"
 {
 	input "*.cpp";
 	output INPUT.cppToObj();
-//	output replace(".cpp", ".o");
 	requires getMakeDeps("${CXX} ${CXXFLAGS} -M ${INPUT}");
 	profile "build"
 	{

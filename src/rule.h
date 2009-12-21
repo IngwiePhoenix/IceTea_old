@@ -22,7 +22,8 @@ public:
 	void addProfile( const AstBranch *pProfile );
 
 	void prepTarget( class Target *pTarget );
-	class Target *createTarget( class Runner &r, const Bu::FString &sInput );
+	class Target *createTarget( class Runner &r, const Bu::FString &sInput,
+			class Target *pParent );
 	bool ruleMatches( class Runner &r, const Bu::FString &sInput );
 
 	void addTag( const Bu::FString &sTag );

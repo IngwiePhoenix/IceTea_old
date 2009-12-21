@@ -191,6 +191,7 @@ const Profile *Target::getProfile( const Bu::FString &sName ) const
 
 void Target::setVars( const VarHash &hNewVars )
 {
+
 	hVars = hNewVars;
 }
 

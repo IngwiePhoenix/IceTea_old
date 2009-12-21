@@ -1,4 +1,6 @@
 #include "functiongetmakedeps.h"
+#include "context.h"
+#include "view.h"
 
 #include <bu/process.h>
 #include <bu/sio.h>
@@ -19,6 +21,7 @@ Bu::FString FunctionGetMakeDeps::getName() const
 
 Variable FunctionGetMakeDeps::call( Variable &/*input*/, VarList lParams )
 {
+	pContext->getView()->cmdStarted( lParams.first().getString().getStr() );
 	Process p( Process::StdOut, "/bin/bash", "/bin/bash", "-c",
 		lParams.first().getString().getStr(), NULL );
 
@@ -30,6 +33,8 @@ Variable FunctionGetMakeDeps::call( Variable &/*input*/, VarList lParams )
 		int iRead = p.read( buf, 4096 );
 		sBuf.append( buf, iRead );
 	}
+	
+	pContext->getView()->cmdFinished( "", "", p.childExitStatus() );
 	
 	Variable vRet( Variable::typeList );
 
