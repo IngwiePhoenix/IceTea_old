@@ -5,6 +5,8 @@
 
 CXXFLAGS += "-ggdb -W -Wall";
 
+CC = CXX; // We actually want to use c++ to compile our c files.
+
 action "default"
 {
 	build: "build";
@@ -49,6 +51,7 @@ target "build"
 	rule "exe";
 	LDFLAGS += "-Llibbu++ -lbu++ -ldl";
 	CXXFLAGS += "-Ilibbu++";
+	CFLAGS = CXXFLAGS;
 	tag "tools";
 }
 
@@ -72,19 +75,6 @@ target "build-r$(svnversion "-n").tar.bz2"
 		];
 	rule "tarball";
 	tag "pkg";
-}
-
-// We want to override the c rule, and just use c++ for it
-rule "c"
-{
-	input "*.c";
-	output replace(".c", ".o");
-	tag "auto-source";
-	requires getMakeDeps("g++ ${CXXFLAGS} -M ${INPUT}");	
-	profile "build"
-	{
-		execute("g++ ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}");
-	}
 }
 
 rule "tarball"

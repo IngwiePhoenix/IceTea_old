@@ -1,10 +1,68 @@
+//
+// Really, variables here should default to something that's platform dependant,
+// but for now, we use linux, I'll default them to gnu/linux
+//
+
+
+if CXX == null then
+{
+	CXX = "g++";
+}
+
+if AR == null then
+{
+	AR = "ar";
+}
+
+if CC == null then
+{
+	CC = "cc";
+}
+
+if BISON == null then
+{
+	BISON = "bison";
+}
+
+if FLEX == null then
+{
+	FLEX = "flex";
+}
+
+function cppToObj()
+{
+	if OBJ_DIR == null then
+	{
+		DIR = INPUT.dirName();
+	}
+	else
+	{
+		DIR = OBJ_DIR;
+	}
+
+	return DIR + "/" + INPUT.fileName().replace(".cpp", ".o");
+}
+
+function cToObj()
+{
+	if OBJ_DIR == null then
+	{
+		DIR = INPUT.dirName();
+	}
+	else
+	{
+		DIR = OBJ_DIR;
+	}
+
+	return DIR + "/" + INPUT.fileName().replace(".c", ".o");
+}
 
 rule "exe"
 {
 	input "*.o";
 	profile "build"
 	{
-		execute("g++ -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
+		execute("${CXX} -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
 	}
 }
 
@@ -13,18 +71,19 @@ rule "lib"
 	input "*.o";
 	profile "build"
 	{
-		execute("ar cr ${OUTPUT} ${INPUT}");
+		execute("${AR} cr ${OUTPUT} ${INPUT}");
 	}
 }
 
 rule "cpp"
 {
 	input "*.cpp";
-	output replace(".cpp", ".o");
-	requires getMakeDeps("g++ ${CXXFLAGS} -M ${INPUT}");
+	output cppToObj();
+//	output replace(".cpp", ".o");
+	requires getMakeDeps("${CXX} ${CXXFLAGS} -M ${INPUT}");
 	profile "build"
 	{
-		execute("g++ ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
+		execute("${CXX} ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
 	}
 }
 
@@ -32,11 +91,12 @@ rule "cpp"
 rule "c"
 {
 	input "*.c";
-	output replace(".c", ".o");
-	requires getMakeDeps("gcc ${CXXFLAGS} -M ${INPUT}");
+	output cToObj();
+//	output replace(".c", ".o");
+	requires getMakeDeps("${CC} ${CFLAGS} -M ${INPUT}");
 	profile "build"
 	{
-		execute("gcc ${CFLAGS} -c -o ${OUTPUT} ${INPUT}");
+		execute("${CC} ${CFLAGS} -c -o ${OUTPUT} ${INPUT}");
 	}
 }
 
@@ -47,7 +107,7 @@ rule "bison"
 	profile "build"
 	{
 		BASE = INPUT.replace(".y", "");
-		execute("bison -b${BASE} ${INPUT}");
+		execute("${BISON} -b${BASE} ${INPUT}");
 		// if you add a -v bison will produce a .output file
 	}
 }
@@ -59,6 +119,6 @@ rule "flex"
 	output replace(".l", ".yy.h");
 	profile "build"
 	{
-		execute("flex ${FLEXFLAGS} ${INPUT}");
+		execute("${FLEX} ${FLEXFLAGS} ${INPUT}");
 	}
 }

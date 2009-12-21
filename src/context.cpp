@@ -438,6 +438,10 @@ void Context::genDefaultActions()
 	{
 		addAction( Action::genDefaultClean() );
 	}
+	if( !hAction.has("clean-all") )
+	{
+		addAction( Action::genDefaultCleanAll() );
+	}
 	if( !hAction.has("default") )
 	{
 		addAction( Action::genDefaultDefault() );

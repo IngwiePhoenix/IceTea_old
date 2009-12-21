@@ -15,6 +15,7 @@ public:
 
 	static Action *genDefaultAll();
 	static Action *genDefaultClean();
+	static Action *genDefaultCleanAll();
 	static Action *genDefaultDefault();
 
 private:

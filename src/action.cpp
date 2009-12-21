@@ -80,6 +80,31 @@ Action *Action::genDefaultClean()
 	return pRet;
 }
 
+Action *Action::genDefaultCleanAll()
+{
+	Ast *pAst = new Ast();
+	pAst->addNode( AstNode::typeActionDef );
+		pAst->openBranch();
+			pAst->addNode( AstNode::typeString, "clean-all" );
+		pAst->openBranch();
+			pAst->addNode( AstNode::typeProcessTarget );
+				pAst->openBranch();
+					pAst->addNode( AstNode::typeString, "clean" );
+				pAst->openBranch();
+					pAst->addNode( AstNode::typeFunction );
+						pAst->openBranch();
+							pAst->addNode( AstNode::typeString, "targets" );
+					pAst->closeNode();
+			pAst->closeNode();
+	pAst->closeNode();
+	Action *pRet = new Action(
+		dynamic_cast<const AstBranch *>( *pAst->getNodeBegin() )
+		);
+	pRet->pAst = pAst;
+
+	return pRet;
+}
+
 Action *Action::genDefaultDefault()
 {
 	Ast *pAst = new Ast();
