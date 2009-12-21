@@ -188,7 +188,7 @@ value_mods:
 
 value_core: variable
 		  | literal
-		  | function
+		  | function_no_input
 		  | list
 		  ;
 
@@ -246,6 +246,16 @@ func_param_list: { bld.xAst.openBranch(); } value
 			   ;
 
 function: UNDEF '(' {
+			bld.xAst.addNode( AstNode::typeFunction );
+			bld.xAst.openBranch();
+			bld.xAst.addNode( AstNode::typeString, $1 );
+		} func_params ')' {
+			bld.xAst.closeNode();
+		}
+		;
+
+function_no_input: UNDEF '(' {
+			bld.xAst.addNode( AstNode::typeNull );
 			bld.xAst.addNode( AstNode::typeFunction );
 			bld.xAst.openBranch();
 			bld.xAst.addNode( AstNode::typeString, $1 );

@@ -4,6 +4,9 @@
 #include "runner.h"
 #include "context.h"
 
+#include <bu/sio.h>
+using namespace Bu;
+
 FunctionAst::FunctionAst( const AstBranch *pRoot, class Runner *pRunner ) :
 	pRoot( pRoot ),
 	pRunner( pRunner )
@@ -22,9 +25,20 @@ Bu::FString FunctionAst::getName() const
 	return sName;
 }
 
-Variable FunctionAst::call( Variable &input, VarList /*lParams*/ )
+Variable FunctionAst::call( Variable &input, VarList lParams )
 {
 	pContext->pushScope();
+	
+	AstBranch::NodeList::const_iterator vName = 
+		(*(pRoot->getBranchBegin()+1)).begin();
+	VarList::iterator vValue = lParams.begin();
+	for( ; vName && vValue; vName++, vValue++ )
+	{
+		pContext->addVariable(
+			dynamic_cast<const AstLeaf *>(*vName)->getStrValue(),
+			*vValue
+			);
+	}
 	pContext->addVariable("INPUT", input );
 	Variable vRet = pRunner->run( (*(pRoot->getBranchBegin()+2)).begin() );
 	pContext->popScope();

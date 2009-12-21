@@ -29,7 +29,7 @@ action "clean"
 
 action "devinstall"
 {
-	if "$(id -u)" != "0\n" then
+	if "$(id -u)" != "0" then
 	{
 		error "You can only install as the root user, su then run this.";
 	}
@@ -38,7 +38,7 @@ action "devinstall"
 
 action "viminstall"
 {
-	if "$(id -u)" != "0\n" then
+	if "$(id -u)" != "0" then
 	{
 		error "You can only install as the root user, su then run this.";
 	}

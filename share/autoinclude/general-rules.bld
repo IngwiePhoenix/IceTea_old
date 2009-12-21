@@ -78,7 +78,7 @@ rule "lib"
 rule "cpp"
 {
 	input "*.cpp";
-	output cppToObj();
+	output INPUT.cppToObj();
 //	output replace(".cpp", ".o");
 	requires getMakeDeps("${CXX} ${CXXFLAGS} -M ${INPUT}");
 	profile "build"
@@ -91,7 +91,7 @@ rule "cpp"
 rule "c"
 {
 	input "*.c";
-	output cToObj();
+	output INPUT.cToObj();
 //	output replace(".c", ".o");
 	requires getMakeDeps("${CC} ${CFLAGS} -M ${INPUT}");
 	profile "build"
@@ -115,8 +115,8 @@ rule "bison"
 rule "flex"
 {
 	input "*.l";
-	output replace(".l", ".yy.c");
-	output replace(".l", ".yy.h");
+	output INPUT.replace(".l", ".yy.c");
+	output INPUT.replace(".l", ".yy.h");
 	profile "build"
 	{
 		execute("${FLEX} ${FLEXFLAGS} ${INPUT}");

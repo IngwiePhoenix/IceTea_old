@@ -232,6 +232,8 @@ Bu::FString Context::expand( const Bu::FString &sInS )
 						char buf[4096];
 						sBuf.append( buf, p.read( buf, 4096 ) );
 					}
+					sBuf = sBuf.replace("\n", " ").replace("\r", " ");
+					sBuf.trimBack(' ');
 					sRet.append( sBuf );
 				} catch(...)
 				{

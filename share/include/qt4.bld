@@ -1,4 +1,58 @@
 
+function qt_getCXXFLAGS()
+{
+	if QTDIR == null then
+	{
+		error "QTDIR is not set, cannot find QT tools.";
+	}
+
+	ret = "-D_REENTRANT -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LI "
+		"-DQT_SHARED -I${QTDIR}/mkspecs/linux-g++ "
+		"$(PKG_CONFIG_PATH=PKG_CONFIG_PATH:${QTDIR}/lib/pkgconfig "
+		"pkg-config --cflags QtCore QtGui ice glu x11 xext libpng freetype2 "
+		"gobject-2.0 sm xrender fontconfig gthread-2.0 glib-2.0)";
+	if UI_DIR != null then
+	{
+		ret += "-I${UI_DIR}";
+	}
+	if RCC_DIR != null then
+	{
+		ret += "-I${RCC_DIR}";
+	}
+	if MOC_DIR != null then
+	{
+		ret += "-I${MOC_DIR}";
+	}
+	return ret;
+}
+
+function qt_getLDFLAGS()
+{
+	if QTDIR == null then
+	{
+		error "QTDIR is not set, cannot find QT tools.";
+	}
+
+	return "-Wl,-rpath,${QTDIR}/lib $(PKG_CONFIG_PATH="
+		"PKG_CONFIG_PATH:${QTDIR}/lib/pkgconfig "
+		"pkg-config --libs QtCore QtGui ice glu x11 xext libpng freetype2 "
+		"gobject-2.0 sm xrender fontconfig gthread-2.0 glib-2.0) -laudio -lz "
+		"-lm -ldl";
+}
+
+function qt_getToolPath( TOOL, DEFAULT )
+{
+	if QTDIR == null then
+	{
+		error "QTDIR is not set, cannot find QT tools.";
+	}
+	if TOOL == null then
+	{
+		return "${QTDIR}/bin/${DEFAULT}";
+	}
+	return TOOL;
+}
+
 function qt_uiToH()
 {
 	if "${UI_DIR}" == "" then
@@ -22,7 +76,8 @@ rule "qt_ui"
 	tag "headers";
 	profile "build"
 	{
-		execute("${QTDIR}/bin/uic -o ${OUTPUT} ${INPUT}");
+		UIC = qt_getToolPath( UIC, "uic" );
+		execute("${UIC} -o ${OUTPUT} ${INPUT}");
 	}
 }
 
@@ -48,8 +103,9 @@ rule "qt_rcc"
 	output INPUT.qt_qrcToCpp();
 	profile "build"
 	{
+		RCC = qt_getToolPath( RCC, "rcc" );
 		NAME = INPUT.fileName().replace(".qrc","");
-		execute("${QTDIR}/bin/rcc -name ${NAME} -o ${OUTPUT} ${INPUT}");
+		execute("${RCC} -name ${NAME} -o ${OUTPUT} ${INPUT}");
 	}
 }
 
@@ -90,7 +146,8 @@ rule "qt_moc"
 	output INPUT.qt_hToMocCpp();
 	profile "build"
 	{
-		execute("${QTDIR}/bin/moc -o${OUTPUT} ${INPUT}");
+		MOC = qt_getToolPath( MOC, "moc" );
+		execute("${MOC} -o${OUTPUT} ${INPUT}");
 	}
 }
 
