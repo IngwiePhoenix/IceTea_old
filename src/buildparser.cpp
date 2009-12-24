@@ -23,6 +23,10 @@ void BuildParser::load( const Bu::FString &sFile )
 
 	sFilename.push( sFile );
 	FILE *fIn = fopen( sFile.getStr(), "rt" );
+	if( fIn == NULL )
+	{
+		throw Bu::ExceptionBase("Cannot open file: %s", sFile.getStr() );
+	}
 	build_lex_init( &scanner );
 	// build_set_debug( true, scanner );
 	build_set_in( fIn, scanner );
