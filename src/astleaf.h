@@ -8,12 +8,12 @@
 class AstLeaf : public AstNode
 {
 public:
-	AstLeaf( Type eType );
-	AstLeaf( Type eType, int iNew );
-	AstLeaf( Type eType, float fNew );
-	AstLeaf( Type eType, bool bNew );
-	AstLeaf( Type eType, const Bu::FString &sNew );
-	AstLeaf( Type eType, const char *sNew );
+	AstLeaf( const Location &loc, Type eType );
+	AstLeaf( const Location &loc, Type eType, int iNew );
+	AstLeaf( const Location &loc, Type eType, float fNew );
+	AstLeaf( const Location &loc, Type eType, bool bNew );
+	AstLeaf( const Location &loc, Type eType, const Bu::FString &sNew );
+	AstLeaf( const Location &loc, Type eType, const char *sNew );
 	virtual ~AstLeaf();
 
 	void setIntValue( int iNew );

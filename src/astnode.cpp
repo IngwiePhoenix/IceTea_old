@@ -2,8 +2,9 @@
 #include "astleaf.h"
 #include "astbranch.h"
 
-AstNode::AstNode( Type eType ) :
-	eType( eType )
+AstNode::AstNode( const Location &loc, Type eType ) :
+	eType( eType ),
+	loc( loc )
 {
 }
 

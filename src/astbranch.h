@@ -10,7 +10,7 @@ class AstBranch : public AstNode
 public:
 	typedef Bu::List<AstNode *> NodeList;
 	typedef Bu::List<NodeList> BranchList;
-	AstBranch( Type eType );
+	AstBranch( const Location &loc, Type eType );
 	virtual ~AstBranch();
 
 	void addBranch();

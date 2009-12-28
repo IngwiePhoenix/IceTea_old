@@ -2,6 +2,7 @@
 #define AST_NODE_H
 
 #include "bu/formatter.h"
+#include "location.h"
 
 class AstNode
 {
@@ -91,7 +92,7 @@ public:
 		typeDataMask		= 0x0F0000
 	};
 public:
-	AstNode( Type eType );
+	AstNode( const Location &loc, Type eType );
 	virtual ~AstNode();
 
 	Type getType() const { return eType; }
@@ -100,6 +101,7 @@ public:
 
 private:
 	Type eType;
+	Location loc;
 };
 
 Bu::Formatter &operator<<( Bu::Formatter &f, const AstNode &n );

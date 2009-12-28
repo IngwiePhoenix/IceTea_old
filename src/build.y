@@ -147,19 +147,19 @@ include: TOK_INCLUDE STRING ';' { bld.include( $2, yyscanner, &yylloc ); }
  *  data related
  */
 
-string: STRING { bld.xAst.addNode( AstNode::typeString, $1 ); }
+string: STRING { bld.xAst.addNode( @1, AstNode::typeString, $1 ); }
 	  ;
 
-int: INT { bld.xAst.addNode( AstNode::typeInt, $1 ); }
+int: INT { bld.xAst.addNode( @1, AstNode::typeInt, $1 ); }
    ;
 
-float: FLOAT { bld.xAst.addNode( AstNode::typeFloat, $1 ); }
+float: FLOAT { bld.xAst.addNode( @1, AstNode::typeFloat, $1 ); }
 	 ;
 
-bool: BOOL { bld.xAst.addNode( AstNode::typeBool, (bool)$1 ); }
+bool: BOOL { bld.xAst.addNode( @1, AstNode::typeBool, (bool)$1 ); }
 	;
 
-null: TOK_NULL { bld.xAst.addNode( AstNode::typeNull ); }
+null: TOK_NULL { bld.xAst.addNode( @1, AstNode::typeNull ); }
 
 literal: string
 	   | int
@@ -168,7 +168,7 @@ literal: string
 	   | null
 	   ;
 
-variable: UNDEF /*VARIABLE*/ { bld.xAst.addNode( AstNode::typeVariable, $1 ); }
+variable: UNDEF { bld.xAst.addNode( @1, AstNode::typeVariable, $1 ); }
 
 list_core:
 		 | { bld.xAst.openBranch(); } expr
@@ -176,7 +176,7 @@ list_core:
 		 ;
 
 list: '[' {
-	  bld.xAst.addNode( AstNode::typeList );
+	  bld.xAst.addNode( @1, AstNode::typeList );
 	} list_core ']' {
 	  bld.xAst.closeNode();
 	}
@@ -199,9 +199,9 @@ value: value_core value_mods
  *  misc global things
  */
 
-notify: TOK_ERROR STRING ';' { bld.xAst.addNode( AstNode::typeError, $2 ); }
-	  | TOK_WARNING STRING ';' { bld.xAst.addNode( AstNode::typeWarning, $2 ); }
-	  | TOK_NOTICE STRING ';' { bld.xAst.addNode( AstNode::typeNotice, $2 ); }
+notify: TOK_ERROR STRING ';' { bld.xAst.addNode( @$,AstNode::typeError, $2 ); }
+	  | TOK_WARNING STRING ';' { bld.xAst.addNode( @$, AstNode::typeWarning, $2 ); }
+	  | TOK_NOTICE STRING ';' { bld.xAst.addNode( @$, AstNode::typeNotice, $2 ); }
 	  ;
 /*
 set_rhs: '=' { bld.xAst.addNode( AstNode::typeOpEq ); } value
@@ -218,7 +218,7 @@ set: TOK_SET {
    ;*/
 
 unset: TOK_UNSET {
-	 	bld.xAst.addNode( AstNode::typeUnset );
+	 	bld.xAst.addNode( @1, AstNode::typeUnset );
 		bld.xAst.openBranch();
 	 } variable ';' {
 		bld.xAst.closeNode();
@@ -230,7 +230,7 @@ export_rhs: '=' value
 		  ;
 
 export: TOK_EXPORT {
-	    bld.xAst.addNode( AstNode::typeExport );
+	    bld.xAst.addNode( @1, AstNode::typeExport );
 		bld.xAst.openBranch();
 	  } variable export_rhs ';' {
 	    bld.xAst.closeNode();
@@ -246,37 +246,37 @@ func_param_list: { bld.xAst.openBranch(); } value
 			   ;
 
 function: UNDEF '(' {
-			bld.xAst.addNode( AstNode::typeFunction );
+			bld.xAst.addNode( @$, AstNode::typeFunction );
 			bld.xAst.openBranch();
-			bld.xAst.addNode( AstNode::typeString, $1 );
+			bld.xAst.addNode( @$, AstNode::typeString, $1 );
 		} func_params ')' {
 			bld.xAst.closeNode();
 		}
 		;
 
 function_no_input: UNDEF '(' {
-			bld.xAst.addNode( AstNode::typeNull );
-			bld.xAst.addNode( AstNode::typeFunction );
+			bld.xAst.addNode( @$, AstNode::typeNull );
+			bld.xAst.addNode( @$, AstNode::typeFunction );
 			bld.xAst.openBranch();
-			bld.xAst.addNode( AstNode::typeString, $1 );
+			bld.xAst.addNode( @$, AstNode::typeString, $1 );
 		} func_params ')' {
 			bld.xAst.closeNode();
 		}
 		;
 
 requires: TOK_REQUIRES {
-			bld.xAst.addNode( AstNode::typeRequires );
+			bld.xAst.addNode( @$, AstNode::typeRequires );
 			bld.xAst.openBranch();
 		} value ';' {
 			bld.xAst.closeNode();
 		}
 		;
 
-type: TOK_STRING { bld.xAst.addNode( AstNode::typeTypeString ); }
-	| TOK_INT { bld.xAst.addNode( AstNode::typeTypeInt ); }
-	| TOK_FLOAT { bld.xAst.addNode( AstNode::typeTypeFloat ); }
-	| TOK_BOOL { bld.xAst.addNode( AstNode::typeTypeBool ); }
-	| TOK_VERSION { bld.xAst.addNode( AstNode::typeTypeVersion ); }
+type: TOK_STRING { bld.xAst.addNode( @1, AstNode::typeTypeString ); }
+	| TOK_INT { bld.xAst.addNode( @1, AstNode::typeTypeInt ); }
+	| TOK_FLOAT { bld.xAst.addNode( @1, AstNode::typeTypeFloat ); }
+	| TOK_BOOL { bld.xAst.addNode( @1, AstNode::typeTypeBool ); }
+	| TOK_VERSION { bld.xAst.addNode( @1, AstNode::typeTypeVersion ); }
 	;
 
 /*
@@ -286,67 +286,67 @@ type: TOK_STRING { bld.xAst.addNode( AstNode::typeTypeString ); }
 expr: value
 	| '(' expr ')'
 	| UNDEF '=' {
-		bld.xAst.addNode( AstNode::typeVariableRef, $1 );
+		bld.xAst.addNode( @$, AstNode::typeVariableRef, $1 );
 	} expr {
-		bld.xAst.addNode( AstNode::typeOpEq );
+		bld.xAst.addNode( @3, AstNode::typeOpEq );
 	}
 	| UNDEF OP_ADDSETP {
-		bld.xAst.addNode( AstNode::typeVariableRef, $1 );
+		bld.xAst.addNode( @$, AstNode::typeVariableRef, $1 );
 	} expr {
-		bld.xAst.addNode( AstNode::typeOpPlusEq );
+		bld.xAst.addNode( @3, AstNode::typeOpPlusEq );
 	}
 	| expr OP_CMPEQUAL expr
 	{
-		bld.xAst.addNode( AstNode::typeCmpEq );
+		bld.xAst.addNode( @$, AstNode::typeCmpEq );
 	}
 	| expr '<' expr
 	{
-		bld.xAst.addNode( AstNode::typeCmpLt );
+		bld.xAst.addNode( @$, AstNode::typeCmpLt );
 	}
 	| expr '>' expr
 	{
-		bld.xAst.addNode( AstNode::typeCmpGt );
+		bld.xAst.addNode( @$, AstNode::typeCmpGt );
 	}
 	| expr OP_INEQUAL expr
 	{
-		bld.xAst.addNode( AstNode::typeCmpNe );
+		bld.xAst.addNode( @$, AstNode::typeCmpNe );
 	}
 	| expr OP_LTEQUAL expr
 	{
-		bld.xAst.addNode( AstNode::typeCmpLtEq );
+		bld.xAst.addNode( @$, AstNode::typeCmpLtEq );
 	}
 	| expr OP_GTEQUAL expr
 	{
-		bld.xAst.addNode( AstNode::typeCmpGtEq );
+		bld.xAst.addNode( @$, AstNode::typeCmpGtEq );
 	}
 	| expr '+' expr
 	{
-		bld.xAst.addNode( AstNode::typeOpPlus );
+		bld.xAst.addNode( @$, AstNode::typeOpPlus );
 	}
 	| expr '-' expr
 	{
-		bld.xAst.addNode( AstNode::typeOpMinus );
+		bld.xAst.addNode( @$, AstNode::typeOpMinus );
 	}
 	| expr '*' expr
 	{
-		bld.xAst.addNode( AstNode::typeOpMultiply );
+		bld.xAst.addNode( @$, AstNode::typeOpMultiply );
 	}
 	| expr '/' expr
 	{
-		bld.xAst.addNode( AstNode::typeOpDivide );
+		bld.xAst.addNode( @$, AstNode::typeOpDivide );
 	}
 	| '-' expr %prec IINEG
 	{
-		bld.xAst.addNode( AstNode::typeOpNegate );
+		bld.xAst.addNode( @$, AstNode::typeOpNegate );
 	}
 	| '!' expr %prec IINOT
 	{
-		bld.xAst.addNode( AstNode::typeOpNot );
+		bld.xAst.addNode( @$, AstNode::typeOpNot );
 	}
 	;
 
 line_expr: {
-		 	bld.xAst.addNode( AstNode::typeExpr );
+		 	bld.xAst.addNode( @$, AstNode::typeExpr );
 			bld.xAst.openBranch();
 		 } expr ';'
 		 {
@@ -355,9 +355,9 @@ line_expr: {
 		 ;
 
 if_core: TOK_IF {
-	   	bld.xAst.addNode( AstNode::typeIf );
+	   	bld.xAst.addNode( @$, AstNode::typeIf );
 		bld.xAst.openBranch();
-//		bld.xAst.addNode( AstNode::typeExpr );
+//		bld.xAst.addNode( @$, AstNode::typeExpr );
 //		bld.xAst.openBranch();
 	   } expr TOK_THEN {
 //	    bld.xAst.closeNode();
@@ -406,7 +406,7 @@ function_else:
  */
 
 for_base: TOK_FOR {
-			bld.xAst.addNode( AstNode::typeFor );
+			bld.xAst.addNode( @$, AstNode::typeFor );
 			bld.xAst.openBranch();
 		} variable TOK_IN {
 			bld.xAst.openBranch();
@@ -432,9 +432,9 @@ function_for: for_base '{' function_exprs '}' { bld.xAst.closeNode(); }
  */
 
 function_def: TOK_FUNCTION UNDEF {
-				bld.xAst.addNode( AstNode::typeFunctionDef );
+				bld.xAst.addNode( @1, AstNode::typeFunctionDef );
 				bld.xAst.openBranch();
-				bld.xAst.addNode( AstNode::typeString, $2 );
+				bld.xAst.addNode( @2, AstNode::typeString, $2 );
 				bld.xAst.openBranch();
 			} '(' param_defs ')' {
 				bld.xAst.openBranch();
@@ -465,7 +465,7 @@ function_exprs:
 			  ;
 
 return: TOK_RETURN {
-	  	bld.xAst.addNode( AstNode::typeReturn );
+	  	bld.xAst.addNode( @$, AstNode::typeReturn );
 		bld.xAst.openBranch();
 	  } expr {
 	  	bld.xAst.closeNode();
@@ -477,9 +477,9 @@ return: TOK_RETURN {
  */
 
 action_def: TOK_ACTION STRING {
-		    bld.xAst.addNode( AstNode::typeActionDef );
+		    bld.xAst.addNode( @$, AstNode::typeActionDef );
 			bld.xAst.openBranch();
-			bld.xAst.addNode( AstNode::typeString, $2 );
+			bld.xAst.addNode( @1, AstNode::typeString, $2 );
 			bld.xAst.openBranch();
 		  } '{' function_exprs '}' {
 		    bld.xAst.closeNode();
@@ -491,7 +491,7 @@ action_def: TOK_ACTION STRING {
  */
 
 profile: TOK_PROFILE {
-	   	bld.xAst.addNode( AstNode::typeProfile );
+	   	bld.xAst.addNode( @$, AstNode::typeProfile );
 		bld.xAst.openBranch();
 	   } string {
 	   	bld.xAst.openBranch();
@@ -518,7 +518,7 @@ profile_exprs:
  */
 
 target: TOK_TARGET {
-	  	bld.xAst.addNode( AstNode::typeTarget );
+	  	bld.xAst.addNode( @$, AstNode::typeTarget );
 		bld.xAst.openBranch();
 	  } expr {
 	  	bld.xAst.openBranch();
@@ -544,7 +544,7 @@ target_exprs:
 			;
 
 target_input: TOK_INPUT {
-				bld.xAst.addNode( AstNode::typeInput );
+				bld.xAst.addNode( @$, AstNode::typeInput );
 				bld.xAst.openBranch();
 			} expr ';' {
 				bld.xAst.closeNode();
@@ -552,7 +552,7 @@ target_input: TOK_INPUT {
 			;
 
 target_rule: TOK_RULE {
-		   	bld.xAst.addNode( AstNode::typeRule );
+		   	bld.xAst.addNode( @$, AstNode::typeRule );
 			bld.xAst.openBranch();
 		   } string ';' {
 		   	bld.xAst.closeNode();
@@ -560,13 +560,13 @@ target_rule: TOK_RULE {
 		   ;
 
 condition: TOK_CONDITION CONDITION ';' {
-		 	bld.xAst.addNode( AstNode::typeCondition, $2 );
+		 	bld.xAst.addNode( @$, AstNode::typeCondition, $2 );
 		 }
 		 | TOK_CONDITION TOK_ALWAYS ';'{
-		 	bld.xAst.addNode( AstNode::typeCondition, "always" );
+		 	bld.xAst.addNode( @$, AstNode::typeCondition, "always" );
 		 }
 		 | TOK_CONDITION TOK_NEVER ';'{
-		 	bld.xAst.addNode( AstNode::typeCondition, "never" );
+		 	bld.xAst.addNode( @$, AstNode::typeCondition, "never" );
 		 }
 		 ;
 
@@ -575,7 +575,7 @@ condition: TOK_CONDITION CONDITION ';' {
  */
 
 rule: TOK_RULE {
-		bld.xAst.addNode( AstNode::typeRuleDef );
+		bld.xAst.addNode( @$, AstNode::typeRuleDef );
 		bld.xAst.openBranch();
 	} string {
 		bld.xAst.openBranch();
@@ -602,18 +602,18 @@ rule_input_func: function
 			     /* In this case, when the input is just a string,
 				    lets actually turn it into a call to the matches function.
 					*/
-			     bld.xAst.addNode( AstNode::typeFunction );
+			     bld.xAst.addNode( @1, AstNode::typeFunction );
 			     bld.xAst.openBranch();
-			     bld.xAst.addNode( AstNode::typeString, "matches" );
+			     bld.xAst.addNode( @1, AstNode::typeString, "matches" );
 			     bld.xAst.openBranch();
-			     bld.xAst.addNode( AstNode::typeString, $1 );
+			     bld.xAst.addNode( @1, AstNode::typeString, $1 );
 			     bld.xAst.closeNode();
 			   }
 /*			   | string */
 			   ;
 
 rule_input: TOK_INPUT {
-		  	bld.xAst.addNode( AstNode::typeInput );
+		  	bld.xAst.addNode( @$, AstNode::typeInput );
 			bld.xAst.openBranch();
 		  } rule_input_func ';' {
 		  	bld.xAst.closeNode();
@@ -621,7 +621,7 @@ rule_input: TOK_INPUT {
 		  ;
 
 output: TOK_OUTPUT {
-	  	bld.xAst.addNode( AstNode::typeOutput );
+	  	bld.xAst.addNode( @$, AstNode::typeOutput );
 		bld.xAst.openBranch();
 	  } value ';' {
 	  	bld.xAst.closeNode();
@@ -632,7 +632,7 @@ output: TOK_OUTPUT {
  *  config
  */
 config: TOK_CONFIG {
-	  	bld.xAst.addNode( AstNode::typeConfig );
+	  	bld.xAst.addNode( @$, AstNode::typeConfig );
 		bld.xAst.openBranch();
 	  } string {
 	  	bld.xAst.openBranch();
@@ -640,7 +640,7 @@ config: TOK_CONFIG {
 	  	bld.xAst.closeNode();
 	  }
 	  | TOK_AUTO TOK_CONFIG {
-	  	bld.xAst.addNode( AstNode::typeAutoConfig );
+	  	bld.xAst.addNode( @$, AstNode::typeAutoConfig );
 		bld.xAst.openBranch();
 	  } string {
 	  	bld.xAst.openBranch();
@@ -648,7 +648,7 @@ config: TOK_CONFIG {
 	  	bld.xAst.closeNode();
 	  }
 	  | TOK_GLOBAL TOK_CONFIG {
-	  	bld.xAst.addNode( AstNode::typeGlobalConfig );
+	  	bld.xAst.addNode( @$, AstNode::typeGlobalConfig );
 		bld.xAst.openBranch();
 	  } string {
 	  	bld.xAst.openBranch();
@@ -667,12 +667,12 @@ config_exprs:
 			;
 
 display: TOK_DISPLAY STRING ';' {
-	   	bld.xAst.addNode( AstNode::typeDisplay, $2 );
+	   	bld.xAst.addNode( @$, AstNode::typeDisplay, $2 );
 	   }
 	   ;
 
 config_type: TOK_TYPE {
-		   	bld.xAst.addNode( AstNode::typeType );
+		   	bld.xAst.addNode( @$, AstNode::typeType );
 			bld.xAst.openBranch();
 		   } type ';' {
 		   	bld.xAst.closeNode();
@@ -680,7 +680,7 @@ config_type: TOK_TYPE {
 		   ;
 
 default: TOK_DEFAULT {
-	   	bld.xAst.addNode( AstNode::typeDefault );
+	   	bld.xAst.addNode( @$, AstNode::typeDefault );
 		bld.xAst.openBranch();
 	   } literal ';' {
 	   	bld.xAst.closeNode();
@@ -691,7 +691,7 @@ value_key_val: value ';'
 			 | '{' function_exprs '}' /* inline function */
 
 value_key: TOK_VALUE {
-		 	bld.xAst.addNode( AstNode::typeValue );
+		 	bld.xAst.addNode( @$, AstNode::typeValue );
 			bld.xAst.openBranch();
 		 } value_key_val {
 		 	bld.xAst.closeNode();
@@ -699,7 +699,7 @@ value_key: TOK_VALUE {
 		 ;
 
 allow: TOK_ALLOW {
-	 	bld.xAst.addNode( AstNode::typeAllow );
+	 	bld.xAst.addNode( @$, AstNode::typeAllow );
 		bld.xAst.openBranch();
 	 } value ';' {
 	 	bld.xAst.closeNode();
@@ -707,9 +707,9 @@ allow: TOK_ALLOW {
 	 ;
 
 cache: TOK_CACHE TOK_ALWAYS ';'
-	 { bld.xAst.addNode( AstNode::typeCache, true ); }
+	 { bld.xAst.addNode( @$, AstNode::typeCache, true ); }
 	 | TOK_CACHE TOK_NEVER ';'
-	 { bld.xAst.addNode( AstNode::typeCache, false ); }
+	 { bld.xAst.addNode( @$, AstNode::typeCache, false ); }
 	 ;
 
 /*
@@ -717,9 +717,9 @@ cache: TOK_CACHE TOK_ALWAYS ';'
  */
 process_target: PROFILE
 			  {
-			  	bld.xAst.addNode( AstNode::typeProcessTarget );
+			  	bld.xAst.addNode( @$, AstNode::typeProcessTarget );
 				bld.xAst.openBranch();
-				bld.xAst.addNode( AstNode::typeString, $1 );
+				bld.xAst.addNode( @$, AstNode::typeString, $1 );
 				bld.xAst.openBranch();
 			  } value ';' {
 				bld.xAst.closeNode();
@@ -728,7 +728,7 @@ process_target: PROFILE
 
 tag: TOK_TAG
    {
-   	bld.xAst.addNode( AstNode::typeTag );
+   	bld.xAst.addNode( @$, AstNode::typeTag );
 	bld.xAst.openBranch();
    } value ';' {
    	bld.xAst.closeNode();

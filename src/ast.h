@@ -19,6 +19,14 @@ public:
 	Ast();
 	virtual ~Ast();
 
+	void addNode( struct YYLTYPE &loc, AstNode::Type eType );
+	void addNode( struct YYLTYPE &loc, AstNode::Type eType, int iVal );
+	void addNode( struct YYLTYPE &loc, AstNode::Type eType, float fVal );
+	void addNode( struct YYLTYPE &loc, AstNode::Type eType, bool bVal );
+	void addNode( struct YYLTYPE &loc, AstNode::Type eType,
+			const Bu::FString &sVal );
+	void addNode( struct YYLTYPE &loc, AstNode::Type eType, const char *sVal );
+
 	void addNode( AstNode::Type eType );
 	void addNode( AstNode::Type eType, int iVal );
 	void addNode( AstNode::Type eType, float fVal );

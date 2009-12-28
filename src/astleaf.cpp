@@ -1,41 +1,41 @@
 #include "astleaf.h"
 
-AstLeaf::AstLeaf( Type eType ) :
-	AstNode( eType ),
+AstLeaf::AstLeaf( const Location &loc, Type eType ) :
+	AstNode( loc, eType ),
 	sVal( NULL )
 {
 }
 
-AstLeaf::AstLeaf( Type eType, int iNew ) :
-	AstNode( eType ),
+AstLeaf::AstLeaf( const Location &loc, Type eType, int iNew ) :
+	AstNode( loc, eType ),
 	sVal( NULL )
 {
 	setIntValue( iNew );
 }
 
-AstLeaf::AstLeaf( Type eType, float fNew ) :
-	AstNode( eType ),
+AstLeaf::AstLeaf( const Location &loc, Type eType, float fNew ) :
+	AstNode( loc, eType ),
 	sVal( NULL )
 {
 	setFloatValue( fNew );
 }
 
-AstLeaf::AstLeaf( Type eType, bool bNew ) :
-	AstNode( eType ),
+AstLeaf::AstLeaf( const Location &loc, Type eType, bool bNew ) :
+	AstNode( loc, eType ),
 	sVal( NULL )
 {
 	setBoolValue( bNew );
 }
 
-AstLeaf::AstLeaf( Type eType, const Bu::FString &sNew ) :
-	AstNode( eType ),
+AstLeaf::AstLeaf( const Location &loc, Type eType, const Bu::FString &sNew ) :
+	AstNode( loc, eType ),
 	sVal( NULL )
 {
 	setStrValue( sNew );
 }
 
-AstLeaf::AstLeaf( Type eType, const char *sNew ) :
-	AstNode( eType ),
+AstLeaf::AstLeaf( const Location &loc, Type eType, const char *sNew ) :
+	AstNode( loc, eType ),
 	sVal( NULL )
 {
 	setStrValue( sNew );

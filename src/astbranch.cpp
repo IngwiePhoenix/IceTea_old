@@ -1,7 +1,7 @@
 #include "astbranch.h"
 
-AstBranch::AstBranch( Type eType ) :
-	AstNode( eType )
+AstBranch::AstBranch( const Location &loc, Type eType ) :
+	AstNode( loc, eType )
 {
 }
 

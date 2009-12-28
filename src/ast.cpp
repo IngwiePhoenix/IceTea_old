@@ -3,6 +3,8 @@
 #include "astleaf.h"
 #include "astbranch.h"
 
+#include "build.tab.h"
+
 Ast::Ast()
 {
 }
@@ -11,13 +13,13 @@ Ast::~Ast()
 {
 }
 
-void Ast::addNode( AstNode::Type eType )
+void Ast::addNode( YYLTYPE &loc, AstNode::Type eType )
 {
 	switch( eType&AstNode::typeClassMask )
 	{
 		case AstNode::typeBranch:
 			{
-				AstBranch *pNode = new AstBranch( eType );
+				AstBranch *pNode = new AstBranch( loc, eType );
 				addNode( pNode );
 				sBranch.push( pNode );
 			}
@@ -25,7 +27,7 @@ void Ast::addNode( AstNode::Type eType )
 
 		case AstNode::typeLeaf:
 			{
-				AstLeaf *pNode = new AstLeaf( eType );
+				AstLeaf *pNode = new AstLeaf( loc, eType );
 				addNode( pNode );
 			}
 			break;
@@ -36,29 +38,65 @@ void Ast::addNode( AstNode::Type eType )
 	}
 }
 
+void Ast::addNode( YYLTYPE &loc, AstNode::Type eType, int iVal )
+{
+	addNode( new AstLeaf( loc, eType, iVal ) );
+}
+
+void Ast::addNode( YYLTYPE &loc, AstNode::Type eType, float fVal )
+{
+	addNode( new AstLeaf( loc, eType, fVal ) );
+}
+
+void Ast::addNode( YYLTYPE &loc, AstNode::Type eType, bool bVal )
+{
+	addNode( new AstLeaf( loc, eType, bVal ) );
+}
+
+void Ast::addNode( YYLTYPE &loc, AstNode::Type eType, const Bu::FString &sVal )
+{
+	addNode( new AstLeaf( loc, eType, sVal ) );
+}
+
+void Ast::addNode( YYLTYPE &loc, AstNode::Type eType, const char *sVal )
+{
+	addNode( new AstLeaf( loc, eType, sVal ) );
+}
+
+void Ast::addNode( AstNode::Type eType )
+{
+	YYLTYPE none = {-1, -1, -1, -1};
+	addNode( none, eType );
+}
+
 void Ast::addNode( AstNode::Type eType, int iVal )
 {
-	addNode( new AstLeaf( eType, iVal ) );
+	YYLTYPE none = {-1, -1, -1, -1};
+	addNode( none, eType, iVal );
 }
 
 void Ast::addNode( AstNode::Type eType, float fVal )
 {
-	addNode( new AstLeaf( eType, fVal ) );
+	YYLTYPE none = {-1, -1, -1, -1};
+	addNode( none, eType, fVal );
 }
 
 void Ast::addNode( AstNode::Type eType, bool bVal )
 {
-	addNode( new AstLeaf( eType, bVal ) );
+	YYLTYPE none = {-1, -1, -1, -1};
+	addNode( none, eType, bVal );
 }
 
 void Ast::addNode( AstNode::Type eType, const Bu::FString &sVal )
 {
-	addNode( new AstLeaf( eType, sVal ) );
+	YYLTYPE none = {-1, -1, -1, -1};
+	addNode( none, eType, sVal );
 }
 
 void Ast::addNode( AstNode::Type eType, const char *sVal )
 {
-	addNode( new AstLeaf( eType, sVal ) );
+	YYLTYPE none = {-1, -1, -1, -1};
+	addNode( none, eType, sVal );
 }
 
 void Ast::addNode( AstNode *pNode )
