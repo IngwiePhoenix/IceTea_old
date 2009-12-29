@@ -890,3 +890,84 @@ Bu::Formatter &operator<<( Bu::Formatter &f, const Variable &v )
 	return f;
 }
 
+Bu::ArchiveBase &operator<<( Bu::ArchiveBase &ar, const Variable &v )
+{
+	ar << (int8_t)v.eType;
+	switch( v.eType )
+	{
+		case Variable::typeNone:
+			break;
+
+		case Variable::typeBool:
+			ar << v.uVal.bVal;
+			break;
+
+		case Variable::typeInt:
+			ar << v.uVal.iVal;
+			break;
+
+		case Variable::typeFloat:
+			ar << v.uVal.fVal;
+			break;
+
+		case Variable::typeVersion:
+			break;
+
+		case Variable::typeString:
+			ar << *v.uVal.sVal;
+			break;
+
+		case Variable::typeList:
+			ar << *v.uVal.lVal;
+			break;
+
+		case Variable::typeRef:
+			ar << *v.uVal.sVal;
+			break;
+	}
+
+	return ar;
+}
+
+Bu::ArchiveBase &operator>>( Bu::ArchiveBase &ar, Variable &v )
+{
+	int8_t t;
+	ar >> t;
+	v.eType = (Variable::Type)t;
+	v.reset( v.eType );
+	switch( v.eType )
+	{
+		case Variable::typeNone:
+			break;
+
+		case Variable::typeBool:
+			ar >> v.uVal.bVal;
+			break;
+
+		case Variable::typeInt:
+			ar >> v.uVal.iVal;
+			break;
+
+		case Variable::typeFloat:
+			ar >> v.uVal.fVal;
+			break;
+
+		case Variable::typeVersion:
+			break;
+
+		case Variable::typeString:
+			ar >> *v.uVal.sVal;
+			break;
+
+		case Variable::typeList:
+			ar >> *v.uVal.lVal;
+			break;
+
+		case Variable::typeRef:
+			ar >> *v.uVal.sVal;
+			break;
+	}
+	
+	return ar;
+}
+

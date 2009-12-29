@@ -2,12 +2,15 @@
 #define VARIABLE_H
 
 #include "types.h"
+#include <bu/archivebase.h>
 
 /**
  * A build variable, which is basically a flexible, limited type range variant.
  */
 class Variable
 {
+friend Bu::ArchiveBase &operator<<( Bu::ArchiveBase &ar, const Variable &v );
+friend Bu::ArchiveBase &operator>>( Bu::ArchiveBase &ar, Variable &v );
 public:
 	enum Type
 	{
@@ -111,5 +114,8 @@ namespace Bu
 
 Bu::Formatter &operator<<( Bu::Formatter &f, const Variable::Type &t );
 Bu::Formatter &operator<<( Bu::Formatter &f, const Variable &v );
+
+Bu::ArchiveBase &operator<<( Bu::ArchiveBase &ar, const Variable &v );
+Bu::ArchiveBase &operator>>( Bu::ArchiveBase &ar, Variable &v );
 
 #endif
