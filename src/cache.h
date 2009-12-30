@@ -21,6 +21,8 @@ public:
 	void load();
 	void save();
 
+
+
 private:
 	Bu::FString sCacheFile;
 	bool bIsLoaded;

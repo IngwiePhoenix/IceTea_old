@@ -236,6 +236,28 @@ void Target::process( class Runner &r, const Bu::FString &sProfile )
 	catch( Bu::HashException &e )
 	{
 	}
+	
+	buildRequires( r );
+	
+	for( TargetList::iterator i = lDeps.begin(); i; i++ )
+	{
+		if( (*i)->bRun )
+			continue;
+
+		// TODO:  This is important, in the future, it may be possible for a
+		// target to be triggered by multiple dependant targets, to cover for
+		// this the below mergeUnder should be *TEMPORARY* and the target
+		// that was marged to be reset post processing.
+		(*i)->mergeUnder( hVars );
+		(*i)->process( r, sProfile );
+	}
+	try
+	{
+		bShouldExec = hProfiles.get( sProfile )->shouldExec( r, *this );
+	}
+	catch( Bu::HashException &e )
+	{
+	}
 
 	if( !bShouldExec )
 	{

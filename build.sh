@@ -1,7 +1,7 @@
 #!/bin/bash
 
-BUSRC="stack.cpp fstring.cpp fbasicstring.cpp hash.cpp list.cpp trace.cpp stream.cpp formatter.cpp util.cpp sharedcore.cpp exceptionbase.cpp heap.cpp archivebase.cpp archive.cpp queue.cpp archival.cpp sio.cpp stdstream.cpp process.cpp plugger.cpp optparser.cpp signals.cpp array.cpp membuf.cpp"
-BUHDR="stack.h fstring.h fbasicstring.h hash.h list.h trace.h stream.h formatter.h util.h sharedcore.h exceptionbase.h heap.h archivebase.h archive.h queue.h archival.h sio.h stdstream.h process.h osx_compatibility.h win32_compatibility.h linux_compatibility.h plugger.h singleton.h optparser.h signals.h array.h membuf.h"
+BUSRC="stack.cpp fstring.cpp fbasicstring.cpp hash.cpp list.cpp trace.cpp stream.cpp formatter.cpp util.cpp sharedcore.cpp exceptionbase.cpp heap.cpp archivebase.cpp archive.cpp queue.cpp archival.cpp sio.cpp stdstream.cpp process.cpp plugger.cpp optparser.cpp signals.cpp array.cpp membuf.cpp file.cpp"
+BUHDR="stack.h fstring.h fbasicstring.h hash.h list.h trace.h stream.h formatter.h util.h sharedcore.h exceptionbase.h heap.h archivebase.h archive.h queue.h archival.h sio.h stdstream.h process.h osx_compatibility.h win32_compatibility.h linux_compatibility.h plugger.h singleton.h optparser.h signals.h array.h membuf.h file.h"
 
 function bld()
 {

@@ -51,7 +51,7 @@ bool ConditionFileTime::shouldExec( class Runner &r, Target &rTarget )
 			return true;
 		}
 	}
-	rTarget.buildRequires( r );
+	// rTarget.buildRequires( r );
 	for( StrList::const_iterator j = rTarget.getRequiresList().begin();
 		 j; j++ )
 	{
