@@ -7,6 +7,7 @@
 #include "context.h"
 #include "profile.h"
 #include "view.h"
+#include "cache.h"
 
 #include <bu/membuf.h>
 #include <bu/formatter.h>
@@ -76,6 +77,19 @@ const StrList &Target::getRequiresList() const
 	return lsRequires;
 }
 
+void Target::gatherRequires( Runner &r )
+{
+	Cache &c = Cache::getInstance();
+	try
+	{
+		lsRequires = c.getRequires( lsOutput.first() );
+	}
+	catch( Bu::HashException &e )
+	{
+		buildRequires( r );
+	}
+}
+
 void Target::buildRequires( Runner &r )
 {
 	r.getContext().getView()->buildRequires( *this );
@@ -108,6 +122,9 @@ void Target::buildRequires( Runner &r )
 		}
 	}
 	r.getContext().popScope();
+
+	Cache &c = Cache::getInstance();
+	c.setRequires( lsOutput.first(), lsRequires );
 }
 
 void Target::addOutput( const Bu::FString &sOutput )

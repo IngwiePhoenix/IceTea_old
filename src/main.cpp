@@ -6,6 +6,8 @@
 
 #include "viewplugger.h"
 
+#include "cache.h"
+
 #include <bu/optparser.h>
 #include <bu/sio.h>
 #include <sys/types.h>
@@ -24,11 +26,13 @@ public:
 		sView("default"),
 		sAction("default"),
 		sConfig("default.bld"),
+		sCacheFile(".build_cache"),
 		bDot( false ),
 		bDebug( false ),
 		bAutoInclude( true ),
 		bAstDump( false ),
 		bEnviron( true ),
+		bCache( true ),
 		iInfoLevel( 0 )
 	{
 		bool bClean = false;
@@ -54,6 +58,8 @@ public:
 			"action is specified, this will modify it to run 'clean-action'.");
 		addOption( slot(this, &Options::onChdir), 'C', "chdir",
 			"Change to directory before doing anything else.");
+		addOption( sCacheFile, "cache", "Select a different cache file.");
+		addOption( bCache, "no-cache", "Disable using the cache.");
 
 		addHelpBanner("\nThe following options control debugging:");
 		addOption( bEnviron, "no-env", "Do not import environment variables.");
@@ -71,6 +77,7 @@ public:
 		setOverride( "debug-ast", "true" );
 		setOverride( "info", "1" );
 		setOverride( 'c', "true" );
+		setOverride( "no-cache", "false" );
 
 		addHelpOption();
 
@@ -111,11 +118,13 @@ public:
 	Bu::FString sView;
 	Bu::FString sAction;
 	Bu::FString sConfig;
+	Bu::FString sCacheFile;
 	bool bDot;
 	bool bDebug;
 	bool bAutoInclude;
 	bool bAstDump;
 	bool bEnviron;
+	bool bCache;
 	int iInfoLevel;
 };
 
@@ -153,6 +162,11 @@ int main( int argc, char *argv[] )
 		}
 		sio << sio.nl << sio.nl;
 		return 1;
+	}
+
+	if( opts.bCache )
+	{
+		Cache::getInstance().bind( opts.sCacheFile );
 	}
 
 	// Load up the environment as vars.

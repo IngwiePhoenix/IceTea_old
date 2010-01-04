@@ -19,6 +19,12 @@ public:
 	void addRequires( const Bu::FString &sReq );
 	void addRequires( const AstBranch *pBr );
 	const StrList &getRequiresList() const;
+	/**
+	 * This function will get the cached requires if they exist, build them
+	 * if they don't.  Use this is conditions, but use buildRequires to force
+	 * a rebuild even if cached data exists.
+	 */
+	void gatherRequires( class Runner &r );
 	void buildRequires( class Runner &r );
 
 	void addOutput( const Bu::FString &sOutput );

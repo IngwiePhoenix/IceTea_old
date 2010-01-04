@@ -7,6 +7,7 @@
 #include <bu/list.h>
 
 #include "variable.h"
+#include "types.h"
 
 class Cache : public Bu::Singleton<Cache>
 {
@@ -21,12 +22,14 @@ public:
 	void load();
 	void save();
 
-
+	StrList getRequires( const Bu::FString &sOutput );
+	void setRequires( const Bu::FString &sOutput, StrList lReqs );
 
 private:
+	bool bCacheChanged;
 	Bu::FString sCacheFile;
 	bool bIsLoaded;
-	typedef Bu::Hash<Bu::FString, Bu::List<Bu::FString> > ReqHash;
+	typedef Bu::Hash<Bu::FString, StrList> ReqHash;
 	ReqHash hRequires;
 	typedef Bu::Hash<Bu::FString, Variable> VarHash;
 	VarHash hVariables;

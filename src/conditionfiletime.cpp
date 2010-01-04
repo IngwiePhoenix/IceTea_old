@@ -25,6 +25,7 @@ bool ConditionFileTime::shouldExec( class Runner &r, Target &rTarget )
 			//sio << "-- Target processed because '" << *j << "' doesn't exist."
 			//	<< sio.nl;
 			// Output doesn't exist
+			rTarget.buildRequires( r );
 			return true;
 		}
 	}
@@ -48,10 +49,11 @@ bool ConditionFileTime::shouldExec( class Runner &r, Target &rTarget )
 		{
 			//sio << "-- Target processed because '" << *j
 			//	<< "' is newer than output." << sio.nl;
+			rTarget.buildRequires( r );
 			return true;
 		}
 	}
-	rTarget.buildRequires( r );
+	rTarget.gatherRequires( r );
 	for( StrList::const_iterator j = rTarget.getRequiresList().begin();
 		 j; j++ )
 	{
@@ -60,6 +62,7 @@ bool ConditionFileTime::shouldExec( class Runner &r, Target &rTarget )
 		{
 			//sio << "-- Target processed because '" << *j
 			//	<< "' is newer than output." << sio.nl;
+			rTarget.buildRequires( r );
 			return true;
 		}
 	}
