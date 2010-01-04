@@ -34,6 +34,8 @@ public:
 
 private:
 	bool bFirst;
+	bool bDisped;
+	bool bDispedTrg;
 	int iDepth;
 	int iTotal;
 	int iCurrent;
