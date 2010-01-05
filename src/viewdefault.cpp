@@ -61,7 +61,7 @@ void ViewDefault::skipTarget( const Bu::FString &/*sProfile*/,
 	iCurrent++;
 }
 
-void ViewDefault::beginTarget( const Bu::FString &/*sProfile*/,
+void ViewDefault::beginTarget( const Bu::FString &sProfile,
 		const Target &rTarget )
 {
 	if( iDepth == 0 )
@@ -69,25 +69,33 @@ void ViewDefault::beginTarget( const Bu::FString &/*sProfile*/,
 		bDispedTrg = false;
 		iTotal = rTarget.getDepCount();
 		iCurrent = 0;
-		if( bFirst == false )
-		{
-			sio << sio.nl;
-		}
-		bFirst = false;
 	}
 	iDepth++;
+
+	sCurProfile = sProfile;
 }
 
-void ViewDefault::processTarget( const Bu::FString &sProfile,
+void ViewDefault::drawTargetHdr( const Bu::FString &sProfile,
 		const Target &rTarget )
 {
 	if( bDispedTrg == false )
 	{
 		bDispedTrg = true;
+		if( bFirst == false )
+		{
+			sio << sio.nl;
+		}
+		bFirst = false;
 		sio << C_BR_WHITE << " --- " << C_BR_CYAN << sProfile << " "
 			<< rTarget.getOutputList().first() << C_BR_WHITE << " --- "
 			<< C_RESET << sio.nl;
 	}
+}
+
+void ViewDefault::processTarget( const Bu::FString &sProfile,
+		const Target &rTarget )
+{
+	drawTargetHdr( sProfile, rTarget );
 	iCurrent++;
 
 	int iPct = (iTotal>0)?(iCurrent*100/iTotal):(100);
@@ -106,6 +114,8 @@ void ViewDefault::endTarget()
 
 void ViewDefault::buildRequires( const Target &rTarget )
 {
+	drawTargetHdr( sCurProfile, rTarget );
+
 	int iPct = (iTotal>0)?(iCurrent*100/iTotal):(100);
 	sio << C_BR_WHITE << "[" << C_BR_GREEN << Fmt(3) << iPct
 		<< "%" << C_BR_WHITE << "] " << C_BR_MAGENTA

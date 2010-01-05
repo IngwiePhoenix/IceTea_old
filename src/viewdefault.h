@@ -32,6 +32,8 @@ public:
 	virtual void sysError( const Bu::FString &sMsg );
 	virtual void sysWarning( const Bu::FString &sMsg );
 
+	void drawTargetHdr( const Bu::FString &sProfile, const Target &rTarget );
+
 private:
 	bool bFirst;
 	bool bDisped;
@@ -39,6 +41,7 @@ private:
 	int iDepth;
 	int iTotal;
 	int iCurrent;
+	Bu::FString sCurProfile;
 };
 
 #endif
