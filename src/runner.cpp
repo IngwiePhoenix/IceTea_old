@@ -417,6 +417,10 @@ Variable Runner::run( AstBranch::NodeList::const_iterator n )
 							);
 					}
 					break;
+
+				case AstNode::typePushPrefix:
+				case AstNode::typePopPrefix:
+					break;
 /*
 				case AstNode::typeCondition:
 					if( pCurTarget )

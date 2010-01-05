@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include "statcache.h"
 
 #include <bu/sio.h>
 using namespace Bu;
@@ -18,6 +19,7 @@ ConditionFileTime::~ConditionFileTime()
 
 bool ConditionFileTime::shouldExec( class Runner &r, Target &rTarget )
 {
+	StatCache &Stat = StatCache::getInstance();
 	for( StrList::const_iterator j = rTarget.getOutputList().begin(); j; j++ )
 	{
 		if( access( (*j).getStr(), F_OK ) )
@@ -30,22 +32,20 @@ bool ConditionFileTime::shouldExec( class Runner &r, Target &rTarget )
 		}
 	}
 
-	time_t tOut = 0;
-	struct stat s;
+	time_t tOut = 0, tmp;
 	for( StrList::const_iterator j = rTarget.getOutputList().begin();
 		 j; j++ )
 	{
-		stat( (*j).getStr(), &s );
-		if( tOut == 0 || tOut > s.st_mtime )
+		tmp = Stat.mtime( *j );
+		if( tOut == 0 || tOut > tmp )
 		{
-			tOut = s.st_mtime;
+			tOut = tmp;
 		}
 	}
 	for( StrList::const_iterator j = rTarget.getInputList().begin();
 		 j; j++ )
 	{
-		stat( (*j).getStr(), &s );
-		if( tOut < s.st_mtime )
+		if( tOut < Stat.mtime( *j ) )
 		{
 			//sio << "-- Target processed because '" << *j
 			//	<< "' is newer than output." << sio.nl;
@@ -57,8 +57,7 @@ bool ConditionFileTime::shouldExec( class Runner &r, Target &rTarget )
 	for( StrList::const_iterator j = rTarget.getRequiresList().begin();
 		 j; j++ )
 	{
-		stat( (*j).getStr(), &s );
-		if( tOut < s.st_mtime )
+		if( tOut < Stat.mtime( *j ) )
 		{
 			//sio << "-- Target processed because '" << *j
 			//	<< "' is newer than output." << sio.nl;
