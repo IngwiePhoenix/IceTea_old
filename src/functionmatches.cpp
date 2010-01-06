@@ -2,6 +2,10 @@
 
 #include <unistd.h>
 
+#include <bu/plugger.h>
+PluginInterface3( pluginFunctionMatches, matches, FunctionMatches, Function,
+		"Mike Buland", 0, 1 );
+
 FunctionMatches::FunctionMatches()
 {
 }

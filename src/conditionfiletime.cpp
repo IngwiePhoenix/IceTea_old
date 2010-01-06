@@ -8,6 +8,10 @@
 #include <bu/sio.h>
 using namespace Bu;
 
+#include <bu/plugger.h>
+PluginInterface3( pluginConditionFileTime, fileTime, ConditionFileTime,
+		Condition, "Mike Buland", 0, 1 );
+
 ConditionFileTime::ConditionFileTime()
 {
 }

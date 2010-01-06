@@ -66,6 +66,15 @@ rule "exe"
 	}
 }
 
+rule "so"
+{
+	input "*.o";
+	profile "build"
+	{
+		execute("${CXX} -shared -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
+	}
+}
+
 rule "lib"
 {
 	input "*.o";

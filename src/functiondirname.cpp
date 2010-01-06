@@ -1,5 +1,9 @@
 #include "functiondirname.h"
 
+#include <bu/plugger.h>
+PluginInterface3( pluginFunctionDirName, dirName, FunctionDirName, Function,
+		"Mike Buland", 0, 1 );
+
 FunctionDirName::FunctionDirName()
 {
 }

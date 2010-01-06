@@ -5,6 +5,8 @@
 #include "target.h"
 
 #include "viewplugger.h"
+#include "functionplugger.h"
+#include "conditionplugger.h"
 
 #include "cache.h"
 
@@ -50,6 +52,8 @@ public:
 		addHelpBanner("The following options do things other than build:");
 		addOption( iInfoLevel, 'i', "info", "Display some basic info about the "
 			"loaded build config, including available targets.");
+		addOption( slot( this, &Options::onListPlugins), "list-plugins",
+			"List all available plugins.");
 
 		addHelpBanner("The following options control general execution:");
 		addOption( sView, 'v', "view", sViews );
@@ -112,6 +116,42 @@ public:
 	int onNonOption( StrArray sParams )
 	{
 		sAction = sParams[0];
+		return 0;
+	}
+
+	int onListPlugins( StrArray /*sParams*/ )
+	{
+		StrList lViews = ViewPlugger::getInstance().getPluginList();
+		sio << "Available view plugins:" << sio.nl << "\t";
+		for( StrList::iterator i = lViews.begin(); i; i++ )
+		{
+			if( i != lViews.begin() )
+				sio << ", ";
+			sio << *i;
+		}
+
+		StrList lFuncs = FunctionPlugger::getInstance().getPluginList();
+		sio << sio.nl << sio.nl << "Available function plugins:"
+			<< sio.nl << "\t";
+		for( StrList::iterator i = lFuncs.begin(); i; i++ )
+		{
+			if( i != lFuncs.begin() )
+				sio << ", ";
+			sio << *i;
+		}
+		
+		StrList lConds = ConditionPlugger::getInstance().getPluginList();
+		sio << sio.nl << sio.nl << "Available condition plugins:"
+			<< sio.nl << "\t";
+		for( StrList::iterator i = lConds.begin(); i; i++ )
+		{
+			if( i != lConds.begin() )
+				sio << ", ";
+			sio << *i;
+		}
+
+		sio << sio.nl << sio.nl;
+
 		return 0;
 	}
 

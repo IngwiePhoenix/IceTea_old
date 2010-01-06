@@ -4,9 +4,7 @@
 #include "astleaf.h"
 #include "condition.h"
 
-#include "conditionfiletime.h"
-#include "conditionalways.h"
-#include "conditionnever.h"
+#include "conditionplugger.h"
 
 #include <bu/sio.h>
 using namespace Bu;
@@ -64,7 +62,7 @@ Profile *Profile::genDefaultClean()
 		pAst->openBranch();
 			pAst->addNode( AstNode::typeString, "clean" );
 		pAst->openBranch();
-		 	pAst->addNode( AstNode::typeCondition, "always" );		
+		 	pAst->addNode( AstNode::typeCondition, "fileExists" );
 			pAst->addNode( AstNode::typeFunction );
 				pAst->openBranch();
 					pAst->addNode( AstNode::typeString, "unlink" );
@@ -89,28 +87,15 @@ void Profile::setCondition()
 		if( (*i)->getType() == AstNode::typeCondition )
 		{
 			Bu::FString sCond = dynamic_cast<const AstLeaf *>(*i)->getStrValue();
-			if( sCond == "filetime" )
-			{
-				delete pCond;
-				pCond = new ConditionFileTime();
-			}
-			else if( sCond == "always" )
-			{
-				delete pCond;
-				pCond = new ConditionAlways();
-			}
-			else if( sCond == "never" )
-			{
-				delete pCond;
-				pCond = new ConditionNever();
-			}
+			delete pCond;
+			pCond = ConditionPlugger::getInstance().instantiate( sCond );
 		}
 	}
 
 	if( pCond == NULL )
 	{
 		// The default condition
-		pCond = new ConditionFileTime();
+		pCond = ConditionPlugger::getInstance().instantiate("fileTime");
 	}
 }
 

@@ -4,6 +4,10 @@
 #include <bu/sio.h>
 using namespace Bu;
 
+#include <bu/plugger.h>
+PluginInterface3( pluginFunctionToString, toString, FunctionToString, Function,
+		"Mike Buland", 0, 1 );
+
 FunctionToString::FunctionToString()
 {
 }

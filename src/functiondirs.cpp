@@ -5,6 +5,10 @@
 #include <glob.h>
 #include <unistd.h>
 
+#include <bu/plugger.h>
+PluginInterface3( pluginFunctionDirs, dirs, FunctionDirs, Function,
+		"Mike Buland", 0, 1 );
+
 FunctionDirs::FunctionDirs()
 {
 }

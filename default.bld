@@ -3,13 +3,16 @@
 # :)
 #
 
+CXXFLAGS += "-fPIC -rdynamic";
+LDFLAGS += "-fPIC -rdynamic -Wl,-export-dynamic";
 CXXFLAGS += "-ggdb -W -Wall";
 
 CC = CXX; // We actually want to use c++ to compile our c files.
 
 action "default"
 {
-	build: "build";
+//	build: "build";
+	build: ["build", targets("plugins")];
 }
 
 action "man"
@@ -55,6 +58,18 @@ target "build"
 	tag "tools";
 }
 
+for IN in files("src/plugins/*.cpp") do
+{
+	target IN.replace("src/","").replace(".cpp", ".so")
+	{
+		input IN;
+		rule "so";
+		LDFLAGS += "-Llibbu++ -lbu++ -ldl";
+		CXXFLAGS += "-Ilibbu++ -Isrc";
+		tag "plugins";
+	}
+}
+
 target "build-r$(svnversion "-n").tar.bz2"
 {
 	input [
@@ -93,9 +108,21 @@ target "/usr/share/build"
 {
 	input "$(echo -n $PWD)/share";
 	tag "devinstall";
+	display "symlink";
 	profile "install"
 	{
-		execute("ln -fsv ${INPUT} \"${OUTPUT}\"");
+		execute("ln -fsv \"${INPUT}\" \"${OUTPUT}\"");
+	}
+}
+
+target "/usr/lib/build"
+{
+	input "$(echo -n $PWD)/plugins";
+	tag "devinstall";
+	display "symlink";
+	profile "install"
+	{
+		execute("ln -fsv \"${INPUT}\" \"${OUTPUT\"");
 	}
 }
 

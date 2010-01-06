@@ -2,6 +2,10 @@
 
 #include <unistd.h>
 
+#include <bu/plugger.h>
+PluginInterface3( pluginFunctionExists, exists, FunctionExists, Function,
+		"Mike Buland", 0, 1 );
+
 FunctionExists::FunctionExists()
 {
 }

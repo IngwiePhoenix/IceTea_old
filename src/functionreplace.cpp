@@ -1,5 +1,9 @@
 #include "functionreplace.h"
 
+#include <bu/plugger.h>
+PluginInterface3( pluginFunctionReplace, replace, FunctionReplace, Function,
+		"Mike Buland", 0, 1 );
+
 FunctionReplace::FunctionReplace()
 {
 }

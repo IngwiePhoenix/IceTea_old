@@ -2,6 +2,10 @@
 #include "context.h"
 #include "target.h"
 
+#include <bu/plugger.h>
+PluginInterface3( pluginFunctionTargets, targets, FunctionTargets, Function,
+		"Mike Buland", 0, 1 );
+
 FunctionTargets::FunctionTargets()
 {
 }

@@ -1,6 +1,10 @@
 #include "conditionnever.h"
 #include "target.h"
 
+#include <bu/plugger.h>
+PluginInterface3( pluginConditionNever, never, ConditionNever, Condition,
+		"Mike Buland", 0, 1 );
+
 ConditionNever::ConditionNever()
 {
 }

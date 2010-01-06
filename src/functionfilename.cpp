@@ -1,5 +1,9 @@
 #include "functionfilename.h"
 
+#include <bu/plugger.h>
+PluginInterface3( pluginFunctionFileName, fileName, FunctionFileName, Function,
+		"Mike Buland", 0, 1 );
+
 FunctionFileName::FunctionFileName()
 {
 }

@@ -6,6 +6,10 @@
 #include <bu/sio.h>
 using namespace Bu;
 
+#include <bu/plugger.h>
+PluginInterface3( pluginFunctionGetMakeDeps, getMakeDeps, FunctionGetMakeDeps,
+		Function, "Mike Buland", 0, 1 );
+
 FunctionGetMakeDeps::FunctionGetMakeDeps()
 {
 }

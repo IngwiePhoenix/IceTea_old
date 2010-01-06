@@ -7,18 +7,7 @@
 #include "profile.h"
 #include "view.h"
 
-#include "functionreplace.h"
-#include "functionexists.h"
-#include "functionfiles.h"
-#include "functionexecute.h"
-#include "functionmatches.h"
-#include "functiontostring.h"
-#include "functionunlink.h"
-#include "functiontargets.h"
-#include "functiondirs.h"
-#include "functiongetmakedeps.h"
-#include "functionfilename.h"
-#include "functiondirname.h"
+#include "functionplugger.h"
 
 #include <bu/process.h>
 #include <bu/sio.h>
@@ -27,18 +16,6 @@ using namespace Bu;
 Context::Context() :
 	pView( NULL )
 {
-	addFunction( new FunctionReplace() );
-	addFunction( new FunctionExists() );
-	addFunction( new FunctionFiles() );
-	addFunction( new FunctionExecute() );
-	addFunction( new FunctionMatches() );
-	addFunction( new FunctionToString() );
-	addFunction( new FunctionUnlink() );
-	addFunction( new FunctionTargets() );
-	addFunction( new FunctionDirs() );
-	addFunction( new FunctionGetMakeDeps() );
-	addFunction( new FunctionFileName() );
-	addFunction( new FunctionDirName() );
 	pushScope();
 }
 
@@ -178,7 +155,16 @@ Variable Context::call( const Bu::FString &sName, Variable &input,
 {
 	if( !hFunction.has( sName ) )
 	{
-		throw Bu::ExceptionBase("Unknown function called: %s", sName.getStr() );
+		// Try to load the function...
+		try
+		{
+			addFunction( FunctionPlugger::getInstance().instantiate( sName ) );
+		}
+		catch(...)
+		{
+			throw Bu::ExceptionBase("Unknown function called: %s",
+				sName.getStr() );
+		}
 	}
 	return hFunction.get( sName )->call( input, lParams );
 }
@@ -290,8 +276,16 @@ void Context::buildTargetTree( Runner &r )
 			continue;
 
 		StrList lNewIns; // The new "changed" inputs for this target
-
-		Rule *pMaster = hRule.get( (*i)->getRule() );
+		
+		Rule *pMaster;
+		try
+		{
+			 pMaster = hRule.get( (*i)->getRule() );
+		}
+		catch( Bu::HashException &e )
+		{
+			throw Bu::ExceptionBase("Unknown rule: %s", (*i)->getRule().getStr() );
+		}
 
 		for( StrList::const_iterator j = (*i)->getInputList().begin(); j; j++ )
 		{

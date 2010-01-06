@@ -6,6 +6,10 @@
 #include <bu/process.h>
 using namespace Bu;
 
+#include <bu/plugger.h>
+PluginInterface3( pluginFunctionExecute, execute, FunctionExecute, Function,
+		"Mike Buland", 0, 1 );
+
 FunctionExecute::FunctionExecute()
 {
 }
