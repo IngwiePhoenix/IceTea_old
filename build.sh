@@ -1,7 +1,7 @@
 #!/bin/bash
 
-BUSRC="stack.cpp fstring.cpp fbasicstring.cpp hash.cpp list.cpp trace.cpp stream.cpp formatter.cpp util.cpp sharedcore.cpp exceptionbase.cpp heap.cpp archivebase.cpp archive.cpp queue.cpp archival.cpp sio.cpp stdstream.cpp process.cpp plugger.cpp optparser.cpp signals.cpp array.cpp membuf.cpp file.cpp"
-BUHDR="stack.h fstring.h fbasicstring.h hash.h list.h trace.h stream.h formatter.h util.h sharedcore.h exceptionbase.h heap.h archivebase.h archive.h queue.h archival.h sio.h stdstream.h process.h osx_compatibility.h win32_compatibility.h linux_compatibility.h plugger.h singleton.h optparser.h signals.h array.h membuf.h file.h"
+BUSRC="stack.cpp fstring.cpp fbasicstring.cpp hash.cpp list.cpp trace.cpp stream.cpp formatter.cpp util.cpp sharedcore.cpp exceptionbase.cpp heap.cpp archivebase.cpp archive.cpp queue.cpp archival.cpp sio.cpp stdstream.cpp process.cpp plugger.cpp optparser.cpp signals.cpp array.cpp membuf.cpp file.cpp regex.cpp"
+BUHDR="stack.h fstring.h fbasicstring.h hash.h list.h trace.h stream.h formatter.h util.h sharedcore.h exceptionbase.h heap.h archivebase.h archive.h queue.h archival.h sio.h stdstream.h process.h osx_compatibility.h win32_compatibility.h linux_compatibility.h plugger.h singleton.h optparser.h signals.h array.h membuf.h file.h regex.h"
 
 function bld()
 {
@@ -27,7 +27,7 @@ function cmd()
 
 function gpp()
 {
-	bld "$1" "$2" || cmd CXX "$1" g++ -ggdb -W -Wall -Iminibu -Iminibu/bu -c -o "$1" "$2"
+	bld "$1" "$2" || cmd CXX "$1" g++ -ggdb -fPIC -rdynamic -W -Wall -Iminibu -c -o "$1" "$2"
 }
 
 if [ ! -z "$1" ]; then
@@ -64,5 +64,5 @@ for F in src/*.c src/*.cpp; do
 	OUTPUT=${F%.*}.o
 	gpp "$OUTPUT" "$F"
 done
-bld build src/*.o minibu/src/*.o || cmd LINK build g++ -o build src/*.o minibu/src/*.o -ldl
+bld build src/*.o minibu/src/*.o || cmd LINK build g++ -fPIC -rdynamic -Wl,-export-dynamic -o build src/*.o minibu/src/*.o -ldl
 bld build~ build || cmd CP build~ cp build build~

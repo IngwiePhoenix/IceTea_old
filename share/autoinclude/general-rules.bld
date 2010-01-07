@@ -40,7 +40,7 @@ function cppToObj()
 		DIR = OBJ_DIR;
 	}
 
-	return DIR + "/" + INPUT.fileName().replace(".cpp", ".o");
+	return DIR + "/" + INPUT.fileName().regex("\\.cpp$", ".o");
 }
 
 function cToObj()
@@ -54,7 +54,7 @@ function cToObj()
 		DIR = OBJ_DIR;
 	}
 
-	return DIR + "/" + INPUT.fileName().replace(".c", ".o");
+	return DIR + "/" + INPUT.fileName().regex("\\.c$", ".o");
 }
 
 rule "exe"
@@ -100,7 +100,6 @@ rule "c"
 {
 	input "*.c";
 	output INPUT.cToObj();
-//	output replace(".c", ".o");
 	requires getMakeDeps("${CC} ${CFLAGS} -M ${INPUT}");
 	profile "build"
 	{
@@ -111,10 +110,10 @@ rule "c"
 rule "bison"
 {
 	input "*.y";
-	output [INPUT.replace(".y", ".tab.c"), INPUT.replace(".y", ".tab.h")];
+	output [INPUT.regex("\\.y$", ".tab.c"), INPUT.regex("\\.y$", ".tab.h")];
 	profile "build"
 	{
-		BASE = INPUT.replace(".y", "");
+		BASE = INPUT.regex("\\.y", "");
 		execute("${BISON} -b${BASE} ${INPUT}");
 		// if you add a -v bison will produce a .output file
 	}
@@ -123,8 +122,8 @@ rule "bison"
 rule "flex"
 {
 	input "*.l";
-	output INPUT.replace(".l", ".yy.c");
-	output INPUT.replace(".l", ".yy.h");
+	output INPUT.regex("\\.l$", ".yy.c");
+	output INPUT.regex("\\.l$", ".yy.h");
 	profile "build"
 	{
 		execute("${FLEX} ${FLEXFLAGS} ${INPUT}");
