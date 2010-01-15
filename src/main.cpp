@@ -54,8 +54,9 @@ public:
 			"loaded build config, including available targets.");
 		addOption( slot( this, &Options::onListPlugins), "list-plugins",
 			"List all available plugins.");
+		addHelpOption();
 
-		addHelpBanner("The following options control general execution:");
+		addHelpBanner("\nThe following options control general execution:");
 		addOption( sView, 'v', "view", sViews );
 		addOption( sConfig, 'f', "file", "Select a different config file." );
 		addOption( bClean, 'c', "Shorthand for running action 'clean'.  If an "
@@ -75,6 +76,11 @@ public:
 			"You should probably never ever use this, it'll scare you."
 			);
 
+		setHelpDefault( "view", "=[view]" );
+		setHelpDefault( "file", "=[file]" );
+		setHelpDefault( "cache", "=[file]" );
+		setHelpDefault( "chdir", "=[dir]" );
+
 		setOverride( "no-env", "false" );
 		setOverride( "dot", "true" );
 		setOverride( "debug", "true" );
@@ -82,8 +88,6 @@ public:
 		setOverride( "info", "1" );
 		setOverride( 'c', "true" );
 		setOverride( "no-cache", "false" );
-
-		addHelpOption();
 
 		setNonOption( slot( this, &Options::onNonOption ) );
 
