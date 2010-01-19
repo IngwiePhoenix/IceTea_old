@@ -122,7 +122,7 @@ target "/usr/lib/build"
 	display "symlink";
 	profile "install"
 	{
-		execute("ln -fsv \"${INPUT}\" \"${OUTPUT\"");
+		execute("ln -fsv \"${INPUT}\" \"${OUTPUT}\"");
 	}
 }
 
@@ -138,6 +138,8 @@ for vimdir in dirs("/usr/share/vim/vim*") do
 			display "install";
 			profile "install"
 			{
+				DIR = OUTPUT.dirName();
+				execute("mkdir -p ${DIR}");
 				execute("cp -f ${INPUT} ${OUTPUT}");
 			}
 		}
