@@ -33,28 +33,26 @@ function cppToObj()
 {
 	if OBJ_DIR == null then
 	{
-		DIR = INPUT.dirName();
+		return INPUT.regex("\\.cpp$", ".o");
 	}
 	else
 	{
-		DIR = OBJ_DIR;
+		return OBJ_DIR + "/" + INPUT.fileName().regex("\\.cpp$", ".o");
 	}
 
-	return DIR + "/" + INPUT.fileName().regex("\\.cpp$", ".o");
 }
 
 function cToObj()
 {
 	if OBJ_DIR == null then
 	{
-		DIR = INPUT.dirName();
+		return INPUT.regex("\\.c$", ".o");
 	}
 	else
 	{
-		DIR = OBJ_DIR;
+		return OBJ_DIR + "/" + INPUT.fileName().regex("\\.c$", ".o");
 	}
 
-	return DIR + "/" + INPUT.fileName().regex("\\.c$", ".o");
 }
 
 rule "exe"
