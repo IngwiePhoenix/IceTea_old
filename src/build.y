@@ -241,8 +241,8 @@ func_params:
 		   | func_param_list
 		   ;
 
-func_param_list: { bld.xAst.openBranch(); } value
-			   | func_param_list ',' { bld.xAst.openBranch(); } value
+func_param_list: { bld.xAst.openBranch(); } expr
+			   | func_param_list ',' { bld.xAst.openBranch(); } expr
 			   ;
 
 function: UNDEF '(' {
