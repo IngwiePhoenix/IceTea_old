@@ -148,7 +148,7 @@ void Rule::setDisplay( const Bu::FString &sStr )
 
 const Bu::FString &Rule::getDisplay() const
 {
-	return ((bool)sDisplay)?(sDisplay):(sName);
+	return (sDisplay.isSet())?(sDisplay):(sName);
 }
 
 void Rule::addRequires( const AstBranch *pBr )

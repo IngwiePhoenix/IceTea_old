@@ -219,7 +219,7 @@ const VarHash &Target::getVars() const
 
 void Target::setDisplay( const Bu::FString &sNewDisplay )
 {
-	if( !sDisplay )
+	if( !sDisplay.isSet() )
 		sDisplay = sNewDisplay;
 }
 
@@ -292,7 +292,7 @@ void Target::mergeUnder( const Target *pSrc )
 	merge( lsRequires, pSrc->lsRequires );
 	merge( lsOutput, pSrc->lsOutput );
 
-	if( !sPrefix )
+	if( !sPrefix.isSet() )
 		sPrefix = pSrc->sPrefix;
 
 	sRule = pSrc->sRule;
@@ -309,7 +309,7 @@ void Target::mergeUnder( const Target *pSrc )
 		}
 	}
 
-	if( !sDisplay )
+	if( !sDisplay.isSet() )
 		sDisplay = pSrc->sDisplay;
 
 	// Now we need to reset our vars.

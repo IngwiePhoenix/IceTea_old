@@ -131,7 +131,7 @@ void ViewDefault::cmdStarted( const Bu::FString &/*sCmd*/ )
 void ViewDefault::cmdFinished( const Bu::FString &sStdOut,
 	const Bu::FString &sStdErr, long /*iExit*/ )
 {
-	if( sStdOut )
+	if( sStdOut.isSet() )
 	{
 		Bu::FString::const_iterator b;
 		b = sStdOut.begin();
@@ -147,7 +147,7 @@ void ViewDefault::cmdFinished( const Bu::FString &sStdOut,
 		}
 		sio << C_BR_GREEN << "\\-----" << C_RESET << sio.nl;
 	}
-	if( sStdErr )
+	if( sStdErr.isSet() )
 	{
 		Bu::FString::const_iterator b;
 		b = sStdErr.begin();

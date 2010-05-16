@@ -748,7 +748,7 @@ Variable Runner::run( AstBranch::NodeList::const_iterator n )
 						else
 						{
 							Bu::FString sTag = vTags.toString();
-							if( sTag )
+							if( sTag.isSet() )
 							{
 								rCont.addTargetToTag( pCurTarget, sTag );
 							}
@@ -775,7 +775,7 @@ Variable Runner::run( AstBranch::NodeList::const_iterator n )
 						else
 						{
 							Bu::FString sTag = vTags.toString();
-							if( sTag )
+							if( sTag.isSet() )
 							{
 								pCurRule->addTag( sTag );
 							}
