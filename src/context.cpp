@@ -220,11 +220,13 @@ Bu::FString Context::expand( const Bu::FString &sInS )
 				{
 					//sio << "Executing command:  >>>" << sCmd << "<<<" << sio.nl;
 					Process p( Process::StdOut, "/bin/bash", "/bin/bash", "-c", sCmd.getStr(), NULL );
-					while( p.isRunning() )
+					char buf[4096];
+					do
 					{
-						char buf[4096];
 						sBuf.append( buf, p.read( buf, 4096 ) );
 					}
+					while( p.isRunning() );
+					sBuf.append( buf, p.read( buf, 4096 ) );
 					sBuf = sBuf.replace("\n", " ").replace("\r", " ");
 					sBuf.trimBack(' ');
 					sRet.append( sBuf );

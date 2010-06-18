@@ -31,7 +31,7 @@ Variable FunctionExecute::call( Variable &/*input*/, VarList lParams )
 	Process pCmd( Process::Both, "/bin/bash", "/bin/bash", "-c",
 		lParams.first().getString().getStr(), NULL );
 	FString sStdOut, sStdErr;
-	while( pCmd.isRunning() )
+	do
 	{
 		char buf[4096];
 		bool out, err;
@@ -49,6 +49,7 @@ Variable FunctionExecute::call( Variable &/*input*/, VarList lParams )
 			//sio << "Read " << iRead << " bytes of stdout." << sio.nl;
 		}
 	}
+	while( pCmd.isRunning() );
 
 	pContext->getView()->cmdFinished(
 		sStdOut, sStdErr, pCmd.childExitStatus()

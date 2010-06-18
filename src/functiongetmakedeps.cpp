@@ -31,12 +31,13 @@ Variable FunctionGetMakeDeps::call( Variable &/*input*/, VarList lParams )
 
 	// Gather all data from the command.
 	Bu::FString sBuf;
-	while( !p.isEos() )
+	do
 	{
 		char buf[4096];
 		int iRead = p.read( buf, 4096 );
 		sBuf.append( buf, iRead );
 	}
+	while( !p.isEos() );
 	
 	pContext->getView()->cmdFinished( "", "", p.childExitStatus() );
 	
