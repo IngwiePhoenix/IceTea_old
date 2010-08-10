@@ -42,6 +42,7 @@ private:
 	int iTotal;
 	int iCurrent;
 	Bu::FString sCurProfile;
+	Bu::FString sTopTarget;
 };
 
 #endif

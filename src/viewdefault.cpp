@@ -69,6 +69,7 @@ void ViewDefault::beginTarget( const Bu::FString &sProfile,
 		bDispedTrg = false;
 		iTotal = rTarget.getDepCount();
 		iCurrent = 0;
+		sTopTarget = rTarget.getOutputList().first();
 	}
 	iDepth++;
 
@@ -87,7 +88,7 @@ void ViewDefault::drawTargetHdr( const Bu::FString &sProfile,
 		}
 		bFirst = false;
 		sio << C_BR_WHITE << " --- " << C_BR_CYAN << sProfile << " "
-			<< rTarget.getOutputList().first() << C_BR_WHITE << " --- "
+			<< sTopTarget << C_BR_WHITE << " --- "
 			<< C_RESET << sio.nl;
 	}
 }
