@@ -12,14 +12,14 @@ FunctionReplace::~FunctionReplace()
 {
 }
 
-Bu::FString FunctionReplace::getName() const
+Bu::String FunctionReplace::getName() const
 {
 	return "replace";
 }
 
 Variable FunctionReplace::call( Variable &input, VarList lParams )
 {
-	Bu::FString sA, sB;
+	Bu::String sA, sB;
 	sA = lParams.first().getString();
 	sB = lParams.last().getString();
 	switch( input.getType() )

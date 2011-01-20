@@ -1,8 +1,8 @@
 %{
   #include "buildparser.h"
-  #include "bu/fstring.h"
+  #include "bu/string.h"
 
-char *fstrdup( const Bu::FString &s )
+char *fstrdup( const Bu::String &s )
 {
 	char *sRet = new char[s.getSize()+1];
 	memcpy( sRet, s.getStr(), s.getSize()+1 );
@@ -17,7 +17,7 @@ char *rstrdup( const char *sIn )
 }
 void build_error( YYLTYPE *locp, yyscan_t yyscanner, BuildParser &bld, const char *msg );
 
-Bu::FString sBuf;
+Bu::String sBuf;
 int iStrDepth = 0;
 %}
 

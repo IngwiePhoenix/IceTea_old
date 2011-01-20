@@ -13,7 +13,7 @@ FunctionRegEx::~FunctionRegEx()
 {
 }
 
-Bu::FString FunctionRegEx::getName() const
+Bu::String FunctionRegEx::getName() const
 {
 	return "regex";
 }
@@ -47,7 +47,7 @@ Variable FunctionRegEx::call( Variable &input, VarList lParams )
 	else if( lParams.getSize() == 2 )
 	{
 		Bu::RegEx re( lParams.first().getString() );
-		Bu::FString sPat = lParams.last().getString();
+		Bu::String sPat = lParams.last().getString();
 		switch( input.getType() )
 		{
 			case Variable::typeString:
@@ -83,10 +83,10 @@ Variable FunctionRegEx::call( Variable &input, VarList lParams )
 		"regex does not work on non-string or non-list types.");
 }
 
-Bu::FString FunctionRegEx::replace( Bu::RegEx &re, const Bu::FString &sSrc,
-		const Bu::FString &sPat )
+Bu::String FunctionRegEx::replace( Bu::RegEx &re, const Bu::String &sSrc,
+		const Bu::String &sPat )
 {
-	Bu::FString sOut;
+	Bu::String sOut;
 
 	int iStart, iEnd;
 	re.getSubStringRange( 0, iStart, iEnd ); // Get the range of the full match
@@ -94,7 +94,7 @@ Bu::FString FunctionRegEx::replace( Bu::RegEx &re, const Bu::FString &sSrc,
 	if( iStart > 0 )
 		sOut.append( sSrc, 0, iStart ); 
 
-	for( Bu::FString::const_iterator i = sPat.begin(); i; i++ )
+	for( Bu::String::const_iterator i = sPat.begin(); i; i++ )
 	{
 		if( *i == '\\' )
 		{

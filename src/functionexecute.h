@@ -9,7 +9,7 @@ public:
 	FunctionExecute();
 	virtual ~FunctionExecute();
 
-	virtual Bu::FString getName() const;
+	virtual Bu::String getName() const;
 	virtual Variable call( Variable &input, VarList lParams );
 };
 

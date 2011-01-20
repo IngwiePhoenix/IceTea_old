@@ -16,15 +16,15 @@ FunctionToString::~FunctionToString()
 {
 }
 
-Bu::FString FunctionToString::getName() const
+Bu::String FunctionToString::getName() const
 {
 	return "toString";
 }
 
 Variable FunctionToString::call( Variable &input, VarList lParams )
 {
-	Bu::FString sStr;
-	Bu::FString sSep;
+	Bu::String sStr;
+	Bu::String sSep;
 	if( lParams.getSize() == 0 )
 	{
 		sSep = " ";

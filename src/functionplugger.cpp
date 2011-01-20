@@ -42,13 +42,13 @@ FunctionPlugger::FunctionPlugger()
 		if( strncmp("pluginFunction", de->d_name, 15 ) )
 			continue;
 
-		Bu::FString sFile("/usr/lib/build/");
+		Bu::String sFile("/usr/lib/build/");
 		sFile += de->d_name;
 		char *s = de->d_name;
 		for(; *s && *s != '.'; s++ ) { }
 		registerExternalPlugin(
 			sFile,
-			Bu::FString( de->d_name, (ptrdiff_t)s-(ptrdiff_t)de->d_name )
+			Bu::String( de->d_name, (ptrdiff_t)s-(ptrdiff_t)de->d_name )
 			);
 	}
 

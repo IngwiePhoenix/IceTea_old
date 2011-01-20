@@ -9,28 +9,28 @@ public:
 	ViewMake();
 	virtual ~ViewMake();
 
-	virtual void beginAction( const Bu::FString &sAction );
+	virtual void beginAction( const Bu::String &sAction );
 	virtual void endAction();
 
-	virtual void skipTarget( const Bu::FString &sProfile,
+	virtual void skipTarget( const Bu::String &sProfile,
 			const Target &rTarget );
-	virtual void beginTarget( const Bu::FString &sProfile,
+	virtual void beginTarget( const Bu::String &sProfile,
 			const Target &rTarget );
-	virtual void processTarget( const Bu::FString &sProfile,
+	virtual void processTarget( const Bu::String &sProfile,
 			const Target &rTarget );	
 	virtual void endTarget();
 
 	virtual void buildRequires( const Target &rTarget );
-	virtual void cmdStarted( const Bu::FString &sCmd );
-	virtual void cmdFinished( const Bu::FString &sStdOut,
-			const Bu::FString &sStdErr, long iExit );
+	virtual void cmdStarted( const Bu::String &sCmd );
+	virtual void cmdFinished( const Bu::String &sStdOut,
+			const Bu::String &sStdErr, long iExit );
 
-	virtual void userError( const Bu::FString &sMsg );
-	virtual void userWarning( const Bu::FString &sMsg );
-	virtual void userNotice( const Bu::FString &sMsg );
+	virtual void userError( const Bu::String &sMsg );
+	virtual void userWarning( const Bu::String &sMsg );
+	virtual void userNotice( const Bu::String &sMsg );
 
-	virtual void sysError( const Bu::FString &sMsg );
-	virtual void sysWarning( const Bu::FString &sMsg );
+	virtual void sysError( const Bu::String &sMsg );
+	virtual void sysWarning( const Bu::String &sMsg );
 };
 
 #endif

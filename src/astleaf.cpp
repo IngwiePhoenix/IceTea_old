@@ -27,7 +27,7 @@ AstLeaf::AstLeaf( const Location &loc, Type eType, bool bNew ) :
 	setBoolValue( bNew );
 }
 
-AstLeaf::AstLeaf( const Location &loc, Type eType, const Bu::FString &sNew ) :
+AstLeaf::AstLeaf( const Location &loc, Type eType, const Bu::String &sNew ) :
 	AstNode( loc, eType ),
 	sVal( NULL )
 {
@@ -68,12 +68,12 @@ void AstLeaf::setBoolValue( bool bNew )
 	bVal = bNew;
 }
 
-void AstLeaf::setStrValue( const Bu::FString &sNew )
+void AstLeaf::setStrValue( const Bu::String &sNew )
 {
 	if( getDataType() != typeDataString )
 		throw Bu::ExceptionBase("Type is not string.");
 	if( sVal == NULL )
-		sVal = new Bu::FString( sNew );
+		sVal = new Bu::String( sNew );
 	else
 		*sVal = sNew;
 }
@@ -99,7 +99,7 @@ bool AstLeaf::getBoolValue() const
 	return bVal;
 }
 
-Bu::FString &AstLeaf::getStrValue() const
+Bu::String &AstLeaf::getStrValue() const
 {
 	if( getDataType() != typeDataString )
 		throw Bu::ExceptionBase("Type is not string.");

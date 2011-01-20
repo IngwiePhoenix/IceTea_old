@@ -20,7 +20,7 @@ FunctionAst::~FunctionAst()
 {
 }
 
-Bu::FString FunctionAst::getName() const
+Bu::String FunctionAst::getName() const
 {
 	return sName;
 }

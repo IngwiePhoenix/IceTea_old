@@ -18,7 +18,7 @@ FunctionExecute::~FunctionExecute()
 {
 }
 
-Bu::FString FunctionExecute::getName() const
+Bu::String FunctionExecute::getName() const
 {
 	return "execute";
 }
@@ -30,7 +30,7 @@ Variable FunctionExecute::call( Variable &/*input*/, VarList lParams )
 	pContext->getView()->cmdStarted( lParams.first().getString() );
 	Process pCmd( Process::Both, "/bin/bash", "/bin/bash", "-c",
 		lParams.first().getString().getStr(), NULL );
-	FString sStdOut, sStdErr;
+	String sStdOut, sStdErr;
 	do
 	{
 		char buf[4096];

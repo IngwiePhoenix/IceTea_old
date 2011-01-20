@@ -14,14 +14,14 @@ FunctionMatches::~FunctionMatches()
 {
 }
 
-Bu::FString FunctionMatches::getName() const
+Bu::String FunctionMatches::getName() const
 {
 	return "matches";
 }
 
-bool FunctionMatches::globcmp( const Bu::FString &sTxt, const Bu::FString &sMatches )
+bool FunctionMatches::globcmp( const Bu::String &sTxt, const Bu::String &sMatches )
 {
-	Bu::FString::const_iterator t, g;
+	Bu::String::const_iterator t, g;
 	t = sTxt.begin();
 	g = sMatches.begin();
 
@@ -36,7 +36,7 @@ bool FunctionMatches::globcmp( const Bu::FString &sTxt, const Bu::FString &sMatc
 					return true;
 				// Now attempt to scan for the remainder as a matched set
 				{
-					Bu::FString::const_iterator tn = t+1, gn = g+1, gi=g+1;
+					Bu::String::const_iterator tn = t+1, gn = g+1, gi=g+1;
 					bool bFoundMatch = false;
 					while( tn && gn )
 					{
@@ -87,7 +87,7 @@ bool FunctionMatches::globcmp( const Bu::FString &sTxt, const Bu::FString &sMatc
 	return true;
 }
 
-bool FunctionMatches::matchlist( const Bu::FString &sTxt, VarList &lParams )
+bool FunctionMatches::matchlist( const Bu::String &sTxt, VarList &lParams )
 {
 	for( VarList::iterator i = lParams.begin(); i; i++ )
 	{
@@ -114,7 +114,7 @@ Variable FunctionMatches::call( Variable &input, VarList lParams )
 	{
 		case Variable::typeString:
 			{
-				Bu::FString sTxt = input.getString();
+				Bu::String sTxt = input.getString();
 				return Variable( matchlist( sTxt, lParams ) );
 			}
 			break;
@@ -126,7 +126,7 @@ Variable FunctionMatches::call( Variable &input, VarList lParams )
 				{
 					if( (*i).getType() != Variable::typeString )
 						continue;
-					Bu::FString sTxt = (*i).getString();
+					Bu::String sTxt = (*i).getString();
 					if( matchlist( sTxt, lParams ) )
 						vRet.append( *i );
 				}

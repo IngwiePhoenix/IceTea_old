@@ -15,7 +15,7 @@ Cache::~Cache()
 	save();
 }
 
-void Cache::bind( const Bu::FString &sCacheFile )
+void Cache::bind( const Bu::String &sCacheFile )
 {
 	this->sCacheFile = sCacheFile;
 	load();
@@ -51,12 +51,12 @@ void Cache::save()
 	ar << hRequires << hVariables;
 }
 
-StrList Cache::getRequires( const Bu::FString &sOutput )
+StrList Cache::getRequires( const Bu::String &sOutput )
 {
 	return hRequires.get( sOutput );
 }
 
-void Cache::setRequires( const Bu::FString &sOutput, StrList lReqs )
+void Cache::setRequires( const Bu::String &sOutput, StrList lReqs )
 {
 	hRequires.insert( sOutput, lReqs );
 	bCacheChanged = true;

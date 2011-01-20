@@ -35,7 +35,7 @@ Profile::~Profile()
 	pAst = NULL;
 }
 
-const Bu::FString &Profile::getName() const
+const Bu::String &Profile::getName() const
 {
 	return sName;
 }
@@ -86,7 +86,7 @@ void Profile::setCondition()
 	{
 		if( (*i)->getType() == AstNode::typeCondition )
 		{
-			Bu::FString sCond = dynamic_cast<const AstLeaf *>(*i)->getStrValue();
+			Bu::String sCond = dynamic_cast<const AstLeaf *>(*i)->getStrValue();
 			delete pCond;
 			pCond = ConditionPlugger::getInstance().instantiate( sCond );
 		}

@@ -13,9 +13,9 @@ public:
 	 * Really basic globbing function, it doesn't handle character classes,
 	 * just * and ?.  We can expand on it later, it may be handy.
 	 */
-	bool globcmp( const Bu::FString &sTxt, const Bu::FString &sMatches );
-	bool matchlist( const Bu::FString &sTxt, VarList &lParams );
-	virtual Bu::FString getName() const;
+	bool globcmp( const Bu::String &sTxt, const Bu::String &sMatches );
+	bool matchlist( const Bu::String &sTxt, VarList &lParams );
+	virtual Bu::String getName() const;
 	virtual Variable call( Variable &input, VarList lParams );
 
 };

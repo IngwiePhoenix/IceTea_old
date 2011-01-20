@@ -1,7 +1,7 @@
 #!/bin/bash
 
-BUSRC="stack.cpp fstring.cpp fbasicstring.cpp hash.cpp list.cpp trace.cpp stream.cpp formatter.cpp util.cpp sharedcore.cpp exceptionbase.cpp heap.cpp archivebase.cpp archive.cpp queue.cpp archival.cpp sio.cpp stdstream.cpp process.cpp plugger.cpp optparser.cpp signals.cpp array.cpp membuf.cpp file.cpp regex.cpp variant.cpp"
-BUHDR="stack.h fstring.h fbasicstring.h hash.h list.h trace.h stream.h formatter.h util.h sharedcore.h exceptionbase.h heap.h archivebase.h archive.h queue.h archival.h sio.h stdstream.h process.h config.h compat/linux.h compat/win32.h compat/osx.h plugger.h singleton.h optparser.h signals.h array.h membuf.h file.h regex.h variant.h"
+BUSRC="stack.cpp string.cpp hash.cpp list.cpp trace.cpp stream.cpp formatter.cpp util.cpp sharedcore.cpp exceptionbase.cpp heap.cpp archivebase.cpp archive.cpp queue.cpp archival.cpp sio.cpp stdstream.cpp process.cpp plugger.cpp optparser.cpp signals.cpp array.cpp membuf.cpp file.cpp regex.cpp variant.cpp"
+BUHDR="stack.h string.h hash.h list.h trace.h stream.h formatter.h util.h sharedcore.h exceptionbase.h heap.h archivebase.h archive.h queue.h archival.h sio.h stdstream.h process.h config.h compat/linux.h compat/win32.h compat/osx.h plugger.h singleton.h optparser.h signals.h array.h membuf.h file.h regex.h variant.h"
 
 function bld()
 {

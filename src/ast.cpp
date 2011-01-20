@@ -53,7 +53,7 @@ void Ast::addNode( YYLTYPE &loc, AstNode::Type eType, bool bVal )
 	addNode( new AstLeaf( loc, eType, bVal ) );
 }
 
-void Ast::addNode( YYLTYPE &loc, AstNode::Type eType, const Bu::FString &sVal )
+void Ast::addNode( YYLTYPE &loc, AstNode::Type eType, const Bu::String &sVal )
 {
 	addNode( new AstLeaf( loc, eType, sVal ) );
 }
@@ -87,7 +87,7 @@ void Ast::addNode( AstNode::Type eType, bool bVal )
 	addNode( none, eType, bVal );
 }
 
-void Ast::addNode( AstNode::Type eType, const Bu::FString &sVal )
+void Ast::addNode( AstNode::Type eType, const Bu::String &sVal )
 {
 	YYLTYPE none = {-1, -1, -1, -1};
 	addNode( none, eType, sVal );

@@ -9,11 +9,11 @@ public:
 	FunctionAst( const class AstBranch *pRoot, class Runner *pRunner );
 	virtual ~FunctionAst();
 
-	virtual Bu::FString getName() const;
+	virtual Bu::String getName() const;
 	virtual Variable call( Variable &input, VarList lParams );
 
 private:
-	Bu::FString sName;
+	Bu::String sName;
 	const class AstBranch *pRoot;
 	class Runner *pRunner;
 };

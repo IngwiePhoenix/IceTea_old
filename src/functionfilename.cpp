@@ -12,28 +12,28 @@ FunctionFileName::~FunctionFileName()
 {
 }
 
-Bu::FString FunctionFileName::getName() const
+Bu::String FunctionFileName::getName() const
 {
 	return "fileName";
 }
 
 Variable FunctionFileName::call( Variable &input, VarList /*lParams*/ )
 {
-	Bu::FString sFile;
+	Bu::String sFile;
 	sFile = input.getString();
 
-	Bu::FString::const_iterator i = sFile.begin();
+	Bu::String::const_iterator i = sFile.begin();
 	for(;;)
 	{
-		Bu::FString::const_iterator b = i.find('/');
+		Bu::String::const_iterator b = i.find('/');
 		if( !b )
 		{
-			return Variable( Bu::FString( i ) );
+			return Variable( Bu::String( i ) );
 		}
 		i = b+1;
 		if( !i )
 		{
-			return Variable( Bu::FString( i ) );
+			return Variable( Bu::String( i ) );
 		}
 	}
 }

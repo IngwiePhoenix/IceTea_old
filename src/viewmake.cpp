@@ -17,7 +17,7 @@ ViewMake::~ViewMake()
 {
 }
 
-void ViewMake::beginAction( const Bu::FString &/*sAction*/ )
+void ViewMake::beginAction( const Bu::String &/*sAction*/ )
 {
 }
 
@@ -25,17 +25,17 @@ void ViewMake::endAction()
 {
 }
 
-void ViewMake::skipTarget( const Bu::FString &/*sProfile*/,
+void ViewMake::skipTarget( const Bu::String &/*sProfile*/,
 		const Target &/*rTarget*/ )
 {
 }
 
-void ViewMake::beginTarget( const Bu::FString &/*sProfile*/,
+void ViewMake::beginTarget( const Bu::String &/*sProfile*/,
 		const Target &/*rTarget*/ )
 {
 }
 
-void ViewMake::processTarget( const Bu::FString &/*sProfile*/,
+void ViewMake::processTarget( const Bu::String &/*sProfile*/,
 		const Target &/*rTarget*/ )
 {
 }
@@ -48,38 +48,38 @@ void ViewMake::buildRequires( const Target &/*rTarget*/ )
 {
 }
 
-void ViewMake::cmdStarted( const Bu::FString &sCmd )
+void ViewMake::cmdStarted( const Bu::String &sCmd )
 {
 	sio << sCmd << sio.nl;
 }
 
-void ViewMake::cmdFinished( const Bu::FString &sStdOut,
-		const Bu::FString &sStdErr, long /*iExit*/ )
+void ViewMake::cmdFinished( const Bu::String &sStdOut,
+		const Bu::String &sStdErr, long /*iExit*/ )
 {
 	sio << sStdOut << sStdErr;
 }
 
-void ViewMake::userError( const Bu::FString &sMsg )
+void ViewMake::userError( const Bu::String &sMsg )
 {
 	sio << "Error: " << sMsg << sio.nl;
 }
 
-void ViewMake::userWarning( const Bu::FString &sMsg )
+void ViewMake::userWarning( const Bu::String &sMsg )
 {
 	sio << "Warning: " << sMsg << sio.nl;
 }
 
-void ViewMake::userNotice( const Bu::FString &sMsg )
+void ViewMake::userNotice( const Bu::String &sMsg )
 {
 	sio << "Notice: " << sMsg << sio.nl;
 }
 
-void ViewMake::sysError( const Bu::FString &sMsg )
+void ViewMake::sysError( const Bu::String &sMsg )
 {
 	sio << sMsg << sio.nl;
 }
 
-void ViewMake::sysWarning( const Bu::FString &sMsg )
+void ViewMake::sysWarning( const Bu::String &sMsg )
 {
 	sio << sMsg << sio.nl;
 }

@@ -17,7 +17,7 @@ FunctionDirs::~FunctionDirs()
 {
 }
 
-Bu::FString FunctionDirs::getName() const
+Bu::String FunctionDirs::getName() const
 {
 	return "dirs";
 }

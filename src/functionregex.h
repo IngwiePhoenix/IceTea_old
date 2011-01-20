@@ -14,11 +14,11 @@ public:
 	FunctionRegEx();
 	virtual ~FunctionRegEx();
 
-	virtual Bu::FString getName() const;
+	virtual Bu::String getName() const;
 	virtual Variable call( Variable &input, VarList lParams );
 
-	Bu::FString replace( Bu::RegEx &re, const Bu::FString &sSrc,
-		const Bu::FString &sPat );
+	Bu::String replace( Bu::RegEx &re, const Bu::String &sSrc,
+		const Bu::String &sPat );
 };
 
 #endif

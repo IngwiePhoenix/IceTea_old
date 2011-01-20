@@ -20,15 +20,15 @@ public:
 	Variable run( AstBranch::NodeList::const_iterator n );
 	class Variable execFunc( const class AstBranch *pFunc,
 			class Variable &vIn );
-	void execProfile( class Target *pTarget, const Bu::FString &sProfile );
-	void execAction( const Bu::FString &sName );
+	void execProfile( class Target *pTarget, const Bu::String &sProfile );
+	void execAction( const Bu::String &sName );
 
 	Context &getContext();
 
 private:
-	class Target *buildTarget( const Bu::FString &sOutput,
+	class Target *buildTarget( const Bu::String &sOutput,
 			AstBranch::NodeList::const_iterator n );
-	class Rule *buildRule( const Bu::FString &sName,
+	class Rule *buildRule( const Bu::String &sName,
 			AstBranch::NodeList::const_iterator n );
 	void attachDefaults();
 	Variable doSet( const AstBranch *pRoot );

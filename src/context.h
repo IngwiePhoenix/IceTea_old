@@ -2,7 +2,7 @@
 #define CONTEXT_H
 
 #include "bu/hash.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 #include "variable.h"
 
@@ -22,27 +22,27 @@ public:
 	void addTarget( Target *pTarget );
 	void addRule( Rule *pRule );
 	void addFunction( Function *pFunction );
-	void addVariable( const Bu::FString &sName, const Variable &vValue );
+	void addVariable( const Bu::String &sName, const Variable &vValue );
 	void addAction( Action *pAction );
-	Action *getAction( const Bu::FString &sName );
+	Action *getAction( const Bu::String &sName );
 
-	void addTargetToTag( Target *pTarget, const Bu::FString &sTag );
+	void addTargetToTag( Target *pTarget, const Bu::String &sTag );
 	void addTargetToTags( Target *pTarget, const StrList &sTags );
-	TargetList &getTag( const Bu::FString &sTag );
+	TargetList &getTag( const Bu::String &sTag );
 
-	Variable &getVariable( const Bu::FString &sName );
-	void delVariable( const Bu::FString &sName );
+	Variable &getVariable( const Bu::String &sName );
+	void delVariable( const Bu::String &sName );
 
 	void pushScope();
 	void pushScope( const VarHash &hNewVars );
 	VarHash &getScope();
 	void popScope();
 
-	Variable call( const Bu::FString &sName, Variable &input, VarList lParams );
+	Variable call( const Bu::String &sName, Variable &input, VarList lParams );
 
-	Bu::FString expand( const Bu::FString &sIn );
+	Bu::String expand( const Bu::String &sIn );
 
-	Target *getTarget( const Bu::FString &sOutput );
+	Target *getTarget( const Bu::String &sOutput );
 	TargetList getExplicitTargets();
 
 	/**
@@ -77,15 +77,15 @@ public:
 	void printBasicInfo();
 
 private:
-	void buildTargetTree( class Runner &r, class Target *pTarget, const Bu::FString &sInput, class Rule *pMaster, StrList &lNewIns );
+	void buildTargetTree( class Runner &r, class Target *pTarget, const Bu::String &sInput, class Rule *pMaster, StrList &lNewIns );
 
 private:
-	typedef Bu::Hash<Bu::FString, Target *> TargetHash;
-	typedef Bu::Hash<Bu::FString, Rule *> RuleHash;
-	typedef Bu::Hash<Bu::FString, Function *> FunctionHash;
-	typedef Bu::Hash<Bu::FString, Action *> ActionHash;
+	typedef Bu::Hash<Bu::String, Target *> TargetHash;
+	typedef Bu::Hash<Bu::String, Rule *> RuleHash;
+	typedef Bu::Hash<Bu::String, Function *> FunctionHash;
+	typedef Bu::Hash<Bu::String, Action *> ActionHash;
 	typedef Bu::List<VarHash> ScopeStack;
-	typedef Bu::Hash<Bu::FString, TargetList> TagHash;
+	typedef Bu::Hash<Bu::String, TargetList> TagHash;
 	
 	TargetHash hTarget;
 	RuleHash hRule;

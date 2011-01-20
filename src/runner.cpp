@@ -47,7 +47,7 @@ void Runner::initialize()
 
 Variable Runner::execFunc( const AstBranch *pFunc, Variable &vIn )
 {
-	Bu::FString sName = dynamic_cast<const AstLeaf *>(
+	Bu::String sName = dynamic_cast<const AstLeaf *>(
 		(*pFunc->getBranchBegin()).first())->getStrValue();
 
 	VarList lParams;
@@ -382,7 +382,7 @@ Variable Runner::run( AstBranch::NodeList::const_iterator n )
 			{
 				case AstNode::typeError:
 					{
-						Bu::FString sMsg = rCont.expand( pExpr->getStrValue() );
+						Bu::String sMsg = rCont.expand( pExpr->getStrValue() );
 						rCont.getView()->userError( sMsg.getStr() );
 						throw Bu::ExceptionBase( sMsg.getStr() );
 					}
@@ -470,7 +470,7 @@ Variable Runner::run( AstBranch::NodeList::const_iterator n )
 					{
 						AstBranch::NodeList::const_iterator n =
 							(*pExpr->getBranchBegin()).begin();
-						Bu::FString sVar = dynamic_cast<const AstLeaf *>(
+						Bu::String sVar = dynamic_cast<const AstLeaf *>(
 							*n )->getStrValue();
 						rCont.delVariable( sVar );
 					}
@@ -511,7 +511,7 @@ Variable Runner::run( AstBranch::NodeList::const_iterator n )
 					{
 						AstBranch::BranchList::const_iterator b =
 							pExpr->getBranchBegin();
-						Bu::FString sVar = dynamic_cast<const AstLeaf *>(
+						Bu::String sVar = dynamic_cast<const AstLeaf *>(
 							(*b).first() )->getStrValue();
 						b++;
 						Variable v = execExpr( (*b).begin() );
@@ -585,7 +585,7 @@ Variable Runner::run( AstBranch::NodeList::const_iterator n )
 					{
 						AstBranch::BranchList::const_iterator b =
 							pExpr->getBranchBegin();
-						Bu::FString sName = dynamic_cast<const AstLeaf *>(
+						Bu::String sName = dynamic_cast<const AstLeaf *>(
 							(*b).first()
 							)->getStrValue();
 						b++;
@@ -709,7 +709,7 @@ Variable Runner::run( AstBranch::NodeList::const_iterator n )
 					{
 						AstBranch::BranchList::const_iterator b =
 							pExpr->getBranchBegin();
-						Bu::FString sProfile = dynamic_cast<const AstLeaf *>(
+						Bu::String sProfile = dynamic_cast<const AstLeaf *>(
 							(*b).first()
 							)->getStrValue();
 						b++;
@@ -747,7 +747,7 @@ Variable Runner::run( AstBranch::NodeList::const_iterator n )
 						}
 						else
 						{
-							Bu::FString sTag = vTags.toString();
+							Bu::String sTag = vTags.toString();
 							if( sTag.isSet() )
 							{
 								rCont.addTargetToTag( pCurTarget, sTag );
@@ -774,7 +774,7 @@ Variable Runner::run( AstBranch::NodeList::const_iterator n )
 						}
 						else
 						{
-							Bu::FString sTag = vTags.toString();
+							Bu::String sTag = vTags.toString();
 							if( sTag.isSet() )
 							{
 								pCurRule->addTag( sTag );
@@ -810,7 +810,7 @@ Variable Runner::run( AstBranch::NodeList::const_iterator n )
 	return vReturn;
 }
 
-void Runner::execProfile( Target *pTarget, const Bu::FString &sProfile )
+void Runner::execProfile( Target *pTarget, const Bu::String &sProfile )
 {
 	rCont.pushScope( pTarget->getVars() );
 	run( (*(pTarget->getProfile( sProfile )->getRoot()->
@@ -818,7 +818,7 @@ void Runner::execProfile( Target *pTarget, const Bu::FString &sProfile )
 	rCont.popScope();
 }
 
-void Runner::execAction( const Bu::FString &sName )
+void Runner::execAction( const Bu::String &sName )
 {
 	try
 	{
@@ -828,7 +828,7 @@ void Runner::execAction( const Bu::FString &sName )
 	}
 	catch( Bu::HashException &e )
 	{
-		Bu::FString sError("No such action '" + sName + "' found.");
+		Bu::String sError("No such action '" + sName + "' found.");
 		rCont.getView()->sysError( sError );
 	}
 }
@@ -838,7 +838,7 @@ Context &Runner::getContext()
 	return rCont;
 }
 
-Target *Runner::buildTarget( const Bu::FString &sOutput,
+Target *Runner::buildTarget( const Bu::String &sOutput,
 		AstBranch::NodeList::const_iterator n )
 {
 	Target *pTrg = NULL;
@@ -868,7 +868,7 @@ Target *Runner::buildTarget( const Bu::FString &sOutput,
 	return pTrg;
 }
 
-Rule *Runner::buildRule( const Bu::FString &sName,
+Rule *Runner::buildRule( const Bu::String &sName,
 		AstBranch::NodeList::const_iterator n )
 {
 	Rule *pRule = new Rule( sName );
@@ -886,7 +886,7 @@ Variable Runner::doSet( const AstBranch *pRoot )
 {
 	AstBranch::NodeList::const_iterator n =
 		(*pRoot->getBranchBegin()).begin();
-	Bu::FString sVar = dynamic_cast<const AstLeaf *>( *n )->getStrValue();
+	Bu::String sVar = dynamic_cast<const AstLeaf *>( *n )->getStrValue();
 	n++;
 	const AstLeaf *pLeaf = dynamic_cast<const AstLeaf *>( *n );
 	n++;

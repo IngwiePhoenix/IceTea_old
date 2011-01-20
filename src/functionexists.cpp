@@ -14,14 +14,14 @@ FunctionExists::~FunctionExists()
 {
 }
 
-Bu::FString FunctionExists::getName() const
+Bu::String FunctionExists::getName() const
 {
 	return "exists";
 }
 
 Variable FunctionExists::call( Variable &input, VarList lParams )
 {
-	Bu::FString sFile;
+	Bu::String sFile;
 	if( input.getType() != Variable::typeNone )
 	{
 		sFile = input.toString();

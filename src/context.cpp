@@ -42,7 +42,7 @@ void Context::addFunction( Function *pFunction )
 	hFunction.insert( pFunction->getName(), pFunction );
 }
 
-void Context::addVariable( const Bu::FString &sName, const Variable &vValue )
+void Context::addVariable( const Bu::String &sName, const Variable &vValue )
 {
 	for( ScopeStack::iterator i = sVars.begin(); i; i++ )
 	{
@@ -61,12 +61,12 @@ void Context::addAction( Action *pAction )
 	hAction.insert( pAction->getName(), pAction );
 }
 
-Action *Context::getAction( const Bu::FString &sName )
+Action *Context::getAction( const Bu::String &sName )
 {
 	return hAction.get( sName );
 }
 
-void Context::addTargetToTag( Target *pTarget, const Bu::FString &sTag )
+void Context::addTargetToTag( Target *pTarget, const Bu::String &sTag )
 {
 	if( !hTag.has( sTag ) )
 	{
@@ -83,12 +83,12 @@ void Context::addTargetToTags( Target *pTarget, const StrList &sTags )
 	}
 }
 
-TargetList &Context::getTag( const Bu::FString &sTag )
+TargetList &Context::getTag( const Bu::String &sTag )
 {
 	return hTag.get( sTag );
 }
 
-Variable &Context::getVariable( const Bu::FString &sName )
+Variable &Context::getVariable( const Bu::String &sName )
 {
 	for( ScopeStack::iterator i = sVars.begin(); i; i++ )
 	{
@@ -100,7 +100,7 @@ Variable &Context::getVariable( const Bu::FString &sName )
 	throw Bu::ExceptionBase("No such variable.");
 }
 
-void Context::delVariable( const Bu::FString &sName )
+void Context::delVariable( const Bu::String &sName )
 {
 	for( ScopeStack::iterator i = sVars.begin(); i; i++ )
 	{
@@ -150,7 +150,7 @@ void Context::popScope()
 	sVars.pop();
 }
 
-Variable Context::call( const Bu::FString &sName, Variable &input,
+Variable Context::call( const Bu::String &sName, Variable &input,
 		VarList lParams )
 {
 	if( !hFunction.has( sName ) )
@@ -171,18 +171,18 @@ Variable Context::call( const Bu::FString &sName, Variable &input,
 
 #include <bu/sio.h>
 using namespace Bu;
-Bu::FString Context::expand( const Bu::FString &sInS )
+Bu::String Context::expand( const Bu::String &sInS )
 {
-	Bu::FString sRet;
-	Bu::FString sIn = sInS;
+	Bu::String sRet;
+	Bu::String sIn = sInS;
 
 	for( int iPass = 0; iPass < 2; iPass++ )
 	{
-		Bu::FString::const_iterator b = sIn.begin();
+		Bu::String::const_iterator b = sIn.begin();
 		sRet.clear();
 		for(;;)
 		{
-			Bu::FString::const_iterator e = b.find('$');
+			Bu::String::const_iterator e = b.find('$');
 			if( !e )
 			{
 				sRet.append( b );
@@ -198,7 +198,7 @@ Bu::FString Context::expand( const Bu::FString &sInS )
 			{
 				b++;
 				e = b.find('}');
-				Bu::FString sVar( b, e );
+				Bu::String sVar( b, e );
 				try
 				{
 					sRet.append( getVariable( sVar ).toString() );
@@ -214,8 +214,8 @@ Bu::FString Context::expand( const Bu::FString &sInS )
 			{
 				b++;
 				e = b.find(')');
-				Bu::FString sCmd( b, e );
-				Bu::FString sBuf;
+				Bu::String sCmd( b, e );
+				Bu::String sBuf;
 				try
 				{
 					//sio << "Executing command:  >>>" << sCmd << "<<<" << sio.nl;
@@ -250,7 +250,7 @@ Bu::FString Context::expand( const Bu::FString &sInS )
 	return sRet;
 }
 
-Target *Context::getTarget( const Bu::FString &sOutput )
+Target *Context::getTarget( const Bu::String &sOutput )
 {
 	return hTarget.get( sOutput );
 }
@@ -347,7 +347,7 @@ void Context::buildTargetTree( Runner &r )
 	}
 }
 
-void Context::buildTargetTree( class Runner &r, class Target *pTarget, const Bu::FString &sInput, Rule *pMaster, StrList &lNewIns )
+void Context::buildTargetTree( class Runner &r, class Target *pTarget, const Bu::String &sInput, Rule *pMaster, StrList &lNewIns )
 {
 	Target *pNewTarget = NULL;
 	for( RuleHash::iterator i = hRule.begin(); i; i++ )

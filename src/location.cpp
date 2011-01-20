@@ -19,7 +19,7 @@ Location::Location( struct YYLTYPE &loc ) :
 {
 }
 
-Location::Location( const Bu::FString &sFile, int iStartRow, int iStartCol,
+Location::Location( const Bu::String &sFile, int iStartRow, int iStartCol,
 		int iEndRow, int iEndCol ) :
 	sFile( sFile ),
 	iStartRow( iStartRow ),

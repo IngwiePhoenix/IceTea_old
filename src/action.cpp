@@ -20,7 +20,7 @@ Action::~Action()
 	pAst = NULL;
 }
 
-const Bu::FString &Action::getName() const
+const Bu::String &Action::getName() const
 {
 	return sName;
 }

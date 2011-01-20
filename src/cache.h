@@ -2,7 +2,7 @@
 #define CACHE_H
 
 #include <bu/singleton.h>
-#include <bu/fstring.h>
+#include <bu/string.h>
 #include <bu/hash.h>
 #include <bu/list.h>
 
@@ -17,21 +17,21 @@ private:
 	virtual ~Cache();
 
 public:
-	void bind( const Bu::FString &sCacheFile );
+	void bind( const Bu::String &sCacheFile );
 
 	void load();
 	void save();
 
-	StrList getRequires( const Bu::FString &sOutput );
-	void setRequires( const Bu::FString &sOutput, StrList lReqs );
+	StrList getRequires( const Bu::String &sOutput );
+	void setRequires( const Bu::String &sOutput, StrList lReqs );
 
 private:
 	bool bCacheChanged;
-	Bu::FString sCacheFile;
+	Bu::String sCacheFile;
 	bool bIsLoaded;
-	typedef Bu::Hash<Bu::FString, StrList> ReqHash;
+	typedef Bu::Hash<Bu::String, StrList> ReqHash;
 	ReqHash hRequires;
-	typedef Bu::Hash<Bu::FString, Variable> VarHash;
+	typedef Bu::Hash<Bu::String, Variable> VarHash;
 	VarHash hVariables;
 };
 

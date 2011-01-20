@@ -18,7 +18,7 @@ FunctionGetMakeDeps::~FunctionGetMakeDeps()
 {
 }
 
-Bu::FString FunctionGetMakeDeps::getName() const
+Bu::String FunctionGetMakeDeps::getName() const
 {
 	return "getMakeDeps";
 }
@@ -30,7 +30,7 @@ Variable FunctionGetMakeDeps::call( Variable &/*input*/, VarList lParams )
 		lParams.first().getString().getStr(), NULL );
 
 	// Gather all data from the command.
-	Bu::FString sBuf;
+	Bu::String sBuf;
 	do
 	{
 		char buf[4096];
@@ -43,7 +43,7 @@ Variable FunctionGetMakeDeps::call( Variable &/*input*/, VarList lParams )
 	
 	Variable vRet( Variable::typeList );
 
-	Bu::FString::iterator i, j;
+	Bu::String::iterator i, j;
 	i = sBuf.find(':')+2;
 	while( i )
 	{
@@ -51,7 +51,7 @@ Variable FunctionGetMakeDeps::call( Variable &/*input*/, VarList lParams )
 		// always a space after a word
 		for( j = i; j && *j != ' ' && *j != '\n' && *j != '\r'; j++ ) { }
 		
-		Bu::FString sTmp( i, j );
+		Bu::String sTmp( i, j );
 		vRet.append( sTmp );
 	
 		// Find the begining of the next word, trickier, we don't want to go

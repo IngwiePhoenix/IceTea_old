@@ -17,7 +17,7 @@ BuildParser::~BuildParser()
 
 int build_parse( yyscan_t yyscanner, BuildParser &bld );
 
-void BuildParser::load( const Bu::FString &sFile )
+void BuildParser::load( const Bu::String &sFile )
 {
 	yyscan_t scanner;
 
@@ -39,7 +39,7 @@ void BuildParser::load( const Bu::FString &sFile )
 	// Bu::sio << xAst;
 }
 
-bool BuildParser::isKeyword( const Bu::FString &sStr )
+bool BuildParser::isKeyword( const Bu::String &sStr )
 {
 	if( sStr == "important" )
 		return true;
@@ -52,7 +52,7 @@ bool BuildParser::isKeyword( const Bu::FString &sStr )
 	return false;
 }
 
-bool BuildParser::isCond( const Bu::FString &sStr )
+bool BuildParser::isCond( const Bu::String &sStr )
 {
 	if( sStr == "filetime" )
 		return true;
@@ -63,7 +63,7 @@ bool BuildParser::isCond( const Bu::FString &sStr )
 	return false;
 }
 
-void BuildParser::include( const Bu::FString &sStr, void *scanner, YYLTYPE *loc )
+void BuildParser::include( const Bu::String &sStr, void *scanner, YYLTYPE *loc )
 {
 	for( StrList::iterator pi = lIncludePaths.begin(); pi; pi++ )
 	{
@@ -80,12 +80,12 @@ void BuildParser::include( const Bu::FString &sStr, void *scanner, YYLTYPE *loc 
 			build__create_buffer( fIn, YY_READ_BUF_SIZE, scanner ),
 			scanner
 			);
-		Bu::FString::const_iterator i = sStr.find('/');
+		Bu::String::const_iterator i = sStr.find('/');
 		if( i )
 		{
 			for(;;)
 			{
-				Bu::FString::const_iterator j = i.find('/');
+				Bu::String::const_iterator j = i.find('/');
 				if( !j )
 					break;
 				i = j+1;
@@ -99,7 +99,7 @@ void BuildParser::include( const Bu::FString &sStr, void *scanner, YYLTYPE *loc 
 		}
 		return;
 	}
-	Bu::FString msg("Could not open include file: ");
+	Bu::String msg("Could not open include file: ");
 	msg += sStr;
 	error(
 		loc->first_line, loc->last_line,
@@ -117,14 +117,14 @@ void BuildParser::endInclude( YYLTYPE *loc )
 }
 
 void BuildParser::error( int iLine1, int iLine2, int iCol1, int iCol2,
-	const Bu::FString &sMsg )
+	const Bu::String &sMsg )
 {
 	throw Bu::ExceptionBase("%s: %d-%d:%d-%d: %s",
 		sFilename.peek().getStr(), iLine1, iLine2, iCol1, iCol2, sMsg.getStr()
 		);
 }
 
-void BuildParser::addIncludePath( const Bu::FString &sPath )
+void BuildParser::addIncludePath( const Bu::String &sPath )
 {
 	lIncludePaths.append( sPath + "/" );
 }

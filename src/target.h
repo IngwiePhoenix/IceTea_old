@@ -9,14 +9,14 @@ class Target
 	friend Bu::Formatter &operator<<( Bu::Formatter &f, const Target &t );
 public:
 	Target( bool bExplicit );
-	Target( const Bu::FString &sOutput, bool bExplicit );
+	Target( const Bu::String &sOutput, bool bExplicit );
 	virtual ~Target();
 
-	void addInput( const Bu::FString &sInput );
+	void addInput( const Bu::String &sInput );
 	const StrList &getInputList() const;
 	void resetInputList( const StrList &lInputs );
 
-	void addRequires( const Bu::FString &sReq );
+	void addRequires( const Bu::String &sReq );
 	void addRequires( const AstBranch *pBr );
 	const StrList &getRequiresList() const;
 	/**
@@ -27,14 +27,14 @@ public:
 	void gatherRequires( class Runner &r );
 	void buildRequires( class Runner &r );
 
-	void addOutput( const Bu::FString &sOutput );
+	void addOutput( const Bu::String &sOutput );
 	const StrList &getOutputList() const;
 
-	void setPrefix( const Bu::FString &sPrefix );
-	const Bu::FString &getPrefix() const;
+	void setPrefix( const Bu::String &sPrefix );
+	const Bu::String &getPrefix() const;
 
-	void setRule( const Bu::FString &sRule );
-	const Bu::FString &getRule() const;
+	void setRule( const Bu::String &sRule );
+	const Bu::String &getRule() const;
 	bool hasRule() const;
 
 	bool isExplicit() const;
@@ -44,16 +44,16 @@ public:
 
 	void addProfile( const class AstBranch *pProfRoot );
 	void addProfile( const class Profile *pSrc );
-	bool hasProfile( const Bu::FString &sName ) const;
-	const class Profile *getProfile( const Bu::FString &sName ) const;
+	bool hasProfile( const Bu::String &sName ) const;
+	const class Profile *getProfile( const Bu::String &sName ) const;
 
 	void setVars( const VarHash &hNewVars );
 	const VarHash &getVars() const;
 
-	void setDisplay( const Bu::FString &sNewDisplay );
-	const Bu::FString &getDisplay() const;
+	void setDisplay( const Bu::String &sNewDisplay );
+	const Bu::String &getDisplay() const;
 
-	void process( class Runner &r, const Bu::FString &sProfile );
+	void process( class Runner &r, const Bu::String &sProfile );
 
 	void mergeUnder( const Target *pSrc );
 
@@ -74,12 +74,12 @@ private:
 	StrList lsInput;
 	StrList lsRequires;
 	StrList lsOutput;
-	Bu::FString sPrefix;
-	Bu::FString sRule;
+	Bu::String sPrefix;
+	Bu::String sRule;
 	VarHash hVars;
 	TargetList lDeps;
 	ProfileHash hProfiles;
-	Bu::FString sDisplay;
+	Bu::String sDisplay;
 	bool bRun;
 	AstBranchList lbRequires;
 	int iDepCount;

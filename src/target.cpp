@@ -23,7 +23,7 @@ Target::Target( bool bExplicit ) :
 {
 }
 
-Target::Target( const Bu::FString &sOutput, bool bExplicit ) :
+Target::Target( const Bu::String &sOutput, bool bExplicit ) :
 	bExplicit( bExplicit ),
 	lsOutput( sOutput ),
 	iDepCount( 0 )
@@ -34,7 +34,7 @@ Target::~Target()
 {
 }
 
-void Target::addInput( const Bu::FString &sInput )
+void Target::addInput( const Bu::String &sInput )
 {
 	lsInput.append( sInput );
 }
@@ -62,7 +62,7 @@ void Target::resetInputList( const StrList &lInputs )
 	}
 }
 
-void Target::addRequires( const Bu::FString &sReq )
+void Target::addRequires( const Bu::String &sReq )
 {
 	lsRequires.append( sReq );
 }
@@ -101,7 +101,7 @@ void Target::buildRequires( Runner &r )
 		{
 			for( VarList::iterator j = v.begin(); j; j++ )
 			{
-				Bu::FString sReq = (*j).toString();
+				Bu::String sReq = (*j).toString();
 				addRequires( sReq );
 			/*	try
 				{
@@ -112,7 +112,7 @@ void Target::buildRequires( Runner &r )
 		}
 		else
 		{
-			Bu::FString sReq = v.toString();
+			Bu::String sReq = v.toString();
 			addRequires( sReq );
 		/*	try
 			{
@@ -127,7 +127,7 @@ void Target::buildRequires( Runner &r )
 	c.setRequires( lsOutput.first(), lsRequires );
 }
 
-void Target::addOutput( const Bu::FString &sOutput )
+void Target::addOutput( const Bu::String &sOutput )
 {
 	lsOutput.append( sOutput );
 }
@@ -137,22 +137,22 @@ const StrList &Target::getOutputList() const
 	return lsOutput;
 }
 
-void Target::setPrefix( const Bu::FString &sPrefix )
+void Target::setPrefix( const Bu::String &sPrefix )
 {
 	this->sPrefix = sPrefix;
 }
 
-const Bu::FString &Target::getPrefix() const
+const Bu::String &Target::getPrefix() const
 {
 	return sPrefix;
 }
 
-void Target::setRule( const Bu::FString &sRule )
+void Target::setRule( const Bu::String &sRule )
 {
 	this->sRule = sRule;
 }
 
-const Bu::FString &Target::getRule() const
+const Bu::String &Target::getRule() const
 {
 	return sRule;
 }
@@ -196,12 +196,12 @@ void Target::addProfile( const class Profile *pSrc )
 	hProfiles.insert( pSrc->getName(), new Profile( *pSrc ) );
 }
 
-bool Target::hasProfile( const Bu::FString &sName ) const
+bool Target::hasProfile( const Bu::String &sName ) const
 {
 	return hProfiles.has( sName );
 }
 
-const Profile *Target::getProfile( const Bu::FString &sName ) const
+const Profile *Target::getProfile( const Bu::String &sName ) const
 {
 	return hProfiles.get( sName );
 }
@@ -217,18 +217,18 @@ const VarHash &Target::getVars() const
 	return hVars;
 }
 
-void Target::setDisplay( const Bu::FString &sNewDisplay )
+void Target::setDisplay( const Bu::String &sNewDisplay )
 {
 	if( !sDisplay.isSet() )
 		sDisplay = sNewDisplay;
 }
 
-const Bu::FString &Target::getDisplay() const
+const Bu::String &Target::getDisplay() const
 {
 	return sDisplay;
 }
 
-void Target::process( class Runner &r, const Bu::FString &sProfile )
+void Target::process( class Runner &r, const Bu::String &sProfile )
 {
 	r.getContext().getView()->beginTarget( sProfile, *this );
 	bRun = true;
@@ -320,7 +320,7 @@ void Target::mergeUnder( const Target *pSrc )
 
 void Target::merge( StrList &lOut, const StrList &lIn )
 {
-	Bu::Heap<Bu::FString> hStr;
+	Bu::Heap<Bu::String> hStr;
 	for( StrList::const_iterator i = lOut.begin(); i; i++ )
 	{
 		hStr.enqueue( *i );

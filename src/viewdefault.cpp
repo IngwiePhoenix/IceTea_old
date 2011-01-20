@@ -47,7 +47,7 @@ ViewDefault::~ViewDefault()
 	}
 }
 
-void ViewDefault::beginAction( const Bu::FString &/*sAction*/ )
+void ViewDefault::beginAction( const Bu::String &/*sAction*/ )
 {
 }
 
@@ -55,13 +55,13 @@ void ViewDefault::endAction()
 {
 }
 
-void ViewDefault::skipTarget( const Bu::FString &/*sProfile*/,
+void ViewDefault::skipTarget( const Bu::String &/*sProfile*/,
 		const Target &/*rTarget*/ )
 {
 	iCurrent++;
 }
 
-void ViewDefault::beginTarget( const Bu::FString &sProfile,
+void ViewDefault::beginTarget( const Bu::String &sProfile,
 		const Target &rTarget )
 {
 	if( iDepth == 0 )
@@ -76,7 +76,7 @@ void ViewDefault::beginTarget( const Bu::FString &sProfile,
 	sCurProfile = sProfile;
 }
 
-void ViewDefault::drawTargetHdr( const Bu::FString &sProfile,
+void ViewDefault::drawTargetHdr( const Bu::String &sProfile,
 		const Target &rTarget )
 {
 	if( bDispedTrg == false )
@@ -93,7 +93,7 @@ void ViewDefault::drawTargetHdr( const Bu::FString &sProfile,
 	}
 }
 
-void ViewDefault::processTarget( const Bu::FString &sProfile,
+void ViewDefault::processTarget( const Bu::String &sProfile,
 		const Target &rTarget )
 {
 	drawTargetHdr( sProfile, rTarget );
@@ -125,23 +125,23 @@ void ViewDefault::buildRequires( const Target &rTarget )
 	bDisped = true;
 }
 
-void ViewDefault::cmdStarted( const Bu::FString &/*sCmd*/ )
+void ViewDefault::cmdStarted( const Bu::String &/*sCmd*/ )
 {
 }
 
-void ViewDefault::cmdFinished( const Bu::FString &sStdOut,
-	const Bu::FString &sStdErr, long /*iExit*/ )
+void ViewDefault::cmdFinished( const Bu::String &sStdOut,
+	const Bu::String &sStdErr, long /*iExit*/ )
 {
 	if( sStdOut.isSet() )
 	{
-		Bu::FString::const_iterator b;
+		Bu::String::const_iterator b;
 		b = sStdOut.begin();
 		while( b )
 		{
-			Bu::FString::const_iterator e, max;
+			Bu::String::const_iterator e, max;
 			max = b + 78;
 			for( e = b; e != max && *e != '\n'; e++ ) { } 
-			sio << C_BR_GREEN << "| " << C_RESET << FString( b, e ) << sio.nl;
+			sio << C_BR_GREEN << "| " << C_RESET << String( b, e ) << sio.nl;
 			b = e;
 			if( *b == '\n' )
 				b++;
@@ -150,14 +150,14 @@ void ViewDefault::cmdFinished( const Bu::FString &sStdOut,
 	}
 	if( sStdErr.isSet() )
 	{
-		Bu::FString::const_iterator b;
+		Bu::String::const_iterator b;
 		b = sStdErr.begin();
 		while( b )
 		{
-			Bu::FString::const_iterator e, max;
+			Bu::String::const_iterator e, max;
 			max = b + 78;
 			for( e = b; e != max && *e != '\n'; e++ ) { } 
-			sio << C_BR_RED << "| " << C_RESET  << FString( b, e ) << sio.nl;
+			sio << C_BR_RED << "| " << C_RESET  << String( b, e ) << sio.nl;
 			b = e;
 			if( *b == '\n' )
 				b++;
@@ -169,31 +169,31 @@ void ViewDefault::cmdFinished( const Bu::FString &sStdOut,
 	bDisped = true;
 }
 
-void ViewDefault::userError( const Bu::FString &sMsg )
+void ViewDefault::userError( const Bu::String &sMsg )
 {
 	sio << C_BR_RED << "Error: " << sMsg << C_RESET << sio.nl;
 	bDisped = true;
 }
 
-void ViewDefault::userWarning( const Bu::FString &sMsg )
+void ViewDefault::userWarning( const Bu::String &sMsg )
 {
 	sio << C_BR_YELLOW << "Warning: " << sMsg << C_RESET << sio.nl;
 	bDisped = true;
 }
 
-void ViewDefault::userNotice( const Bu::FString &sMsg )
+void ViewDefault::userNotice( const Bu::String &sMsg )
 {
 	sio << C_BR_GREEN << "Notice: " << sMsg << C_RESET << sio.nl;
 	bDisped = true;
 }
 
-void ViewDefault::sysError( const Bu::FString &sMsg )
+void ViewDefault::sysError( const Bu::String &sMsg )
 {
 	sio << C_BR_RED << sMsg << C_RESET << sio.nl;
 	bDisped = true;
 }
 
-void ViewDefault::sysWarning( const Bu::FString &sMsg )
+void ViewDefault::sysWarning( const Bu::String &sMsg )
 {
 	sio << C_BR_YELLOW << sMsg << C_RESET << sio.nl;
 	bDisped = true;

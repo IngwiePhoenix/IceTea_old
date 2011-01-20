@@ -11,7 +11,7 @@
 #include <bu/sio.h>
 using namespace Bu;
 
-Rule::Rule( const Bu::FString &sName ) :
+Rule::Rule( const Bu::String &sName ) :
 	sName( sName ),
 	pInput( NULL )
 {
@@ -21,7 +21,7 @@ Rule::~Rule()
 {
 }
 
-const Bu::FString &Rule::getName() const
+const Bu::String &Rule::getName() const
 {
 	return sName;
 }
@@ -73,7 +73,7 @@ void Rule::prepTarget( class Target *pTarget )
 	}
 }
 
-Target *Rule::createTarget( class Runner &r, const Bu::FString &sInput,
+Target *Rule::createTarget( class Runner &r, const Bu::String &sInput,
 		Target *pParent )
 {
 	r.getContext().pushScope( pParent->getVars() );
@@ -114,7 +114,7 @@ Target *Rule::createTarget( class Runner &r, const Bu::FString &sInput,
 	return pTrg;
 }
 
-bool Rule::ruleMatches( Runner &r, const Bu::FString &sInput )
+bool Rule::ruleMatches( Runner &r, const Bu::String &sInput )
 {
 	r.getContext().pushScope();
 	r.getContext().addVariable("INPUT", sInput );
@@ -131,7 +131,7 @@ bool Rule::ruleMatches( Runner &r, const Bu::FString &sInput )
 	return false;
 }
 
-void Rule::addTag( const Bu::FString &sTag )
+void Rule::addTag( const Bu::String &sTag )
 {
 	lsTags.append( sTag );
 }
@@ -141,12 +141,12 @@ const StrList &Rule::getTagList() const
 	return lsTags;
 }
 
-void Rule::setDisplay( const Bu::FString &sStr )
+void Rule::setDisplay( const Bu::String &sStr )
 {
 	sDisplay = sStr;
 }
 
-const Bu::FString &Rule::getDisplay() const
+const Bu::String &Rule::getDisplay() const
 {
 	return (sDisplay.isSet())?(sDisplay):(sName);
 }

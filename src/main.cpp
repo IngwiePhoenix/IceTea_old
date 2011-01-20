@@ -40,7 +40,7 @@ public:
 		bool bClean = false;
 		addHelpBanner("build mark 3\n");
 
-		Bu::FString sViews("Select a view from: ");
+		Bu::String sViews("Select a view from: ");
 		StrList lViews = ViewPlugger::getInstance().getPluginList();
 		for( StrList::iterator i = lViews.begin(); i; i++ )
 		{
@@ -159,10 +159,10 @@ public:
 		return 0;
 	}
 
-	Bu::FString sView;
-	Bu::FString sAction;
-	Bu::FString sConfig;
-	Bu::FString sCacheFile;
+	Bu::String sView;
+	Bu::String sAction;
+	Bu::String sConfig;
+	Bu::String sCacheFile;
 	bool bDot;
 	bool bDebug;
 	bool bAutoInclude;
@@ -174,7 +174,7 @@ public:
 
 int main( int argc, char *argv[] )
 {
-	typedef Bu::List<Bu::FString> StrList;
+	typedef Bu::List<Bu::String> StrList;
 	StrList lShareList;
 	lShareList.append("/usr/share/build/").append("./share/");
 	Ast ast;
@@ -221,8 +221,8 @@ int main( int argc, char *argv[] )
 			int iSplit;
 			for( iSplit = 0; (*env)[iSplit] != '='; iSplit++ ) { }
 			cnt.addVariable(
-				FString( *env, iSplit ),
-				FString( *env+iSplit+1 )
+				String( *env, iSplit ),
+				String( *env+iSplit+1 )
 				);
 		}
 	}
@@ -230,7 +230,7 @@ int main( int argc, char *argv[] )
 	if( opts.bAutoInclude )
 	{
 		DIR *d;
-		Bu::FString sAutoDir;
+		Bu::String sAutoDir;
 		for( StrList::iterator i = lShareList.begin(); i; i++ )
 		{
 			sAutoDir = *i + "autoinclude";

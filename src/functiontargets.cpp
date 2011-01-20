@@ -14,7 +14,7 @@ FunctionTargets::~FunctionTargets()
 {
 }
 
-Bu::FString FunctionTargets::getName() const
+Bu::String FunctionTargets::getName() const
 {
 	return "targets";
 }

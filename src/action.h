@@ -1,7 +1,7 @@
 #ifndef ACTION_H
 #define ACTION_H
 
-#include <bu/fstring.h>
+#include <bu/string.h>
 
 class Action
 {
@@ -9,7 +9,7 @@ public:
 	Action( const class AstBranch *pRoot );
 	virtual ~Action();
 
-	const Bu::FString &getName() const;
+	const Bu::String &getName() const;
 
 	void call( class Runner *pRunner );
 
@@ -19,7 +19,7 @@ public:
 	static Action *genDefaultDefault();
 
 private:
-	Bu::FString sName;
+	Bu::String sName;
 	const class AstBranch *pRoot;
 	class Ast *pAst;
 };

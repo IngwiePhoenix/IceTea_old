@@ -17,7 +17,7 @@ Variable::Variable( Type t ) :
 	memset( &uVal, 0, sizeof(uVal) );
 	if( eType == typeString || eType == typeRef )
 	{
-		uVal.sVal = new Bu::FString;
+		uVal.sVal = new Bu::String;
 	}
 	else if( eType == typeList )
 	{
@@ -46,18 +46,18 @@ Variable::Variable( bool bVal ) :
 	uVal.bVal = bVal;
 }
 
-Variable::Variable( const Bu::FString &sVal ) :
+Variable::Variable( const Bu::String &sVal ) :
 	eType( typeString )
 {
 	memset( &uVal, 0, sizeof(uVal) );
-	uVal.sVal = new Bu::FString( sVal );
+	uVal.sVal = new Bu::String( sVal );
 }
 
 Variable::Variable( const char *sVal ) :
 	eType( typeString )
 {
 	memset( &uVal, 0, sizeof(uVal) );
-	uVal.sVal = new Bu::FString( sVal );
+	uVal.sVal = new Bu::String( sVal );
 }
 
 Variable::Variable( const Variable &v ) :
@@ -66,7 +66,7 @@ Variable::Variable( const Variable &v ) :
 	memset( &uVal, 0, sizeof(uVal) );
 	if( eType == typeString || eType == typeRef )
 	{
-		uVal.sVal = new Bu::FString( *v.uVal.sVal );
+		uVal.sVal = new Bu::String( *v.uVal.sVal );
 	}
 	else if( eType == typeList )
 	{
@@ -99,7 +99,7 @@ Variable::Variable( const class AstLeaf &l )
 
 		case AstNode::typeDataString:
 			eType = typeString;
-			uVal.sVal = new Bu::FString( l.getStrValue() );
+			uVal.sVal = new Bu::String( l.getStrValue() );
 			break;
 
 		case AstNode::typeDataNone:
@@ -118,7 +118,7 @@ Variable::Variable( const StrList &lst )
 	if( lst.getSize() == 1 )
 	{
 		eType = typeString;
-		uVal.sVal = new Bu::FString( lst.first() );
+		uVal.sVal = new Bu::String( lst.first() );
 	}
 	else
 	{
@@ -149,7 +149,7 @@ Variable::~Variable()
 	}
 }
 
-Variable Variable::mkRef( const Bu::FString &sVal )
+Variable Variable::mkRef( const Bu::String &sVal )
 {
 	Variable v( typeRef );
 	(*v.uVal.sVal) = sVal;
@@ -179,7 +179,7 @@ bool Variable::getBool() const
 	return uVal.bVal;
 }
 
-const Bu::FString &Variable::getString() const
+const Bu::String &Variable::getString() const
 {
 	if( eType != typeString && eType != typeRef ) throw Bu::ExceptionBase("Wrong variable type.");
 	return *uVal.sVal;
@@ -263,9 +263,9 @@ bool Variable::toBool() const
 	return false;
 }
 
-Bu::FString Variable::toString() const
+Bu::String Variable::toString() const
 {
-	Bu::FString sRet;
+	Bu::String sRet;
 	switch( eType )
 	{
 		case typeNone:
@@ -417,7 +417,7 @@ const Variable &Variable::operator=( const Variable &rhs )
 	reset( rhs.eType );
 	if( rhs.eType == typeString || rhs.eType == typeRef )
 	{
-		uVal.sVal = new Bu::FString( *rhs.uVal.sVal );
+		uVal.sVal = new Bu::String( *rhs.uVal.sVal );
 	}
 	else if( rhs.eType == typeList )
 	{
@@ -455,10 +455,10 @@ const Variable &Variable::operator=( const bool &rhs )
 	return *this;
 }
 
-const Variable &Variable::operator=( const Bu::FString &rhs )
+const Variable &Variable::operator=( const Bu::String &rhs )
 {
 	reset( typeString );
-	uVal.sVal = new Bu::FString( rhs );
+	uVal.sVal = new Bu::String( rhs );
 
 	return *this;
 }
@@ -471,7 +471,7 @@ const Variable &Variable::operator+=( const Variable &rhs )
 			reset( rhs.eType );
 			if( eType == typeString || eType == typeRef )
 			{
-				uVal.sVal = new Bu::FString( *rhs.uVal.sVal );
+				uVal.sVal = new Bu::String( *rhs.uVal.sVal );
 			}
 			else if( eType == typeList )
 			{
@@ -521,7 +521,7 @@ const Variable &Variable::operator<<( const Variable &rhs )
 			reset( rhs.eType );
 			if( eType == typeString )
 			{
-				uVal.sVal = new Bu::FString( *rhs.uVal.sVal );
+				uVal.sVal = new Bu::String( *rhs.uVal.sVal );
 			}
 			else if( eType == typeList )
 			{

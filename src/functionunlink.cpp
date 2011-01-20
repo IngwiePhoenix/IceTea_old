@@ -17,7 +17,7 @@ FunctionUnlink::~FunctionUnlink()
 {
 }
 
-Bu::FString FunctionUnlink::getName() const
+Bu::String FunctionUnlink::getName() const
 {
 	return "unlink";
 }

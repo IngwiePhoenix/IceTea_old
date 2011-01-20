@@ -8,10 +8,10 @@ class Rule
 {
 	friend Bu::Formatter &operator<<( Bu::Formatter &f, const Rule &t );
 public:
-	Rule( const Bu::FString &sName );
+	Rule( const Bu::String &sName );
 	virtual ~Rule();
 
-	const Bu::FString &getName() const;
+	const Bu::String &getName() const;
 
 	void setInput( const AstBranch *pNewInput );
 	const AstBranch *getInput() const;
@@ -22,21 +22,21 @@ public:
 	void addProfile( const AstBranch *pProfile );
 
 	void prepTarget( class Target *pTarget );
-	class Target *createTarget( class Runner &r, const Bu::FString &sInput,
+	class Target *createTarget( class Runner &r, const Bu::String &sInput,
 			class Target *pParent );
-	bool ruleMatches( class Runner &r, const Bu::FString &sInput );
+	bool ruleMatches( class Runner &r, const Bu::String &sInput );
 
-	void addTag( const Bu::FString &sTag );
+	void addTag( const Bu::String &sTag );
 	const StrList &getTagList() const;
 
-	void setDisplay( const Bu::FString &sStr );
-	const Bu::FString &getDisplay() const;
+	void setDisplay( const Bu::String &sStr );
+	const Bu::String &getDisplay() const;
 
 	void addRequires( const AstBranch *pBr );
 
 private:
-	Bu::FString sName;
-	Bu::FString sDisplay;
+	Bu::String sName;
+	Bu::String sDisplay;
 	const AstBranch *pInput;
 	AstBranchList lOutput;
 	ProfileHash hProfiles;

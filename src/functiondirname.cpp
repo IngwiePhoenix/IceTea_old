@@ -12,30 +12,30 @@ FunctionDirName::~FunctionDirName()
 {
 }
 
-Bu::FString FunctionDirName::getName() const
+Bu::String FunctionDirName::getName() const
 {
 	return "dirName";
 }
 
 Variable FunctionDirName::call( Variable &input, VarList /*lParams*/ )
 {
-	Bu::FString sFile;
+	Bu::String sFile;
 	sFile = input.getString();
 
-	Bu::FString::const_iterator i = sFile.begin();
-	Bu::FString::const_iterator io;
+	Bu::String::const_iterator i = sFile.begin();
+	Bu::String::const_iterator io;
 	for(;;)
 	{
-		Bu::FString::const_iterator b = i.find('/');
+		Bu::String::const_iterator b = i.find('/');
 		if( !b )
 		{
-			return Variable( Bu::FString( sFile.begin(), io ) );
+			return Variable( Bu::String( sFile.begin(), io ) );
 		}
 		io = b;
 		i = b+1;
 		if( !i )
 		{
-			return Variable( Bu::FString( sFile.begin(), io ) );
+			return Variable( Bu::String( sFile.begin(), io ) );
 		}
 	}
 }

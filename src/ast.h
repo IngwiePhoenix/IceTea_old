@@ -3,7 +3,7 @@
 
 #include "bu/list.h"
 #include "bu/stack.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/formatter.h"
 
 #include "astnode.h"
@@ -24,14 +24,14 @@ public:
 	void addNode( struct YYLTYPE &loc, AstNode::Type eType, float fVal );
 	void addNode( struct YYLTYPE &loc, AstNode::Type eType, bool bVal );
 	void addNode( struct YYLTYPE &loc, AstNode::Type eType,
-			const Bu::FString &sVal );
+			const Bu::String &sVal );
 	void addNode( struct YYLTYPE &loc, AstNode::Type eType, const char *sVal );
 
 	void addNode( AstNode::Type eType );
 	void addNode( AstNode::Type eType, int iVal );
 	void addNode( AstNode::Type eType, float fVal );
 	void addNode( AstNode::Type eType, bool bVal );
-	void addNode( AstNode::Type eType, const Bu::FString &sVal );
+	void addNode( AstNode::Type eType, const Bu::String &sVal );
 	void addNode( AstNode::Type eType, const char *sVal );
 	void addNode( AstNode *pNode );
 

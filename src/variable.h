@@ -30,7 +30,7 @@ public:
 	Variable( int iVal );
 	Variable( double fVal );
 	Variable( bool bVal );
-	Variable( const Bu::FString &sVal );
+	Variable( const Bu::String &sVal );
 	Variable( const char *sVal );
 	Variable( const Variable &v );
 	Variable( const class AstLeaf &l );
@@ -43,7 +43,7 @@ public:
 	Variable( const VarList &lst );
 	virtual ~Variable();
 
-	static Variable mkRef( const Bu::FString &sVal );
+	static Variable mkRef( const Bu::String &sVal );
 
 	Type getType() const;
 
@@ -52,7 +52,7 @@ public:
 	int getInt() const;
 	double getFloat() const;
 	bool getBool() const;
-	const Bu::FString &getString() const;
+	const Bu::String &getString() const;
 	const VarList &getList() const;
 
 	// Conversion functions, they'll return the requested type, maybe an error
@@ -60,7 +60,7 @@ public:
 	int toInt() const;
 	double toFloat() const;
 	bool toBool() const;
-	Bu::FString toString() const;
+	Bu::String toString() const;
 	VarList toList() const;
 
 	Variable toType( Type eNewType ) const;
@@ -76,7 +76,7 @@ public:
 	const Variable &operator=( const int &rhs );
 	const Variable &operator=( const double &rhs );
 	const Variable &operator=( const bool &rhs );
-	const Variable &operator=( const Bu::FString &rhs );
+	const Variable &operator=( const Bu::String &rhs );
 
 	const Variable &operator+=( const Variable &rhs );
 	const Variable &operator<<( const Variable &rhs );
@@ -100,7 +100,7 @@ private:
 		int iVal;
 		double fVal;
 		bool bVal;
-		Bu::FString *sVal;
+		Bu::String *sVal;
 		VarList *lVal;
 	} uVal;
 

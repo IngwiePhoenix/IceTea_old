@@ -17,7 +17,7 @@ FunctionFiles::~FunctionFiles()
 {
 }
 
-Bu::FString FunctionFiles::getName() const
+Bu::String FunctionFiles::getName() const
 {
 	return "files";
 }
