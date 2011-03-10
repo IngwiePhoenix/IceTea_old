@@ -137,7 +137,7 @@ rule "jar"
 		{
 			unlink(OUTPUT);
 		}
-		execute("jar cvf ${OUTPUT} ${INPUT}");
+		execute("jar cf ${OUTPUT} ${INPUT}");
 	}
 }
 
