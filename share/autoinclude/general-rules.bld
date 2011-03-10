@@ -127,3 +127,27 @@ rule "flex"
 		execute("${FLEX} ${FLEXFLAGS} ${INPUT}");
 	}
 }
+
+rule "jar"
+{
+	input "*.class";
+	profile "build"
+	{
+		if exists(OUTPUT) then
+		{
+			unlink(OUTPUT);
+		}
+		execute("jar cvf ${OUTPUT} ${INPUT}");
+	}
+}
+
+rule "class"
+{
+	input "*.java";
+	output INPUT.regex("\\.java", ".class");
+	profile "build"
+	{
+		execute("javac -cp . ${INPUT}");
+	}
+}
+
