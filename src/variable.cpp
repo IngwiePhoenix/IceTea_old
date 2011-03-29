@@ -273,11 +273,11 @@ Bu::String Variable::toString() const
 			break;
 
 		case typeInt:
-			sRet.format("%d", uVal.iVal );
+			sRet = Bu::String("%1").arg( uVal.iVal );
 			break;
 
 		case typeFloat:
-			sRet.format("%f", uVal.fVal );
+			sRet = Bu::String("%1").arg( uVal.fVal );
 			break;
 
 		case typeBool:
