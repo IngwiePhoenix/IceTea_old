@@ -219,7 +219,9 @@ Bu::String Context::expand( const Bu::String &sInS )
 				try
 				{
 					//sio << "Executing command:  >>>" << sCmd << "<<<" << sio.nl;
-					Process p( Process::StdOut, "/bin/bash", "/bin/bash", "-c", sCmd.getStr(), NULL );
+					Process p( Process::StdOut,
+						"/bin/bash", "/bin/bash", "-c", sCmd.getStr(), NULL
+						);
 					char buf[4096];
 					do
 					{
@@ -227,8 +229,8 @@ Bu::String Context::expand( const Bu::String &sInS )
 					}
 					while( p.isRunning() );
 					sBuf.append( buf, p.read( buf, 4096 ) );
-					sBuf = sBuf.replace("\n", " ").replace("\r", " ");
-					sBuf.trimBack(' ');
+					sBuf = sBuf.replace("\n", " ").replace("\r", " ").
+						trimWhitespace();
 					sRet.append( sBuf );
 				} catch(...)
 				{
