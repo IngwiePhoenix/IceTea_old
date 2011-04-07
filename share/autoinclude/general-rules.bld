@@ -86,7 +86,7 @@ rule "cpp"
 {
 	input "*.cpp";
 	output INPUT.cppToObj();
-	requires getMakeDeps("${CXX} ${CXXFLAGS} -M ${INPUT}");
+	requires getMakeDeps("${CXX} ${CXXFLAGS} -M -MG ${INPUT}");
 	profile "build"
 	{
 		execute("${CXX} ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
@@ -98,7 +98,7 @@ rule "c"
 {
 	input "*.c";
 	output INPUT.cToObj();
-	requires getMakeDeps("${CC} ${CFLAGS} -M ${INPUT}");
+	requires getMakeDeps("${CC} ${CFLAGS} -M -MG ${INPUT}");
 	profile "build"
 	{
 		execute("${CC} ${CFLAGS} -c -o ${OUTPUT} ${INPUT}");
