@@ -156,7 +156,7 @@ rule "exe"
 	input regex(".*\\.(h|o)");
 	profile "build"
 	{
-		INPUT = INPUT.matches("*.o");
+		INPUT = [INPUT].matches("*.o");
 //		execute("echo ${INPUT}");
 //		execute("echo ${MYIN}");
 		execute("${CXX} -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
