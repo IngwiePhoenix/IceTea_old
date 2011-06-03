@@ -1,4 +1,4 @@
-.TH build 1 "October 30, 2009" "Xagasoft" "Geekgene"
+.TH build 1 "June 3, 2011" "Xagasoft" "Geekgene"
 .SH NAME
 .P
 build.conf configuration files.
@@ -73,6 +73,26 @@ Returns the file portion of the string provided as input.  That is, it returns e
 .B
 dirName()
 Returns the directory portion of the string provided as input.  That is, it returns everything before the last '/' character.  Read the caveat for fileName about what this really means.  If the input ends with a slash this will return the entire string, except the trailing slash.
+.TP
+.B
+range()
+Returns a list of numbers that fit in the specified range.  There are three forms of this function, with one parameter it will produce a list of numbers between one and the number specified, inclusive.  With two parameters the first is the starting number, the second is the last number in the range.  With a third parameter you also specify the step size.  At the moment the only way to make a list that is in decending order is to specify a negative step size.
+.TP
+.B
+open()
+Opens a file in the filesystem, creating it if it doesn't exist.  This takes two parameters, first is the filename, second is the mode string.  The mode is just a plain string that can contain any number of flag characters.  The flags available are 'w' for write mode, and 'r' for read mode.  You can specify both r and w.  Open returns a file handle that needs to be used for all future file operations on that file.
+.TP
+.B
+write()
+Takes a file handle as it's input, and takes a string as it's parameter.  The string is written to the file as is.  If a parameter is specified that isn't a string, it will be converted to a string as best as it can be.
+.TP
+.B
+read()
+Takes a file handle as it's input, and takes an integer as it's parameter.  The integer specified is how many bytes to read form the file.  Up to that many bytes will be returned as a string, fewer if fewer are available.
+.TP
+.B
+close()
+Takes a file handle as it's input, and no parameters.  Closes the file indicated by the handle provided as input.  While it is reccomended to close all files as soon as you are done with them, any files left open will be closed automatically and safely before build exists.
 .P
 Here, lets list functions we wish we had...
 .SH ENVIRONMENT
