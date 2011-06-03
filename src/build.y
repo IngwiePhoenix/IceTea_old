@@ -295,6 +295,11 @@ expr: value
 	} expr {
 		bld.xAst.addNode( @3, AstNode::typeOpPlusEq );
 	}
+	| UNDEF OP_ADDSETR {
+		bld.xAst.addNode( @$, AstNode::typeVariableRef, $1 );
+	} expr {
+		bld.xAst.addNode( @3, AstNode::typeOpPlusEqRaw );
+	}
 	| expr OP_CMPEQUAL expr
 	{
 		bld.xAst.addNode( @$, AstNode::typeCmpEq );
