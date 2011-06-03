@@ -91,7 +91,7 @@ void yyerror( YYLTYPE *locp, yyscan_t yyscanner, BuildParser &bld, const char *m
 
 %token '(' ')' '{' '}' '[' ']' ',' ';' '=' '.' '<' '>' '+' '-' '*' '/'
 
-%right '=' OP_ADDSETP OPADDSETR
+%right '=' OP_ADDSETP OP_ADDSETR OPADDSETR
 %left OP_CMPEQUAL '<' '>' OP_INEQUAL OP_LTEQUAL OP_GTEQUAL '+' '-' '*' '/'
 %left '(' ')' '{' '}' '[' ']'
 %left IINEG IINOT
