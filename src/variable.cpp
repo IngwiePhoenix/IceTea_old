@@ -137,6 +137,13 @@ Variable::Variable( const VarList &lst )
 	uVal.lVal = new VarList( lst );
 }
 
+Variable::Variable( void *oVal ) :
+	eType( typeOpaque )
+{
+	memset( &uVal, 0, sizeof(uVal) );
+	uVal.oVal = oVal;
+}
+
 Variable::~Variable()
 {
 	if( eType == typeString || eType == typeRef )
@@ -189,6 +196,12 @@ const VarList &Variable::getList() const
 {
 	if( eType != typeList ) throw Bu::ExceptionBase("Wrong variable type.");
 	return *uVal.lVal;
+}
+
+const void *Variable::getOpaque() const
+{
+	if( eType != typeOpaque ) throw Bu::ExceptionBase("Wrong variable type.");
+	return uVal.oVal;
 }
 
 int Variable::toInt() const
@@ -302,6 +315,10 @@ Bu::String Variable::toString() const
 
 		case typeVersion:
 			break;
+
+		case typeOpaque:
+			sRet = Bu::String("<opaque:%1>").arg( uVal.oVal );
+			break;
 	}
 
 	return sRet;
@@ -341,6 +358,9 @@ Variable Variable::toType( Type eNewType ) const
 		
 		case typeRef:
 			return Variable::mkRef( toString() );
+
+		case typeOpaque:
+			throw Bu::ExceptionBase("Cannot convert opaque types.");
 	}
 	throw Bu::ExceptionBase("Unhandled case in Variable toType");
 }
@@ -402,6 +422,9 @@ void Variable::doNegate()
 		
 		case typeRef:
 			throw Bu::ExceptionBase("You cannot negate reference values.");
+		
+		case typeOpaque:
+			throw Bu::ExceptionBase("You cannot negate opaque values.");
 	}
 }
 
@@ -459,6 +482,14 @@ const Variable &Variable::operator=( const Bu::String &rhs )
 {
 	reset( typeString );
 	uVal.sVal = new Bu::String( rhs );
+
+	return *this;
+}
+
+const Variable &Variable::operator=( void *rhs )
+{
+	reset( typeOpaque );
+	uVal.oVal = rhs;
 
 	return *this;
 }
@@ -575,6 +606,9 @@ bool Variable::operator==( const Variable &rhs ) const
 
 		case typeVersion:
 			return false;
+
+		case typeOpaque:
+			return uVal.oVal == rhs.uVal.oVal;
 	}
 
 	return false;
@@ -613,6 +647,9 @@ bool Variable::operator<( const Variable &rhs ) const
 		
 		case typeRef:
 			throw Bu::ExceptionBase("You cannot < compare reference values.");
+		
+		case typeOpaque:
+			throw Bu::ExceptionBase("You cannot < compare opaque values.");
 	}
 	throw Bu::ExceptionBase("Unhandled case in Variable < compare");
 }
@@ -645,6 +682,9 @@ bool Variable::operator>( const Variable &rhs ) const
 		
 		case typeRef:
 			throw Bu::ExceptionBase("You cannot > compare reference values.");
+		
+		case typeOpaque:
+			throw Bu::ExceptionBase("You cannot > compare opaque values.");
 	}
 	throw Bu::ExceptionBase("Unhandled case in Variable > compare");
 }
@@ -677,6 +717,9 @@ bool Variable::operator<=( const Variable &rhs ) const
 		
 		case typeRef:
 			throw Bu::ExceptionBase("You cannot <= compare reference values.");
+		
+		case typeOpaque:
+			throw Bu::ExceptionBase("You cannot <= compare opaque values.");
 	}
 	throw Bu::ExceptionBase("Unhandled case in Variable <= compare");
 }
@@ -709,6 +752,9 @@ bool Variable::operator>=( const Variable &rhs ) const
 		
 		case typeRef:
 			throw Bu::ExceptionBase("You cannot >= compare reference values.");
+		
+		case typeOpaque:
+			throw Bu::ExceptionBase("You cannot >= compare opaque values.");
 	}
 	throw Bu::ExceptionBase("Unhandled case in Variable >= compare");
 }
@@ -741,6 +787,9 @@ Variable Variable::operator+( const Variable &rhs ) const
 		
 		case typeRef:
 			throw Bu::ExceptionBase("You cannot add reference values.");
+		
+		case typeOpaque:
+			throw Bu::ExceptionBase("You cannot add opaque values.");
 	}
 	throw Bu::ExceptionBase("Unhandled case in Variable add");
 }
@@ -773,6 +822,9 @@ Variable Variable::operator-( const Variable &rhs ) const
 		
 		case typeRef:
 			throw Bu::ExceptionBase("You cannot subtract reference values.");
+		
+		case typeOpaque:
+			throw Bu::ExceptionBase("You cannot subtract opaque values.");
 	}
 	throw Bu::ExceptionBase("Unhandled case in Variable subtract");
 }
@@ -805,6 +857,9 @@ Variable Variable::operator*( const Variable &rhs ) const
 		
 		case typeRef:
 			throw Bu::ExceptionBase("You cannot multiply reference values.");
+		
+		case typeOpaque:
+			throw Bu::ExceptionBase("You cannot multiply opaque values.");
 	}
 	throw Bu::ExceptionBase("Unhandled case in Variable multiply");
 }
@@ -837,6 +892,9 @@ Variable Variable::operator/( const Variable &rhs ) const
 		
 		case typeRef:
 			throw Bu::ExceptionBase("You cannot divide reference values.");
+		
+		case typeOpaque:
+			throw Bu::ExceptionBase("You cannot divide opaque values.");
 	}
 	throw Bu::ExceptionBase("Unhandled case in Variable divide");
 }
@@ -868,6 +926,7 @@ Bu::Formatter &operator<<( Bu::Formatter &f, const Variable::Type &t )
 		case Variable::typeList:	f << "list";		break;
 		case Variable::typeVersion:	f << "version";		break;
 		case Variable::typeRef:		f << "ref";			break;
+		case Variable::typeOpaque:	f << "opaque";		break;
 	}
 	return f;
 }
@@ -885,6 +944,8 @@ Bu::Formatter &operator<<( Bu::Formatter &f, const Variable &v )
 		case Variable::typeList:	f << v.getList();		break;
 		case Variable::typeVersion:/*f << v.getVersion();*/	break;
 		case Variable::typeRef:		f << v.getString();		break;
+		case Variable::typeOpaque:	f << "<opaque:" << v.getOpaque() << ">";
+									break;
 	}
 
 	return f;
@@ -923,6 +984,9 @@ Bu::ArchiveBase &operator<<( Bu::ArchiveBase &ar, const Variable &v )
 
 		case Variable::typeRef:
 			ar << *v.uVal.sVal;
+			break;
+
+		case Variable::typeOpaque:
 			break;
 	}
 
@@ -965,6 +1029,9 @@ Bu::ArchiveBase &operator>>( Bu::ArchiveBase &ar, Variable &v )
 
 		case Variable::typeRef:
 			ar >> *v.uVal.sVal;
+			break;
+
+		case Variable::typeOpaque:
 			break;
 	}
 	

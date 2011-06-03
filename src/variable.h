@@ -21,7 +21,8 @@ public:
 		typeVersion,
 		typeString,
 		typeList,
-		typeRef			/**< Reference by name, it's just a string. */
+		typeRef,			/**< Reference by name, it's just a string. */
+		typeOpaque			/**< Only useful to functions. */
 	};
 
 public:
@@ -41,6 +42,7 @@ public:
 	 */
 	Variable( const StrList &lst );
 	Variable( const VarList &lst );
+	Variable( void *oVal );
 	virtual ~Variable();
 
 	static Variable mkRef( const Bu::String &sVal );
@@ -54,6 +56,7 @@ public:
 	bool getBool() const;
 	const Bu::String &getString() const;
 	const VarList &getList() const;
+	const void *getOpaque() const;
 
 	// Conversion functions, they'll return the requested type, maybe an error
 	// if the source data is really bad
@@ -77,6 +80,7 @@ public:
 	const Variable &operator=( const double &rhs );
 	const Variable &operator=( const bool &rhs );
 	const Variable &operator=( const Bu::String &rhs );
+	const Variable &operator=( void *rhs );
 
 	const Variable &operator+=( const Variable &rhs );
 	const Variable &operator<<( const Variable &rhs );
@@ -102,6 +106,7 @@ private:
 		bool bVal;
 		Bu::String *sVal;
 		VarList *lVal;
+		void *oVal;
 	} uVal;
 
 	void reset( Type eType );

@@ -17,6 +17,10 @@ extern Bu::PluginInfo pluginFunctionToString;
 extern Bu::PluginInfo pluginFunctionUnlink;
 extern Bu::PluginInfo pluginFunctionRegEx;
 extern Bu::PluginInfo pluginFunctionRange;
+extern Bu::PluginInfo pluginFunctionOpen;
+extern Bu::PluginInfo pluginFunctionClose;
+extern Bu::PluginInfo pluginFunctionRead;
+extern Bu::PluginInfo pluginFunctionWrite;
 
 FunctionPlugger::FunctionPlugger()
 {
@@ -33,7 +37,10 @@ FunctionPlugger::FunctionPlugger()
 	registerBuiltinPlugin( &pluginFunctionToString );
 	registerBuiltinPlugin( &pluginFunctionUnlink );
 	registerBuiltinPlugin( &pluginFunctionRegEx );
-	registerBuiltinPlugin( &pluginFunctionRange );
+	registerBuiltinPlugin( &pluginFunctionOpen );
+	registerBuiltinPlugin( &pluginFunctionClose );
+	registerBuiltinPlugin( &pluginFunctionRead );
+	registerBuiltinPlugin( &pluginFunctionWrite );
 
 	DIR *dir = opendir("/usr/lib/build");
 	if( !dir )
