@@ -16,6 +16,7 @@ extern Bu::PluginInfo pluginFunctionTargets;
 extern Bu::PluginInfo pluginFunctionToString;
 extern Bu::PluginInfo pluginFunctionUnlink;
 extern Bu::PluginInfo pluginFunctionRegEx;
+extern Bu::PluginInfo pluginFunctionRange;
 
 FunctionPlugger::FunctionPlugger()
 {
@@ -32,6 +33,7 @@ FunctionPlugger::FunctionPlugger()
 	registerBuiltinPlugin( &pluginFunctionToString );
 	registerBuiltinPlugin( &pluginFunctionUnlink );
 	registerBuiltinPlugin( &pluginFunctionRegEx );
+	registerBuiltinPlugin( &pluginFunctionRange );
 
 	DIR *dir = opendir("/usr/lib/build");
 	if( !dir )
