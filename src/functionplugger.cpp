@@ -37,6 +37,7 @@ FunctionPlugger::FunctionPlugger()
 	registerBuiltinPlugin( &pluginFunctionToString );
 	registerBuiltinPlugin( &pluginFunctionUnlink );
 	registerBuiltinPlugin( &pluginFunctionRegEx );
+	registerBuiltinPlugin( &pluginFunctionRange );
 	registerBuiltinPlugin( &pluginFunctionOpen );
 	registerBuiltinPlugin( &pluginFunctionClose );
 	registerBuiltinPlugin( &pluginFunctionRead );
