@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BUSRC="stack.cpp string.cpp hash.cpp list.cpp trace.cpp stream.cpp formatter.cpp util.cpp sharedcore.cpp exceptionbase.cpp heap.cpp archivebase.cpp archive.cpp queue.cpp archival.cpp sio.cpp stdstream.cpp process.cpp plugger.cpp optparser.cpp signals.cpp array.cpp membuf.cpp file.cpp regex.cpp variant.cpp"
-BUHDR="stack.h string.h hash.h list.h trace.h stream.h formatter.h util.h sharedcore.h exceptionbase.h heap.h archivebase.h archive.h queue.h archival.h sio.h stdstream.h process.h config.h compat/linux.h compat/win32.h compat/osx.h plugger.h singleton.h optparser.h signals.h array.h membuf.h file.h regex.h variant.h"
+BUHDR="stack.h string.h hash.h list.h trace.h stream.h formatter.h util.h sharedcore.h exceptionbase.h heap.h archivebase.h archive.h queue.h archival.h sio.h stdstream.h process.h config.h compat/linux.h compat/win32.h compat/osx.h plugger.h singleton.h optparser.h signals.h array.h membuf.h file.h regex.h variant.h fmt.h extratypes.h"
 
 function bld()
 {
@@ -45,6 +45,7 @@ if [ ! -z "$1" ]; then
 fi
 
 mkdir -p minibu/src minibu/bu minibu/bu/compat
+touch minibu/bu/autoconfig.h
 for F in $BUSRC; do
 	bld minibu/src/$F || cmd WGET minibu/src/$F wget -q http://svn.xagasoft.com/libbu++/trunk/src/$F -O minibu/src/$F
 done
