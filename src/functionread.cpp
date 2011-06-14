@@ -26,7 +26,7 @@ Variable FunctionRead::call( Variable &input, VarList lParams )
 		int iSize = lParams.first().toInt();
 		Bu::String sBuf( iSize );
 		sBuf.resize(
-			FileMgr::getInstance().get( (int)input.getOpaque() ).read(
+			FileMgr::getInstance().get( (ptrdiff_t)input.getOpaque() ).read(
 				sBuf.getStr(), iSize
 				)
 			);

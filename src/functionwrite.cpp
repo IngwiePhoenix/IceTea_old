@@ -26,7 +26,7 @@ Variable FunctionWrite::call( Variable &input, VarList lParams )
 			"write takes one parameter, the string to write."
 			);
 	}
-	FileMgr::getInstance().get( (int)input.getOpaque() ).write(
+	FileMgr::getInstance().get( (ptrdiff_t)input.getOpaque() ).write(
 		lParams.first().toString()
 		);
 	return Variable();

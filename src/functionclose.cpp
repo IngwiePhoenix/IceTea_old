@@ -20,7 +20,7 @@ Bu::String FunctionClose::getName() const
 
 Variable FunctionClose::call( Variable &input, VarList )
 {
-	FileMgr::getInstance().close( (int)input.getOpaque() );
+	FileMgr::getInstance().close( (ptrdiff_t)input.getOpaque() );
 	return Variable();
 }
 
