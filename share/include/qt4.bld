@@ -36,7 +36,7 @@ function qt_getLDFLAGS()
 	return "-Wl,-rpath,${QTDIR}/lib $(PKG_CONFIG_PATH="
 		"PKG_CONFIG_PATH:${QTDIR}/lib/pkgconfig "
 		"pkg-config --libs QtCore QtGui ice glu x11 xext libpng freetype2 "
-		"gobject-2.0 sm xrender fontconfig gthread-2.0 glib-2.0) -laudio -lz "
+		"gobject-2.0 sm xrender fontconfig gthread-2.0 glib-2.0) -lz "
 		"-lm -ldl";
 }
 
