@@ -51,7 +51,6 @@ cmd FAKE minibu/bu/autoconfig.h touch minibu/bu/autoconfig.h
 for file in $(cd bootstrap; ls); do
 	cmd BOOTSTRAP minibu/bu/${file} cp bootstrap/${file} minibu/bu
 done
-exit
 for F in $BUSRC; do
 	bld minibu/src/$F || cmd WGET minibu/src/$F wget -q http://svn.xagasoft.com/libbu++/trunk/src/$F -O minibu/src/$F
 done
