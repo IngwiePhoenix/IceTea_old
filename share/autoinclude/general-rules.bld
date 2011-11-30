@@ -112,7 +112,7 @@ rule "bison"
 	profile "build"
 	{
 		BASE = INPUT.regex("\\.y", "");
-		execute("${BISON} -b${BASE} ${INPUT}");
+		execute("${BISON} -b${BASE} ${BISONFLAGS} ${INPUT}");
 		// if you add a -v bison will produce a .output file
 	}
 }
