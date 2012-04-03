@@ -2,6 +2,8 @@
 
 BUSRC="stack.cpp string.cpp hash.cpp list.cpp trace.cpp stream.cpp formatter.cpp util.cpp sharedcore.cpp exceptionbase.cpp heap.cpp archivebase.cpp archive.cpp queue.cpp archival.cpp sio.cpp stdstream.cpp process.cpp plugger.cpp optparser.cpp signals.cpp array.cpp membuf.cpp file.cpp variant.cpp"
 BUHDR="stack.h string.h hash.h list.h trace.h stream.h formatter.h util.h sharedcore.h exceptionbase.h heap.h archivebase.h archive.h queue.h archival.h sio.h stdstream.h process.h plugger.h singleton.h optparser.h array.h membuf.h file.h variant.h fmt.h extratypes.h"
+BUEXPSRC="regex.cpp"
+BUEXPHDR="regex.h"
 BUCOMPAT="config.h compat/linux.h compat/win32.h compat/osx.h"
 
 function bld()
@@ -58,6 +60,12 @@ done
 for F in $BUHDR; do
 	bld minibu/bu/$F || cmd WGET minibu/bu/$F wget -q http://svn.xagasoft.com/libbu++/trunk/src/stable/$F -O minibu/bu/$F
 done
+for F in $BUEXPSRC; do
+	bld minibu/src/$F || cmd WGET minibu/src/$F wget -q http://svn.xagasoft.com/libbu++/trunk/src/experimental/$F -O minibu/src/$F
+done
+for F in $BUEXPHDR; do
+	bld minibu/bu/$F || cmd WGET minibu/bu/$F wget -q http://svn.xagasoft.com/libbu++/trunk/src/experimental/$F -O minibu/bu/$F
+done
 for F in $BUCOMPAT; do
 	bld minibu/bu/$F || cmd WGET minibu/bu/$F wget -q http://svn.xagasoft.com/libbu++/trunk/src/$F -O minibu/bu/$F
 done
@@ -65,7 +73,7 @@ done
 bld src/build.tab.c src/build.y || cmd BISON src/build.tab.c bison -bsrc/build src/build.y
 bld src/build.yy.c src/build.l || cmd FLEX src/build.yy.c flex src/build.l
 
-for F in $BUSRC; do
+for F in $BUSRC $BUEXPSRC; do
 	OUTPUT=${F%.*}.o
 	bld minibu/src/$OUTPUT || gpp minibu/src/$OUTPUT minibu/src/$F
 done
