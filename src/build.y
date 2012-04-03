@@ -25,16 +25,16 @@ void yyerror( YYLTYPE *locp, yyscan_t yyscanner, BuildParser &bld, const char *m
 	bool bVal;
 }
 
-%token <sVal>	STRING		"string literal"
-%token <sVal>	KEYWORD		"keyword"
-%token <sVal>	CONDITION	"condition term"
-%token <sVal>	VARIABLE	"variable name"
-%token <sVal>	FUNCTION	"function name"
-%token <sVal>	UNDEF		"undefined identifier"
-%token <sVal>	PROFILE		"profile execute"
-%token <iVal>	INT			"integer literal"
-%token <fVal>	FLOAT		"floating point literal"
-%token <bVal>	BOOL		"boolean literal"
+%token <sVal>	LTR_STRING		"string literal"
+%token <sVal>	LTR_KEYWORD		"keyword"
+%token <sVal>	LTR_CONDITION	"condition term"
+%token <sVal>	LTR_VARIABLE	"variable name"
+%token <sVal>	LTR_FUNCTION	"function name"
+%token <sVal>	LTR_UNDEF		"undefined identifier"
+%token <sVal>	LTR_PROFILE		"profile execute"
+%token <iVal>	LTR_INT			"integer literal"
+%token <fVal>	LTR_FLOAT		"floating point literal"
+%token <bVal>	LTR_BOOL		"boolean literal"
 
 %token TOK_TARGET			"target"
 %token TOK_INPUT			"input"
@@ -96,13 +96,13 @@ void yyerror( YYLTYPE *locp, yyscan_t yyscanner, BuildParser &bld, const char *m
 %left '(' ')' '{' '}' '[' ']'
 %left IINEG IINOT
 
-%destructor { delete[] $$; } STRING
-%destructor { delete[] $$; } KEYWORD
-%destructor { delete[] $$; } CONDITION
-%destructor { delete[] $$; } VARIABLE
-%destructor { delete[] $$; } FUNCTION
-%destructor { delete[] $$; } UNDEF
-%destructor { delete[] $$; } PROFILE
+%destructor { delete[] $$; } LTR_STRING
+%destructor { delete[] $$; } LTR_KEYWORD
+%destructor { delete[] $$; } LTR_CONDITION
+%destructor { delete[] $$; } LTR_VARIABLE
+%destructor { delete[] $$; } LTR_FUNCTION
+%destructor { delete[] $$; } LTR_UNDEF
+%destructor { delete[] $$; } LTR_PROFILE
 
 %%  /* Grammar rules */
 
@@ -140,23 +140,23 @@ root_sub_exprs:
 		  | root export
 		  ;
 
-include: TOK_INCLUDE STRING ';' { bld.include( $2, yyscanner, &yylloc ); }
+include: TOK_INCLUDE LTR_STRING ';' { bld.include( $2, yyscanner, &yylloc ); }
 	   ;
 
 /*
  *  data related
  */
 
-string: STRING { bld.xAst.addNode( @1, AstNode::typeString, $1 ); }
+string: LTR_STRING { bld.xAst.addNode( @1, AstNode::typeString, $1 ); }
 	  ;
 
-int: INT { bld.xAst.addNode( @1, AstNode::typeInt, $1 ); }
+int: LTR_INT { bld.xAst.addNode( @1, AstNode::typeInt, $1 ); }
    ;
 
-float: FLOAT { bld.xAst.addNode( @1, AstNode::typeFloat, $1 ); }
+float: LTR_FLOAT { bld.xAst.addNode( @1, AstNode::typeFloat, $1 ); }
 	 ;
 
-bool: BOOL { bld.xAst.addNode( @1, AstNode::typeBool, (bool)$1 ); }
+bool: LTR_BOOL { bld.xAst.addNode( @1, AstNode::typeBool, (bool)$1 ); }
 	;
 
 null: TOK_NULL { bld.xAst.addNode( @1, AstNode::typeNull ); }
@@ -168,7 +168,7 @@ literal: string
 	   | null
 	   ;
 
-variable: UNDEF { bld.xAst.addNode( @1, AstNode::typeVariable, $1 ); }
+variable: LTR_UNDEF { bld.xAst.addNode( @1, AstNode::typeVariable, $1 ); }
 
 list_core:
 		 | { bld.xAst.openBranch(); } expr
@@ -199,9 +199,9 @@ value: value_core value_mods
  *  misc global things
  */
 
-notify: TOK_ERROR STRING ';' { bld.xAst.addNode( @$,AstNode::typeError, $2 ); }
-	  | TOK_WARNING STRING ';' { bld.xAst.addNode( @$, AstNode::typeWarning, $2 ); }
-	  | TOK_NOTICE STRING ';' { bld.xAst.addNode( @$, AstNode::typeNotice, $2 ); }
+notify: TOK_ERROR LTR_STRING ';' { bld.xAst.addNode( @$,AstNode::typeError, $2 ); }
+	  | TOK_WARNING LTR_STRING ';' { bld.xAst.addNode( @$, AstNode::typeWarning, $2 ); }
+	  | TOK_NOTICE LTR_STRING ';' { bld.xAst.addNode( @$, AstNode::typeNotice, $2 ); }
 	  ;
 /*
 set_rhs: '=' { bld.xAst.addNode( AstNode::typeOpEq ); } value
@@ -245,7 +245,7 @@ func_param_list: { bld.xAst.openBranch(); } expr
 			   | func_param_list ',' { bld.xAst.openBranch(); } expr
 			   ;
 
-function: UNDEF '(' {
+function: LTR_UNDEF '(' {
 			bld.xAst.addNode( @$, AstNode::typeFunction );
 			bld.xAst.openBranch();
 			bld.xAst.addNode( @$, AstNode::typeString, $1 );
@@ -254,7 +254,7 @@ function: UNDEF '(' {
 		}
 		;
 
-function_no_input: UNDEF '(' {
+function_no_input: LTR_UNDEF '(' {
 			bld.xAst.addNode( @$, AstNode::typeNull );
 			bld.xAst.addNode( @$, AstNode::typeFunction );
 			bld.xAst.openBranch();
@@ -285,17 +285,17 @@ type: TOK_STRING { bld.xAst.addNode( @1, AstNode::typeTypeString ); }
 
 expr: value
 	| '(' expr ')'
-	| UNDEF '=' {
+	| LTR_UNDEF '=' {
 		bld.xAst.addNode( @$, AstNode::typeVariableRef, $1 );
 	} expr {
 		bld.xAst.addNode( @3, AstNode::typeOpEq );
 	}
-	| UNDEF OP_ADDSETP {
+	| LTR_UNDEF OP_ADDSETP {
 		bld.xAst.addNode( @$, AstNode::typeVariableRef, $1 );
 	} expr {
 		bld.xAst.addNode( @3, AstNode::typeOpPlusEq );
 	}
-	| UNDEF OP_ADDSETR {
+	| LTR_UNDEF OP_ADDSETR {
 		bld.xAst.addNode( @$, AstNode::typeVariableRef, $1 );
 	} expr {
 		bld.xAst.addNode( @3, AstNode::typeOpPlusEqRaw );
@@ -436,7 +436,7 @@ function_for: for_base '{' function_exprs '}' { bld.xAst.closeNode(); }
  *  functions
  */
 
-function_def: TOK_FUNCTION UNDEF {
+function_def: TOK_FUNCTION LTR_UNDEF {
 				bld.xAst.addNode( @1, AstNode::typeFunctionDef );
 				bld.xAst.openBranch();
 				bld.xAst.addNode( @2, AstNode::typeString, $2 );
@@ -481,7 +481,7 @@ return: TOK_RETURN {
  * Actions, they're basically functions, no parameters
  */
 
-action_def: TOK_ACTION STRING {
+action_def: TOK_ACTION LTR_STRING {
 		    bld.xAst.addNode( @$, AstNode::typeActionDef );
 			bld.xAst.openBranch();
 			bld.xAst.addNode( @1, AstNode::typeString, $2 );
@@ -564,7 +564,7 @@ target_rule: TOK_RULE {
 		   }
 		   ;
 
-condition: TOK_CONDITION CONDITION ';' {
+condition: TOK_CONDITION LTR_CONDITION ';' {
 		 	bld.xAst.addNode( @$, AstNode::typeCondition, $2 );
 		 }
 		 | TOK_CONDITION TOK_ALWAYS ';'{
@@ -603,7 +603,7 @@ rule_exprs:
 		  ;
 
 rule_input_func: function
-			   | STRING {
+			   | LTR_STRING {
 			     /* In this case, when the input is just a string,
 				    lets actually turn it into a call to the matches function.
 					*/
@@ -671,7 +671,7 @@ config_exprs:
 			| config_exprs cache
 			;
 
-display: TOK_DISPLAY STRING ';' {
+display: TOK_DISPLAY LTR_STRING ';' {
 	   	bld.xAst.addNode( @$, AstNode::typeDisplay, $2 );
 	   }
 	   ;
@@ -720,7 +720,7 @@ cache: TOK_CACHE TOK_ALWAYS ';'
 /*
  * target/profile execute
  */
-process_target: PROFILE
+process_target: LTR_PROFILE
 			  {
 			  	bld.xAst.addNode( @$, AstNode::typeProcessTarget );
 				bld.xAst.openBranch();

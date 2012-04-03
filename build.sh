@@ -1,7 +1,8 @@
 #!/bin/bash
 
-BUSRC="stack.cpp string.cpp hash.cpp list.cpp trace.cpp stream.cpp formatter.cpp util.cpp sharedcore.cpp exceptionbase.cpp heap.cpp archivebase.cpp archive.cpp queue.cpp archival.cpp sio.cpp stdstream.cpp process.cpp plugger.cpp optparser.cpp signals.cpp array.cpp membuf.cpp file.cpp regex.cpp variant.cpp"
-BUHDR="stack.h string.h hash.h list.h trace.h stream.h formatter.h util.h sharedcore.h exceptionbase.h heap.h archivebase.h archive.h queue.h archival.h sio.h stdstream.h process.h config.h compat/linux.h compat/win32.h compat/osx.h plugger.h singleton.h optparser.h array.h membuf.h file.h regex.h variant.h fmt.h extratypes.h"
+BUSRC="stack.cpp string.cpp hash.cpp list.cpp trace.cpp stream.cpp formatter.cpp util.cpp sharedcore.cpp exceptionbase.cpp heap.cpp archivebase.cpp archive.cpp queue.cpp archival.cpp sio.cpp stdstream.cpp process.cpp plugger.cpp optparser.cpp signals.cpp array.cpp membuf.cpp file.cpp variant.cpp"
+BUHDR="stack.h string.h hash.h list.h trace.h stream.h formatter.h util.h sharedcore.h exceptionbase.h heap.h archivebase.h archive.h queue.h archival.h sio.h stdstream.h process.h plugger.h singleton.h optparser.h array.h membuf.h file.h variant.h fmt.h extratypes.h"
+BUCOMPAT="config.h compat/linux.h compat/win32.h compat/osx.h"
 
 function bld()
 {
@@ -27,7 +28,7 @@ function cmd()
 
 function gpp()
 {
-	bld "$1" "$2" || cmd CXX "$1" g++ -ggdb -fPIC -rdynamic -W -Wall -Iminibu -c -o "$1" "$2"
+	bld "$1" "$2" || cmd CXX "$1" g++ -ggdb -fPIC -W -Wall -Iminibu -c -o "$1" "$2"
 }
 
 if [ ! -z "$1" ]; then
@@ -52,9 +53,12 @@ for file in $(cd bootstrap; ls); do
 	cmd BOOTSTRAP minibu/bu/${file} cp bootstrap/${file} minibu/bu
 done
 for F in $BUSRC; do
-	bld minibu/src/$F || cmd WGET minibu/src/$F wget -q http://svn.xagasoft.com/libbu++/trunk/src/$F -O minibu/src/$F
+	bld minibu/src/$F || cmd WGET minibu/src/$F wget -q http://svn.xagasoft.com/libbu++/trunk/src/stable/$F -O minibu/src/$F
 done
 for F in $BUHDR; do
+	bld minibu/bu/$F || cmd WGET minibu/bu/$F wget -q http://svn.xagasoft.com/libbu++/trunk/src/stable/$F -O minibu/bu/$F
+done
+for F in $BUCOMPAT; do
 	bld minibu/bu/$F || cmd WGET minibu/bu/$F wget -q http://svn.xagasoft.com/libbu++/trunk/src/$F -O minibu/bu/$F
 done
 

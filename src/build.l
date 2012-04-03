@@ -118,36 +118,36 @@ int iStrDepth = 0;
 
 "true"								{
 	yylval->bVal = true;
-	return BOOL;
+	return LTR_BOOL;
 }
 "false"								{
 	yylval->bVal = false;
-	return BOOL;
+	return LTR_BOOL;
 }
 
 [a-zA-Z_][a-zA-Z0-9_]*:				{
 	yytext[yyleng-1] = '\0';
 	yylval->sVal = rstrdup( yytext );
-	return PROFILE;
+	return LTR_PROFILE;
 }
 
 [a-zA-Z_][a-zA-Z0-9_]*				{
 	yylval->sVal = rstrdup( yytext );
 	if( b.isKeyword( yylval->sVal ) )
-		return KEYWORD;
+		return LTR_KEYWORD;
 	else if( b.isCond( yylval->sVal ) )
-		return CONDITION;
-	return UNDEF;
+		return LTR_CONDITION;
+	return LTR_UNDEF;
 }
 
 -?([1-9][0-9]*)|(0)					{
 	yylval->iVal = strtol( yytext, NULL, 10 );
-	return INT;
+	return LTR_INT;
 }
 
 (0\.0+)|(-?(([1-9][0-9]*)|(0))\.[0-9]*)		{
 	yylval->fVal = strtof( yytext, NULL );
-	return FLOAT;
+	return LTR_FLOAT;
 }
 
 \"									{
@@ -198,7 +198,7 @@ int iStrDepth = 0;
 	{
 		BEGIN( INITIAL );
 		yylval->sVal = fstrdup( sBuf );
-		return STRING;
+		return LTR_STRING;
 	}
 }
 
