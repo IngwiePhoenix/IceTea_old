@@ -93,6 +93,10 @@ Takes a file handle as it's input, and takes an integer as it's parameter.  The 
 .B
 close()
 Takes a file handle as it's input, and no parameters.  Closes the file indicated by the handle provided as input.  While it is reccomended to close all files as soon as you are done with them, any files left open will be closed automatically and safely before build exists.
+.TP
+.B
+unique()
+At the moment only works on lists of strings.  It will return the input string in the same order, with all duplicate entries removed.  It will also remove any non-strings in the list at the moment.
 .P
 Here, lets list functions we wish we had...
 .SH ENVIRONMENT

@@ -60,6 +60,7 @@ rule "exe"
 	input "*.o";
 	profile "build"
 	{
+		INPUT = [INPUT].unique().matches("*.o");
 		execute("${CXX} -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
 	}
 }
@@ -69,6 +70,7 @@ rule "so"
 	input "*.o";
 	profile "build"
 	{
+		INPUT = [INPUT].unique().matches("*.o");
 		execute("${CXX} -shared -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
 	}
 }
@@ -78,6 +80,7 @@ rule "lib"
 	input "*.o";
 	profile "build"
 	{
+		INPUT = [INPUT].unique().matches("*.o");
 		execute("${AR} cr ${OUTPUT} ${INPUT}");
 	}
 }
