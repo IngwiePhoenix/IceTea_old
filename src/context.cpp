@@ -212,9 +212,20 @@ Bu::String Context::expand( const Bu::String &sInS )
 			}
 			else if( *b == '(' && iPass == 1 )
 			{
+				Bu::String sCmd;
 				b++;
-				e = b.find(')');
-				Bu::String sCmd( b, e );
+				for( e = b; e != ')'; e++ )
+				{
+					if( *e == '\\' && *(e+1) == ')' )
+					{
+						sCmd += ')';
+						e++;
+					}
+					else
+						sCmd += *e;
+				}
+				//e = b.find(')');
+//				Bu::String sCmd( b, e );
 				Bu::String sBuf;
 				try
 				{
