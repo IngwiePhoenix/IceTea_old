@@ -327,7 +327,7 @@ Bu::String Variable::toString() const
 VarList Variable::toList() const
 {
 	if( eType == typeList )
-		return *this;
+		return *uVal.lVal;
 	return VarList( *this );
 }
 
@@ -621,7 +621,7 @@ bool Variable::operator!=( const Variable &rhs ) const
 
 bool Variable::operator<( const Variable &rhs ) const
 {
-	Type eTop = Bu::max( eType, rhs.eType );
+	Type eTop = Bu::buMax( eType, rhs.eType );
 	switch( eTop )
 	{
 		case typeNone:
@@ -656,7 +656,7 @@ bool Variable::operator<( const Variable &rhs ) const
 
 bool Variable::operator>( const Variable &rhs ) const
 {
-	Type eTop = Bu::max( eType, rhs.eType );
+	Type eTop = Bu::buMax( eType, rhs.eType );
 	switch( eTop )
 	{
 		case typeNone:
@@ -691,7 +691,7 @@ bool Variable::operator>( const Variable &rhs ) const
 
 bool Variable::operator<=( const Variable &rhs ) const
 {
-	Type eTop = Bu::max( eType, rhs.eType );
+	Type eTop = Bu::buMax( eType, rhs.eType );
 	switch( eTop )
 	{
 		case typeNone:
@@ -726,7 +726,7 @@ bool Variable::operator<=( const Variable &rhs ) const
 
 bool Variable::operator>=( const Variable &rhs ) const
 {
-	Type eTop = Bu::max( eType, rhs.eType );
+	Type eTop = Bu::buMax( eType, rhs.eType );
 	switch( eTop )
 	{
 		case typeNone:
@@ -761,7 +761,7 @@ bool Variable::operator>=( const Variable &rhs ) const
 
 Variable Variable::operator+( const Variable &rhs ) const
 {
-	Type eTop = Bu::max( eType, rhs.eType );
+	Type eTop = Bu::buMax( eType, rhs.eType );
 	switch( eTop )
 	{
 		case typeNone:
@@ -796,7 +796,7 @@ Variable Variable::operator+( const Variable &rhs ) const
 
 Variable Variable::operator-( const Variable &rhs ) const
 {
-	Type eTop = Bu::max( eType, rhs.eType );
+	Type eTop = Bu::buMax( eType, rhs.eType );
 	switch( eTop )
 	{
 		case typeNone:
@@ -818,7 +818,7 @@ Variable Variable::operator-( const Variable &rhs ) const
 			throw Bu::ExceptionBase("You cannot subtract string values.");
 		
 		case typeList:
-			throw Bu::ExceptionBase("You cannot subtract list values.");
+			return Variable( toList() - rhs.toList() );
 		
 		case typeRef:
 			throw Bu::ExceptionBase("You cannot subtract reference values.");
@@ -831,7 +831,7 @@ Variable Variable::operator-( const Variable &rhs ) const
 
 Variable Variable::operator*( const Variable &rhs ) const
 {
-	Type eTop = Bu::max( eType, rhs.eType );
+	Type eTop = Bu::buMax( eType, rhs.eType );
 	switch( eTop )
 	{
 		case typeNone:
@@ -866,7 +866,7 @@ Variable Variable::operator*( const Variable &rhs ) const
 
 Variable Variable::operator/( const Variable &rhs ) const
 {
-	Type eTop = Bu::max( eType, rhs.eType );
+	Type eTop = Bu::buMax( eType, rhs.eType );
 	switch( eTop )
 	{
 		case typeNone:
@@ -1036,5 +1036,20 @@ Bu::ArchiveBase &operator>>( Bu::ArchiveBase &ar, Variable &v )
 	}
 	
 	return ar;
+}
+
+VarList operator-( const VarList &rBase, const VarList &rSub )
+{
+    VarList lRet( rBase );
+
+    for( VarList::const_iterator i = rSub.begin(); i; i++ )
+    {
+        VarList::const_iterator k;
+        for( k = lRet.begin(); k && *k != *i; k++ ) { }
+        if( k )
+            lRet.erase( k );
+    }
+
+    return lRet;
 }
 

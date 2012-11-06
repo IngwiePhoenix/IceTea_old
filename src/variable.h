@@ -123,4 +123,6 @@ Bu::Formatter &operator<<( Bu::Formatter &f, const Variable &v );
 Bu::ArchiveBase &operator<<( Bu::ArchiveBase &ar, const Variable &v );
 Bu::ArchiveBase &operator>>( Bu::ArchiveBase &ar, Variable &v );
 
+VarList operator-( const VarList &rBase, const VarList &rSub );
+
 #endif
