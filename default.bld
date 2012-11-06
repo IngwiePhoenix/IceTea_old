@@ -88,6 +88,7 @@ target PKG_BASE
 		"default.bld",
 		"docs/build.1",
 		"docs/build.7",
+        "build.sh",
 		"support/vim/syntax/build.vim",
 		"support/vim/ftdetect/build.vim",
 		"support/vim/ftplugin/build.vim",
@@ -100,7 +101,8 @@ target PKG_BASE
 		files("share/include/*"),
         "minibu",
 		files("minibu/bu/*"),
-		files("minibu/src/*")
+		files("minibu/src/*"),
+        files("bootstrap/*")
 		];
 	rule "tarball";
 	tag "pkg";
@@ -141,11 +143,11 @@ target PKG_BASE + ".xz"
 
 rule "tarball"
 {
-	input matches("*.cpp", "*.h", "*.c", "*.y", "*.l", "*.conf", "Doxyfile",
-		"*.1", "*.7", "*.vim");
+	input matches("*.cpp", "*.h", "*.c", "*.y", "*.l", "*.bld", "Doxyfile",
+		"*.1", "*.7", "*.vim", "*.sh");
 	profile "build"
 	{
-		OUTDIR = OUTPUT.replace(".tar.bz2","");
+		OUTDIR = OUTPUT.replace(".tar","");
 		execute("tar -f ./${OUTPUT} --transform=\"s@^@${OUTDIR}/@\" -c ${INPUT}");
 	}
 }
