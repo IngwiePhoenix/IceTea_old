@@ -70,10 +70,20 @@ for IN in files("src/plugins/*.cpp") do
 	}
 }
 
-target "build-r$(svnversion "-n").tar.bz2"
+target "minibu"
+{
+    profile "build"
+    {
+        condition always;
+        execute("./build.sh setup");
+    }
+}
+
+PKG_BASE = "build-$(cat version)-r$(svnversion "-n").tar";
+
+target PKG_BASE
 {
 	input [
-		"build.conf",
 		"Doxyfile",
 		"default.bld",
 		"docs/build.1",
@@ -83,13 +93,50 @@ target "build-r$(svnversion "-n").tar.bz2"
 		"support/vim/ftplugin/build.vim",
 		files("src/*.y"),
 		files("src/*.l"),
+		files("src/*.c"),
 		files("src/*.cpp"),
 		files("src/*.h"),
 		files("share/autoinclude/*"),
-		files("share/include/*")
+		files("share/include/*"),
+        "minibu",
+		files("minibu/bu/*"),
+		files("minibu/src/*")
 		];
 	rule "tarball";
 	tag "pkg";
+}
+
+target PKG_BASE + ".gz"
+{
+    input PKG_BASE;
+    tag "pkg";
+    display "gzip";
+    profile "build"
+    {
+        execute("gzip -9 < ${INPUT} > ${OUTPUT}");
+    }
+}
+
+target PKG_BASE + ".bz2"
+{
+    input PKG_BASE;
+    tag "pkg";
+    display "bzip2";
+    profile "build"
+    {
+        execute("bzip2 -9 < ${INPUT} > ${OUTPUT}");
+    }
+}
+
+target PKG_BASE + ".xz"
+{
+    input PKG_BASE;
+    tag "pkg";
+    display "xz";
+    profile "build"
+    {
+        execute("xz -9vv < ${INPUT} > ${OUTPUT}");
+    }
 }
 
 rule "tarball"
@@ -99,8 +146,7 @@ rule "tarball"
 	profile "build"
 	{
 		OUTDIR = OUTPUT.replace(".tar.bz2","");
-		execute("tar --transform=\"s@^@${OUTDIR}/@\" -c ${INPUT} |"
-			" bzip2 -9 > ${OUTPUT}");
+		execute("tar -f ./${OUTPUT} --transform=\"s@^@${OUTDIR}/@\" -c ${INPUT}");
 	}
 }
 
