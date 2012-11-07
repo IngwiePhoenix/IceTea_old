@@ -1,0 +1,88 @@
+
+action "default"
+{
+    build: targets("pkg");
+}
+
+target "minibu"
+{
+    profile "build"
+    {
+        condition always;
+        execute("./build.sh setup");
+    }
+}
+
+PKG_BASE = "build-$(cat version)-r$(svnversion "-n").tar";
+
+target PKG_BASE
+{
+	input [
+		"Doxyfile",
+		files("*.bld"),
+		"docs/build.1",
+		"docs/build.7",
+        "build.sh",
+        "version",
+		"support/vim/syntax/build.vim",
+		"support/vim/ftdetect/build.vim",
+		"support/vim/ftplugin/build.vim",
+		files("src/*.y"),
+		files("src/*.l"),
+		files("src/*.c"),
+		files("src/*.cpp"),
+		files("src/*.h"),
+		files("share/autoinclude/*"),
+		files("share/include/*"),
+        "minibu",
+		files("minibu/bu/*"),
+		files("minibu/src/*"),
+        files("bootstrap/*")
+		];
+	rule "tarball";
+	tag "pkg";
+}
+
+target PKG_BASE + ".gz"
+{
+    input PKG_BASE;
+    tag "pkg";
+    display "gzip";
+    profile "build"
+    {
+        execute("gzip -9 < ${INPUT} > ${OUTPUT}");
+    }
+}
+
+target PKG_BASE + ".bz2"
+{
+    input PKG_BASE;
+    tag "pkg";
+    display "bzip2";
+    profile "build"
+    {
+        execute("bzip2 -9 < ${INPUT} > ${OUTPUT}");
+    }
+}
+
+target PKG_BASE + ".xz"
+{
+    input PKG_BASE;
+    tag "pkg";
+    display "xz";
+    profile "build"
+    {
+        execute("xz -9vv < ${INPUT} > ${OUTPUT}");
+    }
+}
+
+rule "tarball"
+{
+	input matches("*.cpp", "*.h", "*.c", "*.y", "*.l", "*.bld", "Doxyfile",
+		"*.1", "*.7", "*.vim", "*.sh", "version");
+	profile "build"
+	{
+		OUTDIR = OUTPUT.replace(".tar","");
+		execute("tar -f ./${OUTPUT} --transform=\"s@^@${OUTDIR}/@\" -c ${INPUT}");
+	}
+}
