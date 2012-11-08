@@ -9,6 +9,11 @@ CXXFLAGS += "-ggdb -W -Wall";
 
 CC = CXX; // We actually want to use c++ to compile our c files.
 
+if PREFIX == null then
+{
+    PREFIX = "/usr/local";
+}
+
 action "default"
 {
 	build: ["build", targets("plugins")];
@@ -22,6 +27,11 @@ action "man"
 action "clean"
 {
 	clean: "build";
+}
+
+action "docs"
+{
+    build: targets("docs");
 }
 
 action "devinstall"
@@ -106,3 +116,53 @@ for vimdir in dirs("/usr/share/vim/vim*") do
 	}
 }
 
+target "docs/build-manual.pdf"
+{
+    display "pdflatex";
+    tag "docs";
+    profile "build"
+    {
+        condition always;
+        execute("mkdir -p docs/pdf");
+        // You have to do this multiple times to get the TOC right.
+        for j in range(1,3) do
+        {
+            notice "Pass ${j}...";
+            execute("cd docs/pdf; pdflatex ../build-manual.tex > /dev/null");
+        }
+        execute("mv docs/pdf/build-manual.pdf docs");
+        execute("rm -Rf docs/pdf");
+    }
+}
+
+target "docs/html-single/build-manual.html"
+{
+    display "htlatex";
+    tag "docs";
+    profile "build"
+    {
+        condition always;
+        execute("mkdir -p docs/html-single");
+        execute("cd docs/html-single; htlatex ../build-manual.tex > /dev/null");
+    }
+    profile "clean"
+    {
+        execute("rm -Rf docs/html-single");
+    }
+}
+
+target "docs/html-multi"
+{
+    display "htlatex";
+    tag "docs";
+    profile "build"
+    {
+        condition always;
+        execute("mkdir -p docs/html-multi");
+        execute("cd docs/html-multi; htlatex ../build-manual.tex \"html,3\" > /dev/null");
+    }
+    profile "clean"
+    {
+        execute("rm -Rf docs/html-multi");
+    }
+}

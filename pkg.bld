@@ -22,6 +22,9 @@ target PKG_BASE
 		files("*.bld"),
 		"docs/build.1",
 		"docs/build.7",
+        files("docs/build-manual.*"),
+        files("docs/html-multi/*"),
+        files("docs/html-single/*"),
         "build.sh",
         "version",
 		"support/vim/syntax/build.vim",
@@ -79,7 +82,8 @@ target PKG_BASE + ".xz"
 rule "tarball"
 {
 	input matches("*.cpp", "*.h", "*.c", "*.y", "*.l", "*.bld", "Doxyfile",
-		"*.1", "*.7", "*.vim", "*.sh", "version");
+		"*.1", "*.7", "*.vim", "*.sh", "version", "*.tex", "*.pdf", "*.html",
+        "*.css");
 	profile "build"
 	{
 		OUTDIR = OUTPUT.replace(".tar","");

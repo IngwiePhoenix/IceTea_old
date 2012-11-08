@@ -140,12 +140,12 @@ int iStrDepth = 0;
 	return LTR_UNDEF;
 }
 
--?([1-9][0-9]*)|(0)					{
+([1-9][0-9]*)|(0)					{
 	yylval->iVal = strtol( yytext, NULL, 10 );
 	return LTR_INT;
 }
 
-(0\.0+)|(-?(([1-9][0-9]*)|(0))\.[0-9]*)		{
+(0\.0+)|((([1-9][0-9]*)|(0))\.[0-9]*)		{
 	yylval->fVal = strtof( yytext, NULL );
 	return LTR_FLOAT;
 }
