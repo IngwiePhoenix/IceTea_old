@@ -100,12 +100,81 @@ Targets can contain the following special keywords:
     specified then the list of inputs will be used to generate implicit targets
     to satisfy dependancies.
     \item[requires] \hfill \\
-    \item[profile] \hfill \\
+    Requires works just like input, except that the items here will not be added
+    to the list of inputs.  They will be added as dependancies to figure out
+    when this target needs to be rebuilt, but will not be listed as inputs.
+    This is handy for things like libraries, datafiles, et cetera.
     \item[rule] \hfill \\
+    You can optionally specify a single rule name by string.  This rule will be
+    applied to this target before processing and used to provide the display,
+    profiles, and potentially additionally inputs and requirements.  Rules can
+    also add additional tags.
     \item[tag] \hfill \\
+    You can specify any number of tags.  These can be used to group targets
+    together to find them easily for use in actions and other places.  You can
+    use the handy targets() function to find all targets that match a given tag.
     \item[display] \hfill \\
+    You can optionally specify a string that will be displayed while this
+    action is being processed.  If this action has a rule set or was implicitly
+    generated then the display name is set from the rule name.  If a target is
+    explicit and does not have a rule then the default is an empty string.
+    \item[profile] \hfill \\
+    Profiles are in actuality scripts that handle the real work of processing
+    a target.  Each target can have multiple profiles, and they can have any
+    name but the names "build" and "clean" have special meaning and life is
+    much easier if you use them.  You can specify any number of profiles with
+    any name, another common name is  "install".
 \end{description}
 
+\subsection{Explicit Target Example With Rule}
+\begin{lstlisting}
+target "program"
+{
+    input ["input1.cpp", "input2.cpp", "input3.cpp"];
+    rule "exe";
+    tag "programs";
+    display "awesome exe";
+    requires "library.a";
+}
+\end{lstlisting}
+This example shows every option listed above except for profile.
+
+\subsection{Profiles}
+Each profile is basically just a script that is run when the target is
+processed.  Unlike other build systems this is not a shell script, but build
+script.  You can use any variables, functions, or constructs that you can use
+anywhere else.  Very often these will use the execute() function to run
+commands.
+
+There is an extra property that can be set in any profile, and that's condition.
+Specifying a condition will allow you to change how build decides when it's
+appropriate to process that target in that profile.  There are four builtin
+conditions: always, never, filetime, and fileexists.  In the future it may also
+be possible to use a user-defined function as a condition.
+
+
+\subsection{Explicit Target Example Without Rule}
+\begin{lstlisting}
+target "datafile.zip"
+{
+    input files("data/*");
+    tag "datafile";
+    display "zip";
+    profile "build"
+    {
+        condition filetime;
+        execute("zip -u ${OUTPUT} ${INPUT}");
+    }
+    profile "clean"
+    {
+        condition fileexists;
+        unlink( OUTPUT );
+    }
+}
+\end{lstlisting}
+
+This example shows you how to build and clean a target that is a zipfile from
+it's component pieces.
 
 \section{Actions}
 Actions are the primary interface to build scripts from the command line, when
@@ -130,5 +199,7 @@ action "default"
 
 This is as basic as it gets, this example will cause build to process the
 target "myprogram" using the profile "build".
+
+
 
 \end{document}
