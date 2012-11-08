@@ -126,9 +126,12 @@ target PREFIX + "/bin/build"
 {
     display "install";
     tag "install";
-    requires "build";
     profile "build"
     {
+        if !exists("build") then
+        {
+            build: "build";
+        }
         execute("install -T -s build ${OUTPUT}");
     }
 }

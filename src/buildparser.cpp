@@ -1,6 +1,7 @@
 #include "buildparser.h"
 #include "ast.h"
 #include "build.yy.h"
+#include "conditionplugger.h"
 
 #include "bu/sio.h"
 using Bu::sio;
@@ -9,6 +10,9 @@ BuildParser::BuildParser( Ast &rAst ) :
 	xAst( rAst )
 {
 	lIncludePaths.append("./");
+    StrList lConds = ConditionPlugger::getInstance().getPluginList();
+    for( StrList::iterator i = lConds.begin(); i; i++ )
+        hConds.insert( *i, true );
 }
 
 BuildParser::~BuildParser()
@@ -54,13 +58,14 @@ bool BuildParser::isKeyword( const Bu::String &sStr )
 
 bool BuildParser::isCond( const Bu::String &sStr )
 {
-	if( sStr == "filetime" )
-		return true;
-	if( sStr == "always" )
-		return true;
-	if( sStr == "never" )
-		return true;
-	return false;
+    try
+    {
+        return hConds.get( sStr );
+    }
+    catch(...)
+    {
+        return false;
+    }
 }
 
 void BuildParser::include( const Bu::String &sStr, void *scanner, YYLTYPE *loc )

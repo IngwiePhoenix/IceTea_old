@@ -31,6 +31,7 @@ private:
 	Bu::Stack<Bu::String> sFilename;
 	Bu::Stack<YYLTYPE> sLocation;
 	StrList lIncludePaths;
+    Bu::Hash<Bu::String, bool> hConds;
 };
 
 typedef void * yyscan_t;
