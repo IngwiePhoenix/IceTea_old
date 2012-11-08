@@ -10,27 +10,27 @@
 class BuildParser
 {
 public:
-	BuildParser( class Ast &rAst );
-	virtual ~BuildParser();
+    BuildParser( class Ast &rAst );
+    virtual ~BuildParser();
 
-	void load( const Bu::String &sFile );
+    void load( const Bu::String &sFile );
 
-	bool isKeyword( const Bu::String &sStr );
-	bool isCond( const Bu::String &sStr );
-	void include( const Bu::String &sStr, void *scanner, YYLTYPE *loc );
-	void endInclude( YYLTYPE *loc );
+    bool isKeyword( const Bu::String &sStr );
+    bool isCond( const Bu::String &sStr );
+    void include( const Bu::String &sStr, void *scanner, YYLTYPE *loc );
+    void endInclude( YYLTYPE *loc );
 
-	void error( int iLine1, int iLine2, int iCol1, int iCol2,
-		const Bu::String &sMsg );
+    void error( int iLine1, int iLine2, int iCol1, int iCol2,
+        const Bu::String &sMsg );
 
-	class Ast &xAst;
+    class Ast &xAst;
 
-	void addIncludePath( const Bu::String &sPath );
+    void addIncludePath( const Bu::String &sPath );
 
 private:
-	Bu::Stack<Bu::String> sFilename;
-	Bu::Stack<YYLTYPE> sLocation;
-	StrList lIncludePaths;
+    Bu::Stack<Bu::String> sFilename;
+    Bu::Stack<YYLTYPE> sLocation;
+    StrList lIncludePaths;
     Bu::Hash<Bu::String, bool> hConds;
 };
 

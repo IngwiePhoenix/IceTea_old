@@ -6,11 +6,11 @@
 class FunctionExecute : public Function
 {
 public:
-	FunctionExecute();
-	virtual ~FunctionExecute();
+    FunctionExecute();
+    virtual ~FunctionExecute();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 };
 
 #endif

@@ -5,20 +5,20 @@
 
 namespace Bu
 {
-	class RegEx;
+    class RegEx;
 }
 
 class FunctionRegEx : public Function
 {
 public:
-	FunctionRegEx();
-	virtual ~FunctionRegEx();
+    FunctionRegEx();
+    virtual ~FunctionRegEx();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 
-	Bu::String replace( Bu::RegEx &re, const Bu::String &sSrc,
-		const Bu::String &sPat );
+    Bu::String replace( Bu::RegEx &re, const Bu::String &sSrc,
+        const Bu::String &sPat );
 };
 
 #endif

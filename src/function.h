@@ -7,17 +7,17 @@
 class Function
 {
 public:
-	Function();
-	virtual ~Function();
+    Function();
+    virtual ~Function();
 
-	virtual Bu::String getName() const=0;
+    virtual Bu::String getName() const=0;
 
-	virtual Variable call( Variable &input, VarList lParams )=0;
+    virtual Variable call( Variable &input, VarList lParams )=0;
 
-	void setContext( class Context *p );
+    void setContext( class Context *p );
 
 protected:
-	class Context *pContext;
+    class Context *pContext;
 };
 
 #endif

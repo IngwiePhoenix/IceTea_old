@@ -6,22 +6,22 @@
 class Action
 {
 public:
-	Action( const class AstBranch *pRoot );
-	virtual ~Action();
+    Action( const class AstBranch *pRoot );
+    virtual ~Action();
 
-	const Bu::String &getName() const;
+    const Bu::String &getName() const;
 
-	void call( class Runner *pRunner );
+    void call( class Runner *pRunner );
 
-	static Action *genDefaultAll();
-	static Action *genDefaultClean();
-	static Action *genDefaultCleanAll();
-	static Action *genDefaultDefault();
+    static Action *genDefaultAll();
+    static Action *genDefaultClean();
+    static Action *genDefaultCleanAll();
+    static Action *genDefaultDefault();
 
 private:
-	Bu::String sName;
-	const class AstBranch *pRoot;
-	class Ast *pAst;
+    Bu::String sName;
+    const class AstBranch *pRoot;
+    class Ast *pAst;
 };
 
 #endif

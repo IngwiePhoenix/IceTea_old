@@ -6,11 +6,11 @@
 class FunctionRead : public Function
 {
 public:
-	FunctionRead();
-	virtual ~FunctionRead();
+    FunctionRead();
+    virtual ~FunctionRead();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 
 };
 

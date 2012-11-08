@@ -13,26 +13,26 @@ class Cache : public Bu::Singleton<Cache>
 {
 friend class Bu::Singleton<Cache>;
 private:
-	Cache();
-	virtual ~Cache();
+    Cache();
+    virtual ~Cache();
 
 public:
-	void bind( const Bu::String &sCacheFile );
+    void bind( const Bu::String &sCacheFile );
 
-	void load();
-	void save();
+    void load();
+    void save();
 
-	StrList getRequires( const Bu::String &sOutput );
-	void setRequires( const Bu::String &sOutput, StrList lReqs );
+    StrList getRequires( const Bu::String &sOutput );
+    void setRequires( const Bu::String &sOutput, StrList lReqs );
 
 private:
-	bool bCacheChanged;
-	Bu::String sCacheFile;
-	bool bIsLoaded;
-	typedef Bu::Hash<Bu::String, StrList> ReqHash;
-	ReqHash hRequires;
-	typedef Bu::Hash<Bu::String, Variable> VarHash;
-	VarHash hVariables;
+    bool bCacheChanged;
+    Bu::String sCacheFile;
+    bool bIsLoaded;
+    typedef Bu::Hash<Bu::String, StrList> ReqHash;
+    ReqHash hRequires;
+    typedef Bu::Hash<Bu::String, Variable> VarHash;
+    VarHash hVariables;
 };
 
 #endif

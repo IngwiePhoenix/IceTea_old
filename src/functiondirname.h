@@ -6,11 +6,11 @@
 class FunctionDirName : public Function
 {
 public:
-	FunctionDirName();
-	virtual ~FunctionDirName();
+    FunctionDirName();
+    virtual ~FunctionDirName();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 
 };
 

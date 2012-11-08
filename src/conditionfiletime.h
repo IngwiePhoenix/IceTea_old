@@ -6,11 +6,11 @@
 class ConditionFileTime : public Condition
 {
 public:
-	ConditionFileTime();
-	virtual ~ConditionFileTime();
+    ConditionFileTime();
+    virtual ~ConditionFileTime();
 
-	virtual bool shouldExec( class Runner &r, class Target &rTarget );
-	virtual Condition *clone();
+    virtual bool shouldExec( class Runner &r, class Target &rTarget );
+    virtual Condition *clone();
 };
 
 #endif

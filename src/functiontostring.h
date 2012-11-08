@@ -6,11 +6,11 @@
 class FunctionToString : public Function
 {
 public:
-	FunctionToString();
-	virtual ~FunctionToString();
+    FunctionToString();
+    virtual ~FunctionToString();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 };
 
 #endif

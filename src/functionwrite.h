@@ -6,11 +6,11 @@
 class FunctionWrite : public Function
 {
 public:
-	FunctionWrite();
-	virtual ~FunctionWrite();
+    FunctionWrite();
+    virtual ~FunctionWrite();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 
 };
 

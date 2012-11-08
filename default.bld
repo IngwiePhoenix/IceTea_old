@@ -16,17 +16,17 @@ if PREFIX == null then
 
 action "default"
 {
-	build: ["build", targets("plugins")];
+    build: ["build", targets("plugins")];
 }
 
 action "man"
 {
-	build: targets("all");
+    build: targets("all");
 }
 
 action "clean"
 {
-	clean: "build";
+    clean: "build";
 }
 
 action "docs"
@@ -41,85 +41,85 @@ action "install"
 
 action "devinstall"
 {
-	if "$(id -u)" != "0" then
-	{
-		error "You can only install as the root user, su then run this.";
-	}
-	install: targets("devinstall");
+    if "$(id -u)" != "0" then
+    {
+        error "You can only install as the root user, su then run this.";
+    }
+    install: targets("devinstall");
 }
 
 action "viminstall"
 {
-	if "$(id -u)" != "0" then
-	{
-		error "You can only install as the root user, su then run this.";
-	}
-	install: targets("viminstall");
+    if "$(id -u)" != "0" then
+    {
+        error "You can only install as the root user, su then run this.";
+    }
+    install: targets("viminstall");
 }
 
 target "build"
 {
-	input [files("src/*.y"), files("src/*.l"), files("src/*.cpp")];
-	rule "exe";
-	LDFLAGS += "-Llibbu++ -lbu++ -ldl";
-	CXXFLAGS += "-Ilibbu++";
-	CFLAGS = CXXFLAGS;
-	tag "tools";
+    input [files("src/*.y"), files("src/*.l"), files("src/*.cpp")];
+    rule "exe";
+    LDFLAGS += "-Llibbu++ -lbu++ -ldl";
+    CXXFLAGS += "-Ilibbu++";
+    CFLAGS = CXXFLAGS;
+    tag "tools";
 }
 
 for IN in files("src/plugins/*.cpp") do
 {
-	target IN.replace("src/","").replace(".cpp", ".so")
-	{
-		input IN;
-		rule "so";
-		LDFLAGS += "-Llibbu++ -lbu++ -ldl";
-		CXXFLAGS += "-Ilibbu++ -Isrc";
-		tag "plugins";
-	}
+    target IN.replace("src/","").replace(".cpp", ".so")
+    {
+        input IN;
+        rule "so";
+        LDFLAGS += "-Llibbu++ -lbu++ -ldl";
+        CXXFLAGS += "-Ilibbu++ -Isrc";
+        tag "plugins";
+    }
 }
 
 target "/usr/share/build"
 {
-	input "$(echo -n $PWD)/share";
-	tag "devinstall";
-	display "symlink";
-	profile "install"
-	{
-		execute("ln -fsv \"${INPUT}\" \"${OUTPUT}\"");
-	}
+    input "$(echo -n $PWD)/share";
+    tag "devinstall";
+    display "symlink";
+    profile "install"
+    {
+        execute("ln -fsv \"${INPUT}\" \"${OUTPUT}\"");
+    }
 }
 
 target "/usr/lib/build"
 {
-	input "$(echo -n $PWD)/plugins";
-	tag "devinstall";
-	display "symlink";
-	profile "install"
-	{
-		execute("ln -fsv \"${INPUT}\" \"${OUTPUT}\"");
-	}
+    input "$(echo -n $PWD)/plugins";
+    tag "devinstall";
+    display "symlink";
+    profile "install"
+    {
+        execute("ln -fsv \"${INPUT}\" \"${OUTPUT}\"");
+    }
 }
 
 for vimdir in [dirs("/usr/share/vim/vim*"),
     dirs("/usr/local/share/vim/vim*")] do
 {
-	for ftype in ["ftplugin/build.vim", "ftdetect/build.vim",
-		"syntax/build.vim"] do
-	{
-		target vimdir + "/" + ftype
-		{
-			input "support/vim/" + ftype;
-			tag "viminstall";
-			display "install";
-			profile "install"
-			{
-				DIR = OUTPUT.dirName();
-				execute("mkdir -p ${DIR}");
-				execute("cp -f ${INPUT} ${OUTPUT}");
-			}
-		}
-	}
+    for ftype in ["ftplugin/build.vim", "ftdetect/build.vim",
+        "syntax/build.vim"] do
+    {
+        target vimdir + "/" + ftype
+        {
+            input "support/vim/" + ftype;
+            tag "viminstall";
+            display "install";
+            profile "install"
+            {
+                DIR = OUTPUT.dirName();
+                execute("mkdir -p ${DIR}");
+                execute("cp -f ${INPUT} ${OUTPUT}");
+            }
+        }
+    }
 }
 
 target PREFIX + "/bin/build"

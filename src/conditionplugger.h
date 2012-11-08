@@ -6,12 +6,12 @@
 #include <bu/singleton.h>
 
 class ConditionPlugger : public Bu::Plugger<Condition>,
-	public Bu::Singleton<ConditionPlugger>
+    public Bu::Singleton<ConditionPlugger>
 {
 friend class Bu::Singleton<ConditionPlugger>;
 private:
-	ConditionPlugger();
-	virtual ~ConditionPlugger();
+    ConditionPlugger();
+    virtual ~ConditionPlugger();
 };
 
 #endif

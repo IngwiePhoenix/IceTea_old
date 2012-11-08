@@ -5,60 +5,60 @@
 using namespace Bu;
 
 Cache::Cache() :
-	bCacheChanged( false ),
-	bIsLoaded( false )
+    bCacheChanged( false ),
+    bIsLoaded( false )
 {
 }
 
 Cache::~Cache()
 {
-	save();
+    save();
 }
 
 void Cache::bind( const Bu::String &sCacheFile )
 {
-	this->sCacheFile = sCacheFile;
-	load();
+    this->sCacheFile = sCacheFile;
+    load();
 }
 
 void Cache::load()
 {
-	if( bIsLoaded )
-		return;
+    if( bIsLoaded )
+        return;
 
-	try
-	{
-		Bu::File fIn( sCacheFile, Bu::File::Read );
-		Bu::Archive ar( fIn, Bu::Archive::load );
+    try
+    {
+        Bu::File fIn( sCacheFile, Bu::File::Read );
+        Bu::Archive ar( fIn, Bu::Archive::load );
 
-		ar >> hRequires >> hVariables;
-	}
-	catch(...) { }
+        ar >> hRequires >> hVariables;
+    }
+    catch(...) { }
 
-	bIsLoaded = true;
+    bIsLoaded = true;
 }
 
 void Cache::save()
 {
-	if( !bIsLoaded )
-		return;
-	if( bCacheChanged == false )
-		return;
+    if( !bIsLoaded )
+        return;
+    if( bCacheChanged == false )
+        return;
 
-	Bu::File fIn( sCacheFile, Bu::File::WriteNew );
-	Bu::Archive ar( fIn, Bu::Archive::save );
+    Bu::File fIn( sCacheFile, Bu::File::WriteNew );
+    Bu::Archive ar( fIn, Bu::Archive::save );
 
-	ar << hRequires << hVariables;
+    ar << hRequires << hVariables;
 }
 
 StrList Cache::getRequires( const Bu::String &sOutput )
 {
-	return hRequires.get( sOutput );
+    return hRequires.get( sOutput );
 }
 
 void Cache::setRequires( const Bu::String &sOutput, StrList lReqs )
 {
-	hRequires.insert( sOutput, lReqs );
-	bCacheChanged = true;
+    hRequires.insert( sOutput, lReqs );
+    bCacheChanged = true;
 }
 

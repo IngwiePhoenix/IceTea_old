@@ -6,11 +6,11 @@
 class FunctionReplace : public Function
 {
 public:
-	FunctionReplace();
-	virtual ~FunctionReplace();
+    FunctionReplace();
+    virtual ~FunctionReplace();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 };
 
 #endif

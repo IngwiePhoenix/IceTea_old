@@ -14,31 +14,31 @@
 class View
 {
 public:
-	View();
-	virtual ~View();
+    View();
+    virtual ~View();
 
-	virtual void beginAction( const Bu::String &sAction )=0;
-	virtual void endAction()=0;
+    virtual void beginAction( const Bu::String &sAction )=0;
+    virtual void endAction()=0;
 
-	virtual void skipTarget( const Bu::String &sProfile,
-			const Target &rTarget )=0;
-	virtual void beginTarget( const Bu::String &sProfile,
-			const Target &rTarget )=0;
-	virtual void processTarget( const Bu::String &sProfile,
-			const Target &rTarget )=0;
-	virtual void endTarget()=0;
+    virtual void skipTarget( const Bu::String &sProfile,
+            const Target &rTarget )=0;
+    virtual void beginTarget( const Bu::String &sProfile,
+            const Target &rTarget )=0;
+    virtual void processTarget( const Bu::String &sProfile,
+            const Target &rTarget )=0;
+    virtual void endTarget()=0;
 
-	virtual void buildRequires( const Target &rTarget )=0;
-	virtual void cmdStarted( const Bu::String &sCmd )=0;
-	virtual void cmdFinished( const Bu::String &sStdOut,
-			const Bu::String &sStdErr, long iExit )=0;
+    virtual void buildRequires( const Target &rTarget )=0;
+    virtual void cmdStarted( const Bu::String &sCmd )=0;
+    virtual void cmdFinished( const Bu::String &sStdOut,
+            const Bu::String &sStdErr, long iExit )=0;
 
-	virtual void userError( const Bu::String &sMsg )=0;
-	virtual void userWarning( const Bu::String &sMsg )=0;
-	virtual void userNotice( const Bu::String &sMsg )=0;
+    virtual void userError( const Bu::String &sMsg )=0;
+    virtual void userWarning( const Bu::String &sMsg )=0;
+    virtual void userNotice( const Bu::String &sMsg )=0;
 
-	virtual void sysError( const Bu::String &sMsg )=0;
-	virtual void sysWarning( const Bu::String &sMsg )=0;
+    virtual void sysError( const Bu::String &sMsg )=0;
+    virtual void sysWarning( const Bu::String &sMsg )=0;
 
 private:
 };

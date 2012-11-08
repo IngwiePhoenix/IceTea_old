@@ -25,46 +25,46 @@ extern Bu::PluginInfo pluginFunctionUnique;
 
 FunctionPlugger::FunctionPlugger()
 {
-	registerBuiltinPlugin( &pluginFunctionDirName );
-	registerBuiltinPlugin( &pluginFunctionDirs );
-	registerBuiltinPlugin( &pluginFunctionExecute );
-	registerBuiltinPlugin( &pluginFunctionExists );
-	registerBuiltinPlugin( &pluginFunctionFileName );
-	registerBuiltinPlugin( &pluginFunctionFiles );
-	registerBuiltinPlugin( &pluginFunctionGetMakeDeps );
-	registerBuiltinPlugin( &pluginFunctionMatches );
-	registerBuiltinPlugin( &pluginFunctionReplace );
-	registerBuiltinPlugin( &pluginFunctionTargets );
-	registerBuiltinPlugin( &pluginFunctionToString );
-	registerBuiltinPlugin( &pluginFunctionUnlink );
-	registerBuiltinPlugin( &pluginFunctionRegEx );
-	registerBuiltinPlugin( &pluginFunctionRange );
-	registerBuiltinPlugin( &pluginFunctionOpen );
-	registerBuiltinPlugin( &pluginFunctionClose );
-	registerBuiltinPlugin( &pluginFunctionRead );
-	registerBuiltinPlugin( &pluginFunctionWrite );
-	registerBuiltinPlugin( &pluginFunctionUnique );
+    registerBuiltinPlugin( &pluginFunctionDirName );
+    registerBuiltinPlugin( &pluginFunctionDirs );
+    registerBuiltinPlugin( &pluginFunctionExecute );
+    registerBuiltinPlugin( &pluginFunctionExists );
+    registerBuiltinPlugin( &pluginFunctionFileName );
+    registerBuiltinPlugin( &pluginFunctionFiles );
+    registerBuiltinPlugin( &pluginFunctionGetMakeDeps );
+    registerBuiltinPlugin( &pluginFunctionMatches );
+    registerBuiltinPlugin( &pluginFunctionReplace );
+    registerBuiltinPlugin( &pluginFunctionTargets );
+    registerBuiltinPlugin( &pluginFunctionToString );
+    registerBuiltinPlugin( &pluginFunctionUnlink );
+    registerBuiltinPlugin( &pluginFunctionRegEx );
+    registerBuiltinPlugin( &pluginFunctionRange );
+    registerBuiltinPlugin( &pluginFunctionOpen );
+    registerBuiltinPlugin( &pluginFunctionClose );
+    registerBuiltinPlugin( &pluginFunctionRead );
+    registerBuiltinPlugin( &pluginFunctionWrite );
+    registerBuiltinPlugin( &pluginFunctionUnique );
 
-	DIR *dir = opendir("/usr/lib/build");
-	if( !dir )
-		return;
-	struct dirent *de;
-	while( (de = readdir( dir )) )
-	{
-		if( strncmp("pluginFunction", de->d_name, 15 ) )
-			continue;
+    DIR *dir = opendir("/usr/lib/build");
+    if( !dir )
+        return;
+    struct dirent *de;
+    while( (de = readdir( dir )) )
+    {
+        if( strncmp("pluginFunction", de->d_name, 15 ) )
+            continue;
 
-		Bu::String sFile("/usr/lib/build/");
-		sFile += de->d_name;
-		char *s = de->d_name;
-		for(; *s && *s != '.'; s++ ) { }
-		registerExternalPlugin(
-			sFile,
-			Bu::String( de->d_name, (ptrdiff_t)s-(ptrdiff_t)de->d_name )
-			);
-	}
+        Bu::String sFile("/usr/lib/build/");
+        sFile += de->d_name;
+        char *s = de->d_name;
+        for(; *s && *s != '.'; s++ ) { }
+        registerExternalPlugin(
+            sFile,
+            Bu::String( de->d_name, (ptrdiff_t)s-(ptrdiff_t)de->d_name )
+            );
+    }
 
-	closedir( dir );
+    closedir( dir );
 }
 
 FunctionPlugger::~FunctionPlugger()

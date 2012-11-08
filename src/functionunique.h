@@ -6,11 +6,11 @@
 class FunctionUnique : public Function
 {
 public:
-	FunctionUnique();
-	virtual ~FunctionUnique();
+    FunctionUnique();
+    virtual ~FunctionUnique();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 };
 
 #endif

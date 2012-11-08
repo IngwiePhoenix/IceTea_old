@@ -15,36 +15,36 @@
 class Ast
 {
 public:
-	typedef Bu::List<AstNode *> NodeList;
-	Ast();
-	virtual ~Ast();
+    typedef Bu::List<AstNode *> NodeList;
+    Ast();
+    virtual ~Ast();
 
-	void addNode( struct YYLTYPE &loc, AstNode::Type eType );
-	void addNode( struct YYLTYPE &loc, AstNode::Type eType, int iVal );
-	void addNode( struct YYLTYPE &loc, AstNode::Type eType, float fVal );
-	void addNode( struct YYLTYPE &loc, AstNode::Type eType, bool bVal );
-	void addNode( struct YYLTYPE &loc, AstNode::Type eType,
-			const Bu::String &sVal );
-	void addNode( struct YYLTYPE &loc, AstNode::Type eType, const char *sVal );
+    void addNode( struct YYLTYPE &loc, AstNode::Type eType );
+    void addNode( struct YYLTYPE &loc, AstNode::Type eType, int iVal );
+    void addNode( struct YYLTYPE &loc, AstNode::Type eType, float fVal );
+    void addNode( struct YYLTYPE &loc, AstNode::Type eType, bool bVal );
+    void addNode( struct YYLTYPE &loc, AstNode::Type eType,
+            const Bu::String &sVal );
+    void addNode( struct YYLTYPE &loc, AstNode::Type eType, const char *sVal );
 
-	void addNode( AstNode::Type eType );
-	void addNode( AstNode::Type eType, int iVal );
-	void addNode( AstNode::Type eType, float fVal );
-	void addNode( AstNode::Type eType, bool bVal );
-	void addNode( AstNode::Type eType, const Bu::String &sVal );
-	void addNode( AstNode::Type eType, const char *sVal );
-	void addNode( AstNode *pNode );
+    void addNode( AstNode::Type eType );
+    void addNode( AstNode::Type eType, int iVal );
+    void addNode( AstNode::Type eType, float fVal );
+    void addNode( AstNode::Type eType, bool bVal );
+    void addNode( AstNode::Type eType, const Bu::String &sVal );
+    void addNode( AstNode::Type eType, const char *sVal );
+    void addNode( AstNode *pNode );
 
-	void openBranch();
+    void openBranch();
 
-	void closeNode();
+    void closeNode();
 
-	NodeList::const_iterator getNodeBegin() const;
+    NodeList::const_iterator getNodeBegin() const;
 
 private:
-	NodeList lNode;
-	typedef Bu::Stack<class AstBranch *> BranchStack;
-	BranchStack sBranch;
+    NodeList lNode;
+    typedef Bu::Stack<class AstBranch *> BranchStack;
+    BranchStack sBranch;
 };
 
 Bu::Formatter &operator<<( Bu::Formatter &f, const Ast &a );

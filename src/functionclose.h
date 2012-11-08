@@ -6,11 +6,11 @@
 class FunctionClose : public Function
 {
 public:
-	FunctionClose();
-	virtual ~FunctionClose();
+    FunctionClose();
+    virtual ~FunctionClose();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 
 };
 

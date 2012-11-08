@@ -6,11 +6,11 @@
 class FunctionTargets : public Function
 {
 public:
-	FunctionTargets();
-	virtual ~FunctionTargets();
+    FunctionTargets();
+    virtual ~FunctionTargets();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 };
 
 #endif

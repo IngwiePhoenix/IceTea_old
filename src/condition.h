@@ -4,11 +4,11 @@
 class Condition
 {
 public:
-	Condition();
-	virtual ~Condition();
+    Condition();
+    virtual ~Condition();
 
-	virtual bool shouldExec( class Runner &r, class Target &rTarget )=0;
-	virtual Condition *clone()=0;
+    virtual bool shouldExec( class Runner &r, class Target &rTarget )=0;
+    virtual Condition *clone()=0;
 
 private:
 };

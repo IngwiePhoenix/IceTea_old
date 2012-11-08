@@ -8,18 +8,18 @@
 class AstBranch : public AstNode
 {
 public:
-	typedef Bu::List<AstNode *> NodeList;
-	typedef Bu::List<NodeList> BranchList;
-	AstBranch( const Location &loc, Type eType );
-	virtual ~AstBranch();
+    typedef Bu::List<AstNode *> NodeList;
+    typedef Bu::List<NodeList> BranchList;
+    AstBranch( const Location &loc, Type eType );
+    virtual ~AstBranch();
 
-	void addBranch();
-	void addNode( AstNode *pNode );
+    void addBranch();
+    void addNode( AstNode *pNode );
 
-	BranchList::const_iterator getBranchBegin() const;
+    BranchList::const_iterator getBranchBegin() const;
 
 private:
-	BranchList lBranch;
+    BranchList lBranch;
 };
 
 Bu::Formatter &operator<<( Bu::Formatter &f, const AstBranch &l );

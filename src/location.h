@@ -6,18 +6,18 @@
 class Location
 {
 public:
-	Location();
-	Location( struct YYLTYPE &loc );
-	Location( const Bu::String &sFile, int iStartRow, int iStartCol,
-			int iEndRow, int iEndCol );
-	virtual ~Location();
+    Location();
+    Location( struct YYLTYPE &loc );
+    Location( const Bu::String &sFile, int iStartRow, int iStartCol,
+            int iEndRow, int iEndCol );
+    virtual ~Location();
 
 private:
-	const Bu::String sFile;
-	int iStartRow;
-	int iStartCol;
-	int iEndRow;
-	int iEndCol;
+    const Bu::String sFile;
+    int iStartRow;
+    int iStartCol;
+    int iEndRow;
+    int iEndCol;
 };
 
 #endif

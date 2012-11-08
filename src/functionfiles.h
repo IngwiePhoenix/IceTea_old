@@ -6,11 +6,11 @@
 class FunctionFiles : public Function
 {
 public:
-	FunctionFiles();
-	virtual ~FunctionFiles();
+    FunctionFiles();
+    virtual ~FunctionFiles();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 
 };
 

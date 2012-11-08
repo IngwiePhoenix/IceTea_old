@@ -6,11 +6,11 @@
 class ConditionNever : public Condition
 {
 public:
-	ConditionNever();
-	virtual ~ConditionNever();
+    ConditionNever();
+    virtual ~ConditionNever();
 
-	virtual bool shouldExec( class Runner &r, class Target &rTarget );
-	virtual Condition *clone();
+    virtual bool shouldExec( class Runner &r, class Target &rTarget );
+    virtual Condition *clone();
 };
 
 #endif

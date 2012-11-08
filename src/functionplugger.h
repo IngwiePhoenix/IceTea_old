@@ -6,12 +6,12 @@
 #include <bu/singleton.h>
 
 class FunctionPlugger : public Bu::Plugger<Function>,
-	public Bu::Singleton<FunctionPlugger>
+    public Bu::Singleton<FunctionPlugger>
 {
 friend class Bu::Singleton<FunctionPlugger>;
 private:
-	FunctionPlugger();
-	virtual ~FunctionPlugger();
+    FunctionPlugger();
+    virtual ~FunctionPlugger();
 };
 
 #endif

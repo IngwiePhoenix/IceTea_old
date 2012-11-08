@@ -7,12 +7,12 @@
 
 class ViewPlugger : public Bu::Plugger<View>, public Bu::Singleton<ViewPlugger>
 {
-	friend class Bu::Singleton<ViewPlugger>;
+    friend class Bu::Singleton<ViewPlugger>;
 private:
-	ViewPlugger();
+    ViewPlugger();
 
 public:
-	virtual ~ViewPlugger();
+    virtual ~ViewPlugger();
 
 private:
 };

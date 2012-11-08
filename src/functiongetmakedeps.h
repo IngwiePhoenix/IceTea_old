@@ -6,11 +6,11 @@
 class FunctionGetMakeDeps : public Function
 {
 public:
-	FunctionGetMakeDeps();
-	virtual ~FunctionGetMakeDeps();
+    FunctionGetMakeDeps();
+    virtual ~FunctionGetMakeDeps();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 };
 
 #endif

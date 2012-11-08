@@ -6,151 +6,151 @@
 
 if CXX == null then
 {
-	CXX = "g++";
+    CXX = "g++";
 }
 
 if AR == null then
 {
-	AR = "ar";
+    AR = "ar";
 }
 
 if CC == null then
 {
-	CC = "cc";
+    CC = "cc";
 }
 
 if BISON == null then
 {
-	BISON = "bison";
+    BISON = "bison";
 }
 
 if FLEX == null then
 {
-	FLEX = "flex";
+    FLEX = "flex";
 }
 
 function cppToObj()
 {
-	if OBJ_DIR == null then
-	{
-		return INPUT.regex("\\.cpp$", ".o");
-	}
-	else
-	{
-		return OBJ_DIR + "/" + INPUT.fileName().regex("\\.cpp$", ".o");
-	}
+    if OBJ_DIR == null then
+    {
+        return INPUT.regex("\\.cpp$", ".o");
+    }
+    else
+    {
+        return OBJ_DIR + "/" + INPUT.fileName().regex("\\.cpp$", ".o");
+    }
 
 }
 
 function cToObj()
 {
-	if OBJ_DIR == null then
-	{
-		return INPUT.regex("\\.c$", ".o");
-	}
-	else
-	{
-		return OBJ_DIR + "/" + INPUT.fileName().regex("\\.c$", ".o");
-	}
+    if OBJ_DIR == null then
+    {
+        return INPUT.regex("\\.c$", ".o");
+    }
+    else
+    {
+        return OBJ_DIR + "/" + INPUT.fileName().regex("\\.c$", ".o");
+    }
 
 }
 
 rule "exe"
 {
-	input "*.o";
-	profile "build"
-	{
-		INPUT = [INPUT].unique().matches("*.o");
-		execute("${CXX} -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
-	}
+    input "*.o";
+    profile "build"
+    {
+        INPUT = [INPUT].unique().matches("*.o");
+        execute("${CXX} -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
+    }
 }
 
 rule "so"
 {
-	input "*.o";
-	profile "build"
-	{
-		INPUT = [INPUT].unique().matches("*.o");
-		execute("${CXX} -shared -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
-	}
+    input "*.o";
+    profile "build"
+    {
+        INPUT = [INPUT].unique().matches("*.o");
+        execute("${CXX} -shared -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
+    }
 }
 
 rule "lib"
 {
-	input "*.o";
-	profile "build"
-	{
-		INPUT = [INPUT].unique().matches("*.o");
-		execute("${AR} cr ${OUTPUT} ${INPUT}");
-	}
+    input "*.o";
+    profile "build"
+    {
+        INPUT = [INPUT].unique().matches("*.o");
+        execute("${AR} cr ${OUTPUT} ${INPUT}");
+    }
 }
 
 rule "cpp"
 {
-	input "*.cpp";
-	output INPUT.cppToObj();
-	requires getMakeDeps("${CXX} ${CXXFLAGS} -M -MG ${INPUT}");
-	profile "build"
-	{
-		execute("${CXX} ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
-	}
+    input "*.cpp";
+    output INPUT.cppToObj();
+    requires getMakeDeps("${CXX} ${CXXFLAGS} -M -MG ${INPUT}");
+    profile "build"
+    {
+        execute("${CXX} ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
+    }
 }
 
 // Heh, we're not going to use this one.
 rule "c"
 {
-	input "*.c";
-	output INPUT.cToObj();
-	requires getMakeDeps("${CC} ${CFLAGS} -M -MG ${INPUT}");
-	profile "build"
-	{
-		execute("${CC} ${CFLAGS} -c -o ${OUTPUT} ${INPUT}");
-	}
+    input "*.c";
+    output INPUT.cToObj();
+    requires getMakeDeps("${CC} ${CFLAGS} -M -MG ${INPUT}");
+    profile "build"
+    {
+        execute("${CC} ${CFLAGS} -c -o ${OUTPUT} ${INPUT}");
+    }
 }
 
 rule "bison"
 {
-	input "*.y";
-	output [INPUT.regex("\\.y$", ".tab.c"), INPUT.regex("\\.y$", ".tab.h")];
-	profile "build"
-	{
-		BASE = INPUT.regex("\\.y", "");
-		execute("${BISON} -b${BASE} ${BISONFLAGS} ${INPUT}");
-		// if you add a -v bison will produce a .output file
-	}
+    input "*.y";
+    output [INPUT.regex("\\.y$", ".tab.c"), INPUT.regex("\\.y$", ".tab.h")];
+    profile "build"
+    {
+        BASE = INPUT.regex("\\.y", "");
+        execute("${BISON} -b${BASE} ${BISONFLAGS} ${INPUT}");
+        // if you add a -v bison will produce a .output file
+    }
 }
 
 rule "flex"
 {
-	input "*.l";
-	output INPUT.regex("\\.l$", ".yy.c");
-	output INPUT.regex("\\.l$", ".yy.h");
-	profile "build"
-	{
-		execute("${FLEX} ${FLEXFLAGS} ${INPUT}");
-	}
+    input "*.l";
+    output INPUT.regex("\\.l$", ".yy.c");
+    output INPUT.regex("\\.l$", ".yy.h");
+    profile "build"
+    {
+        execute("${FLEX} ${FLEXFLAGS} ${INPUT}");
+    }
 }
 
 rule "jar"
 {
-	input "*.class";
-	profile "build"
-	{
-		if exists(OUTPUT) then
-		{
-			unlink(OUTPUT);
-		}
-		execute("jar cf ${OUTPUT} ${INPUT}");
-	}
+    input "*.class";
+    profile "build"
+    {
+        if exists(OUTPUT) then
+        {
+            unlink(OUTPUT);
+        }
+        execute("jar cf ${OUTPUT} ${INPUT}");
+    }
 }
 
 rule "class"
 {
-	input "*.java";
-	output INPUT.regex("\\.java", ".class");
-	profile "build"
-	{
-		execute("javac -cp . ${INPUT}");
-	}
+    input "*.java";
+    output INPUT.regex("\\.java", ".class");
+    profile "build"
+    {
+        execute("javac -cp . ${INPUT}");
+    }
 }
 

@@ -6,11 +6,11 @@
 class FunctionRange : public Function
 {
 public:
-	FunctionRange();
-	virtual ~FunctionRange();
+    FunctionRange();
+    virtual ~FunctionRange();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 
 };
 

@@ -9,18 +9,18 @@ class FileMgr : public Bu::Singleton<FileMgr>
 {
 friend class Bu::Singleton<FileMgr>;
 private:
-	FileMgr();
-	virtual ~FileMgr();
+    FileMgr();
+    virtual ~FileMgr();
 
 public:
-	int open( const Bu::String &sPath, int iMode );
-	Bu::File &get( int iId );
-	void close( int iId );
+    int open( const Bu::String &sPath, int iMode );
+    Bu::File &get( int iId );
+    void close( int iId );
 
 private:
-	typedef Bu::Hash<int, Bu::File *> FileHash;
-	FileHash hFile;
-	int iNextId;
+    typedef Bu::Hash<int, Bu::File *> FileHash;
+    FileHash hFile;
+    int iNextId;
 };
 
 #endif

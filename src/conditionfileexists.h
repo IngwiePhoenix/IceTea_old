@@ -6,11 +6,11 @@
 class ConditionFileExists : public Condition
 {
 public:
-	ConditionFileExists();
-	virtual ~ConditionFileExists();
+    ConditionFileExists();
+    virtual ~ConditionFileExists();
 
-	virtual bool shouldExec( class Runner &r, class Target &rTarget );
-	virtual Condition *clone();
+    virtual bool shouldExec( class Runner &r, class Target &rTarget );
+    virtual Condition *clone();
 };
 
 #endif

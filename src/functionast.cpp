@@ -8,12 +8,12 @@
 using namespace Bu;
 
 FunctionAst::FunctionAst( const AstBranch *pRoot, class Runner *pRunner ) :
-	pRoot( pRoot ),
-	pRunner( pRunner )
+    pRoot( pRoot ),
+    pRunner( pRunner )
 {
-	sName = dynamic_cast<AstLeaf *>(
-		*(*pRoot->getBranchBegin()).begin()
-		)->getStrValue();
+    sName = dynamic_cast<AstLeaf *>(
+        *(*pRoot->getBranchBegin()).begin()
+        )->getStrValue();
 }
 
 FunctionAst::~FunctionAst()
@@ -22,26 +22,26 @@ FunctionAst::~FunctionAst()
 
 Bu::String FunctionAst::getName() const
 {
-	return sName;
+    return sName;
 }
 
 Variable FunctionAst::call( Variable &input, VarList lParams )
 {
-	pContext->pushScope();
-	
-	AstBranch::NodeList::const_iterator vName = 
-		(*(pRoot->getBranchBegin()+1)).begin();
-	VarList::iterator vValue = lParams.begin();
-	for( ; vName && vValue; vName++, vValue++ )
-	{
-		pContext->addVariable(
-			dynamic_cast<const AstLeaf *>(*vName)->getStrValue(),
-			*vValue
-			);
-	}
-	pContext->addVariable("INPUT", input );
-	Variable vRet = pRunner->run( (*(pRoot->getBranchBegin()+2)).begin() );
-	pContext->popScope();
-	return vRet;
+    pContext->pushScope();
+    
+    AstBranch::NodeList::const_iterator vName = 
+        (*(pRoot->getBranchBegin()+1)).begin();
+    VarList::iterator vValue = lParams.begin();
+    for( ; vName && vValue; vName++, vValue++ )
+    {
+        pContext->addVariable(
+            dynamic_cast<const AstLeaf *>(*vName)->getStrValue(),
+            *vValue
+            );
+    }
+    pContext->addVariable("INPUT", input );
+    Variable vRet = pRunner->run( (*(pRoot->getBranchBegin()+2)).begin() );
+    pContext->popScope();
+    return vRet;
 }
 

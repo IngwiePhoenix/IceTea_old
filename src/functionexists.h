@@ -6,11 +6,11 @@
 class FunctionExists : public Function
 {
 public:
-	FunctionExists();
-	virtual ~FunctionExists();
+    FunctionExists();
+    virtual ~FunctionExists();
 
-	virtual Bu::String getName() const;
-	virtual Variable call( Variable &input, VarList lParams );
+    virtual Bu::String getName() const;
+    virtual Variable call( Variable &input, VarList lParams );
 
 };
 
