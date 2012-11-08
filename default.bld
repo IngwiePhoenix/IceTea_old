@@ -34,6 +34,11 @@ action "docs"
     build: targets("docs");
 }
 
+action "install"
+{
+    build: targets("install");
+}
+
 action "devinstall"
 {
 	if "$(id -u)" != "0" then
@@ -96,7 +101,8 @@ target "/usr/lib/build"
 	}
 }
 
-for vimdir in dirs("/usr/share/vim/vim*") do
+for vimdir in [dirs("/usr/share/vim/vim*"),
+    dirs("/usr/local/share/vim/vim*")] do
 {
 	for ftype in ["ftplugin/build.vim", "ftdetect/build.vim",
 		"syntax/build.vim"] do
@@ -114,6 +120,31 @@ for vimdir in dirs("/usr/share/vim/vim*") do
 			}
 		}
 	}
+}
+
+target PREFIX + "/bin/build"
+{
+    display "install";
+    tag "install";
+    requires "build";
+    profile "build"
+    {
+        execute("install -T -s build ${OUTPUT}");
+    }
+}
+
+for i in [files("share/autoinclude/*.bld"), files("share/include/*.bld")] do
+{
+    target PREFIX + "/share/build/" + i.replace("share/","")
+    {
+        display "install";
+        tag "install";
+        requires i;
+        profile "build"
+        {
+            execute("install -T -D -m0466 ${i} ${OUTPUT}");
+        }
+    }
 }
 
 target "docs/build-manual.pdf"
