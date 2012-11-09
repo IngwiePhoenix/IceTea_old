@@ -15,29 +15,29 @@ processes. The primary goal is to be able to replace the standard
 configure/make or cmake/make systems that have become quite popular.
 
 By default Build will work much as one would expect for compiling software, it
-uses file exisistance and timestamps to determine what to build, and every file
-has a list of dependant files and input files.
+uses file existence and timestamps to determine what to build, and every file
+has a list of dependent files and input files.
 
 However, this is only the default configuration, you can use anything as the
 condition for determining what to build or rebuild, and targets do not have to
 be files.
 
 Build boasts a sophisticated system for chaining rules together to take files
-through as many steps as necesarry to get them in the desirable foramt for input
+through as many steps as necessary to get them in the desirable format for input
 to the final step.  This may sound a little vague and confusing, but what it
 means in the end is that you can list, say, a bison file as on input to an
 executable target that requires object (.o) files.  In this case build will
 automatically figure out that it can get a .c file from the .y input file, and
-a .o file from the .c file.  It will autogenerate these targets for you and
+a .o file from the .c file.  It will auto generate these targets for you and
 save a lot of time and effort on your part.
 
 \chapter{Structure of a Build File}
-Build files contain build script along with four major types of declerations.
-These are the major types that can be decared:
+Build files contain build script along with four major types of declarations.
+These are the major types that can be declared:
 
 \begin{description}
     \item[Targets] \hfill \\
-    Explicit targets can be defined that represent units of work with a definate
+    Explicit targets can be defined that represent units of work with a definite
     goal and possibly inputs that can be other targets.
     \item[Actions] \hfill \\
     Actions are triggered from the command line and determine what targets to
@@ -68,7 +68,7 @@ target "myprogram"
 }
 \end{lstlisting}
 
-This example doesn't set any special compliation or linking flags, but it is a
+This example doesn't set any special compilation or linking flags, but it is a
 complete and valid build file.  It will find all cpp files in src, generate an
 implicit target for each file to compile it into an object (.o) file, and then
 use those files as the input to the myprogram target in the end.
@@ -96,14 +96,14 @@ Targets can contain the following special keywords:
     \item[input] \hfill \\
     You can specify any expression that results in a string or list of strings.
     These strings will be added to the list of inputs to this target, and if
-    they are targets they will be added as dependancies.  If you have a rule
+    they are targets they will be added as dependencies.  If you have a rule
     specified then the list of inputs will be used to generate implicit targets
-    to satisfy dependancies.
+    to satisfy dependencies.
     \item[requires] \hfill \\
     Requires works just like input, except that the items here will not be added
-    to the list of inputs.  They will be added as dependancies to figure out
+    to the list of inputs.  They will be added as dependencies to figure out
     when this target needs to be rebuilt, but will not be listed as inputs.
-    This is handy for things like libraries, datafiles, et cetera.
+    This is handy for things like libraries, data files, et cetera.
     \item[rule] \hfill \\
     You can optionally specify a single rule name by string.  This rule will be
     applied to this target before processing and used to provide the display,
@@ -148,8 +148,8 @@ commands.
 
 There is an extra property that can be set in any profile, and that's condition.
 Specifying a condition will allow you to change how build decides when it's
-appropriate to process that target in that profile.  There are four builtin
-conditions: always, never, filetime, and fileexists.  In the future it may also
+appropriate to process that target in that profile.  There are four built-in
+conditions: always, never, fileTime, and fileExists.  In the future it may also
 be possible to use a user-defined function as a condition.
 
 

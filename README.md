@@ -6,18 +6,18 @@ automation process, but is intended primarily for compiling source code.
 Features:
 
  * Does _NOT_ rely on make of any sort.
- * Can auto-generate targets based on builtin and user proided rules.
- * Contains it's own turing complete scripting language.
+ * Can auto-generate targets based on builtin and user provided rules.
+ * Contains it's own Turing complete scripting language.
  * Provides a variety of output modes to make errors easier to see.
  * Supports plugins.
  * Write much, much less and do more.
- * Builtin understanding of dependancy tracking.
+ * Builtin understanding of dependency tracking.
 
 ## Requirements
 
 There are different requirements depending on how you got your source code and
 what you intend to do with it.  If you just want to use build, then I recommend
-getting one of the release tarballs.  They include most of the dependancies and
+getting one of the release tarballs.  They include most of the dependencies and
 are the easiest to use.
 
 ### Tarball Releases
@@ -89,4 +89,4 @@ This example is slightly more complex.  It sets some flags that all targets will
 use, then creates two explicit targets.  The second target, joved, also
 requires that libjove.a is up to date, but it is not treated as an input.  This
 is enough to determine order of building, all source files, targets, and even
-provides full dependancy tracking.
+provides full dependency tracking.
