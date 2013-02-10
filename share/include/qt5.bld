@@ -1,0 +1,165 @@
+
+function qt_getCXXFLAGS()
+{
+    if QTDIR == null then
+    {
+        error "QTDIR is not set, cannot find QT tools.";
+    }
+
+    ret = "-D_REENTRANT -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LI "
+        "-DQT_SHARED -I${QTDIR}/mkspecs/linux-g++ "
+        "$(PKG_CONFIG_PATH=PKG_CONFIG_PATH:${QTDIR}/lib/pkgconfig "
+        "pkg-config --cflags Qt5Core Qt5Gui Qt5Widgets ice glu x11 xext libpng freetype2 "
+        "gobject-2.0 sm xrender fontconfig gthread-2.0 glib-2.0)";
+    if UI_DIR != null then
+    {
+        ret += "-I${UI_DIR}";
+    }
+    if RCC_DIR != null then
+    {
+        ret += "-I${RCC_DIR}";
+    }
+    if MOC_DIR != null then
+    {
+        ret += "-I${MOC_DIR}";
+    }
+    return ret;
+}
+
+function qt_getLDFLAGS()
+{
+    if QTDIR == null then
+    {
+        error "QTDIR is not set, cannot find QT tools.";
+    }
+
+    return "-Wl,-rpath,${QTDIR}/lib $(PKG_CONFIG_PATH="
+        "PKG_CONFIG_PATH:${QTDIR}/lib/pkgconfig "
+        "pkg-config --libs Qt5Core Qt5Gui Qt5Widgets ice glu x11 xext libpng freetype2 "
+        "gobject-2.0 sm xrender fontconfig gthread-2.0 glib-2.0) -lz "
+        "-lm -ldl";
+}
+
+function qt_getToolPath( TOOL, DEFAULT )
+{
+    if QTDIR == null then
+    {
+        error "QTDIR is not set, cannot find QT tools.";
+    }
+    if TOOL == null then
+    {
+        return "${QTDIR}/bin/${DEFAULT}";
+    }
+    return TOOL;
+}
+
+function qt_uiToH()
+{
+    if "${UI_DIR}" == "" then
+    {
+        DIR = INPUT.dirName();
+    }
+    else
+    {
+        DIR = UI_DIR;
+    }
+    FILE = INPUT.fileName();
+    OUTFILE = FILE.replace(".ui",".h");
+    return "${DIR}/ui_${OUTFILE}";
+}
+
+rule "qt_ui"
+{
+    display "ui";
+    input "*.ui";
+    output INPUT.qt_uiToH();
+    tag "headers";
+    profile "build"
+    {
+        UIC = qt_getToolPath( UIC, "uic" );
+        execute("${UIC} -o ${OUTPUT} ${INPUT}");
+    }
+}
+
+function qt_qrcToCpp()
+{
+    if "${RCC_DIR}" == "" then
+    {
+        DIR = INPUT.dirName();
+    }
+    else
+    {
+        DIR = RCC_DIR;
+    }
+    FILE = INPUT.fileName();
+    OUTFILE = FILE.replace(".qrc",".cpp");
+    return "${DIR}/qrc_${OUTFILE}";
+}
+
+rule "qt_rcc"
+{
+    display "rcc";
+    input "*.qrc";
+    output INPUT.qt_qrcToCpp();
+    profile "build"
+    {
+        RCC = qt_getToolPath( RCC, "rcc" );
+        NAME = INPUT.fileName().replace(".qrc","");
+        execute("${RCC} -name ${NAME} -o ${OUTPUT} ${INPUT}");
+    }
+}
+
+function qt_isMocable()
+{
+    if INPUT.matches("*.h") then
+    {
+        if exists( INPUT ) then
+        {
+            if "$(grep Q_OBJECT ${INPUT})" != "" then
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function qt_hToMocCpp()
+{
+    if "${MOC_DIR}" == "" then
+    {
+        DIR = INPUT.dirName();
+    }
+    else
+    {
+        DIR = MOC_DIR;
+    }
+    FILE = INPUT.fileName();
+    OUTFILE = FILE.replace(".h",".cpp");
+    return "${DIR}/moc_${OUTFILE}";
+}
+
+rule "qt_moc"
+{
+    display "moc";
+    input qt_isMocable();
+    output INPUT.qt_hToMocCpp();
+    profile "build"
+    {
+        MOC = qt_getToolPath( MOC, "moc" );
+        execute("${MOC} -o${OUTPUT} ${INPUT}");
+    }
+}
+
+rule "exe"
+{
+    input regex(".*\\.(h|o)");
+    profile "build"
+    {
+        INPUT = [INPUT].matches("*.o");
+//      execute("echo ${INPUT}");
+//      execute("echo ${MYIN}");
+        execute("${CXX} -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
+    }
+}
+
