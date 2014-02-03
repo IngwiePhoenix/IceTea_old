@@ -6,6 +6,10 @@ BUEXPSRC="regex.cpp"
 BUEXPHDR="regex.h"
 BUCOMPAT="config.h compat/linux.h compat/win32.h compat/osx.h"
 
+if [ -z "${CXX}" ]; then
+    CXX="g++"
+fi
+
 function bld()
 {
 	OUTFILE="$1"
@@ -30,7 +34,7 @@ function cmd()
 
 function gpp()
 {
-	bld "$1" "$2" || cmd CXX "$1" g++ -ggdb -fPIC -W -Wall -Iminibu -c -o "$1" "$2"
+	bld "$1" "$2" || cmd CXX "$1" ${CXX} -ggdb -fPIC -W -Wall -Iminibu -c -o "$1" "$2"
 }
 
 function presetup()
@@ -74,9 +78,16 @@ if [ ! -z "$1" ]; then
         presetup
         exit
 	else
-		echo "The only option supported is \"clean\", otherwise run $0"
-		echo "with no parameters to compile build."
-		echo
+		echo "Without parameters build.sh will download extra components and"
+        echo "compile build."
+        echo
+        echo "Parameters:"
+        echo "  clean | -c  Delete all opbject code and downloaded source."
+        echo "  setup | -s  Download and perform initial setup, but do not"
+        echo "              compile."
+        echo
+        echo "Using ${CXX} to complie code."
+        echo
 		exit
 	fi
 fi
@@ -92,5 +103,5 @@ for F in src/*.c src/*.cpp; do
 	OUTPUT=${F%.*}.o
 	gpp "$OUTPUT" "$F"
 done
-bld build src/*.o minibu/src/*.o || cmd LINK build g++ -fPIC -rdynamic -Wl,-export-dynamic -o build src/*.o minibu/src/*.o -ldl
+bld build src/*.o minibu/src/*.o || cmd LINK build ${CXX} -fPIC -rdynamic -Wl,-export-dynamic -o build src/*.o minibu/src/*.o -ldl
 bld build~ build || cmd CP build~ cp build build~

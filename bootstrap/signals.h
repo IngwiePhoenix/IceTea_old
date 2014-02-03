@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2014 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -8,8 +8,10 @@
 #ifndef BU_SIGNALS_H
 #define BU_SIGNALS_H
 
+#include <typeinfo>
 #include "bu/util.h"
 #include "bu/exceptionbase.h"
+#include "bu/list.h"
 
 namespace Bu
 {
@@ -28,6 +30,7 @@ namespace Bu
         virtual ~_Slot0() { }
         virtual ret operator()(  )=0;
         virtual _Slot0<ret> *clone() const=0;
+        virtual bool operator==( const _Slot0<ret> &rhs ) const=0;
     };
     
     template<typename cls, typename ret>
@@ -46,6 +49,12 @@ namespace Bu
         virtual _Slot0<ret> *clone() const
         {
             return new __Slot0<cls, ret>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot0<ret> &rhs ) const
+        {
+            const __Slot0<cls, ret> &rrhs = (const __Slot0<cls, ret> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -69,6 +78,11 @@ namespace Bu
         virtual _Slot0<ret> *clone() const
         {
             return new __Slot0F<ret>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot0<ret> &rhs ) const
+        {
+            return pFnc == ((const __Slot0F<ret> &)rhs).pFnc;
         }
     
     private:
@@ -100,6 +114,17 @@ namespace Bu
             return *this;
         }
     
+        bool operator==( const Signal0<ret> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
+        }
+    
     private:
         _Slot0<ret> *pCb;
     };
@@ -121,6 +146,53 @@ namespace Bu
             new __Slot0F<ret>( pFnc )
             );
     }
+    
+    template<typename ret>
+    class SignalList0 : public Bu::List<Bu::Signal0<ret> >
+    {
+        typedef Bu::List<Bu::Signal0<ret> > MyType;
+    public:
+        SignalList0()
+        {
+        }
+    
+        using typename Bu::List<Bu::Signal0<ret> >::iterator;
+        using typename Bu::List<Bu::Signal0<ret> >::const_iterator;
+    
+        ret operator()(  )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)(  );
+                else
+                    return (*i)(  );
+            }
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<>
+    class SignalList0<void> : public Bu::List<Bu::Signal0<void> >
+    {
+        typedef Bu::List<Bu::Signal0<void> > MyType;
+        public:
+        SignalList0()
+        {
+        }
+   
+        using typename Bu::List<Bu::Signal0<void> >::iterator;
+        using typename Bu::List<Bu::Signal0<void> >::const_iterator;
+   
+        void operator()(  )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)(  );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_0
 
 #ifndef BU_SIGNAL_PARAM_COUNT_1
@@ -136,6 +208,7 @@ namespace Bu
         virtual ~_Slot1() { }
         virtual ret operator()( p1t p1 )=0;
         virtual _Slot1<ret, p1t> *clone() const=0;
+        virtual bool operator==( const _Slot1<ret, p1t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t>
@@ -154,6 +227,12 @@ namespace Bu
         virtual _Slot1<ret, p1t> *clone() const
         {
             return new __Slot1<cls, ret, p1t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot1<ret, p1t> &rhs ) const
+        {
+            const __Slot1<cls, ret, p1t> &rrhs = (const __Slot1<cls, ret, p1t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -177,6 +256,11 @@ namespace Bu
         virtual _Slot1<ret, p1t> *clone() const
         {
             return new __Slot1F<ret, p1t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot1<ret, p1t> &rhs ) const
+        {
+            return pFnc == ((const __Slot1F<ret, p1t> &)rhs).pFnc;
         }
     
     private:
@@ -208,6 +292,17 @@ namespace Bu
             return *this;
         }
     
+        bool operator==( const Signal1<ret, p1t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
+        }
+    
     private:
         _Slot1<ret, p1t> *pCb;
     };
@@ -229,6 +324,53 @@ namespace Bu
             new __Slot1F<ret, p1t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t>
+    class SignalList1 : public Bu::List<Bu::Signal1<ret, p1t> >
+    {
+        typedef Bu::List<Bu::Signal1<ret, p1t> > MyType;
+    public:
+        SignalList1()
+        {
+        }
+    
+        using typename Bu::List<Bu::Signal1<ret, p1t> >::iterator;
+        using typename Bu::List<Bu::Signal1<ret, p1t> >::const_iterator;
+    
+        ret operator()( p1t p1 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1 );
+                else
+                    return (*i)( p1 );
+            }
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t>
+    class SignalList1<void, p1t> : public Bu::List<Bu::Signal1<void, p1t> >
+    {
+        typedef Bu::List<Bu::Signal1<void, p1t> > MyType;
+        public:
+        SignalList1()
+        {
+        }
+   
+        using typename Bu::List<Bu::Signal1<void, p1t> >::iterator;
+        using typename Bu::List<Bu::Signal1<void, p1t> >::const_iterator;
+   
+        void operator()( p1t p1 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_1
 
 #ifndef BU_SIGNAL_PARAM_COUNT_2
@@ -244,6 +386,7 @@ namespace Bu
         virtual ~_Slot2() { }
         virtual ret operator()( p1t p1, p2t p2 )=0;
         virtual _Slot2<ret, p1t, p2t> *clone() const=0;
+        virtual bool operator==( const _Slot2<ret, p1t, p2t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t>
@@ -262,6 +405,12 @@ namespace Bu
         virtual _Slot2<ret, p1t, p2t> *clone() const
         {
             return new __Slot2<cls, ret, p1t, p2t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot2<ret, p1t, p2t> &rhs ) const
+        {
+            const __Slot2<cls, ret, p1t, p2t> &rrhs = (const __Slot2<cls, ret, p1t, p2t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -285,6 +434,11 @@ namespace Bu
         virtual _Slot2<ret, p1t, p2t> *clone() const
         {
             return new __Slot2F<ret, p1t, p2t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot2<ret, p1t, p2t> &rhs ) const
+        {
+            return pFnc == ((const __Slot2F<ret, p1t, p2t> &)rhs).pFnc;
         }
     
     private:
@@ -316,6 +470,17 @@ namespace Bu
             return *this;
         }
     
+        bool operator==( const Signal2<ret, p1t, p2t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
+        }
+    
     private:
         _Slot2<ret, p1t, p2t> *pCb;
     };
@@ -337,6 +502,53 @@ namespace Bu
             new __Slot2F<ret, p1t, p2t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t>
+    class SignalList2 : public Bu::List<Bu::Signal2<ret, p1t, p2t> >
+    {
+        typedef Bu::List<Bu::Signal2<ret, p1t, p2t> > MyType;
+    public:
+        SignalList2()
+        {
+        }
+    
+        using typename Bu::List<Bu::Signal2<ret, p1t, p2t> >::iterator;
+        using typename Bu::List<Bu::Signal2<ret, p1t, p2t> >::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2 );
+                else
+                    return (*i)( p1, p2 );
+            }
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t>
+    class SignalList2<void, p1t, p2t> : public Bu::List<Bu::Signal2<void, p1t, p2t> >
+    {
+        typedef Bu::List<Bu::Signal2<void, p1t, p2t> > MyType;
+        public:
+        SignalList2()
+        {
+        }
+   
+        using typename Bu::List<Bu::Signal2<void, p1t, p2t> >::iterator;
+        using typename Bu::List<Bu::Signal2<void, p1t, p2t> >::const_iterator;
+   
+        void operator()( p1t p1, p2t p2 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_2
 
 #ifndef BU_SIGNAL_PARAM_COUNT_3
@@ -352,6 +564,7 @@ namespace Bu
         virtual ~_Slot3() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3 )=0;
         virtual _Slot3<ret, p1t, p2t, p3t> *clone() const=0;
+        virtual bool operator==( const _Slot3<ret, p1t, p2t, p3t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t>
@@ -370,6 +583,12 @@ namespace Bu
         virtual _Slot3<ret, p1t, p2t, p3t> *clone() const
         {
             return new __Slot3<cls, ret, p1t, p2t, p3t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot3<ret, p1t, p2t, p3t> &rhs ) const
+        {
+            const __Slot3<cls, ret, p1t, p2t, p3t> &rrhs = (const __Slot3<cls, ret, p1t, p2t, p3t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -393,6 +612,11 @@ namespace Bu
         virtual _Slot3<ret, p1t, p2t, p3t> *clone() const
         {
             return new __Slot3F<ret, p1t, p2t, p3t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot3<ret, p1t, p2t, p3t> &rhs ) const
+        {
+            return pFnc == ((const __Slot3F<ret, p1t, p2t, p3t> &)rhs).pFnc;
         }
     
     private:
@@ -424,6 +648,17 @@ namespace Bu
             return *this;
         }
     
+        bool operator==( const Signal3<ret, p1t, p2t, p3t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
+        }
+    
     private:
         _Slot3<ret, p1t, p2t, p3t> *pCb;
     };
@@ -445,6 +680,53 @@ namespace Bu
             new __Slot3F<ret, p1t, p2t, p3t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t>
+    class SignalList3 : public Bu::List<Bu::Signal3<ret, p1t, p2t, p3t> >
+    {
+        typedef Bu::List<Bu::Signal3<ret, p1t, p2t, p3t> > MyType;
+    public:
+        SignalList3()
+        {
+        }
+    
+        using typename Bu::List<Bu::Signal3<ret, p1t, p2t, p3t> >::iterator;
+        using typename Bu::List<Bu::Signal3<ret, p1t, p2t, p3t> >::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3 );
+                else
+                    return (*i)( p1, p2, p3 );
+            }
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t>
+    class SignalList3<void, p1t, p2t, p3t> : public Bu::List<Bu::Signal3<void, p1t, p2t, p3t> >
+    {
+        typedef Bu::List<Bu::Signal3<void, p1t, p2t, p3t> > MyType;
+        public:
+        SignalList3()
+        {
+        }
+   
+        using typename Bu::List<Bu::Signal3<void, p1t, p2t, p3t> >::iterator;
+        using typename Bu::List<Bu::Signal3<void, p1t, p2t, p3t> >::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_3
 
 #ifndef BU_SIGNAL_PARAM_COUNT_4
@@ -460,6 +742,7 @@ namespace Bu
         virtual ~_Slot4() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4 )=0;
         virtual _Slot4<ret, p1t, p2t, p3t, p4t> *clone() const=0;
+        virtual bool operator==( const _Slot4<ret, p1t, p2t, p3t, p4t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t>
@@ -478,6 +761,12 @@ namespace Bu
         virtual _Slot4<ret, p1t, p2t, p3t, p4t> *clone() const
         {
             return new __Slot4<cls, ret, p1t, p2t, p3t, p4t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot4<ret, p1t, p2t, p3t, p4t> &rhs ) const
+        {
+            const __Slot4<cls, ret, p1t, p2t, p3t, p4t> &rrhs = (const __Slot4<cls, ret, p1t, p2t, p3t, p4t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -501,6 +790,11 @@ namespace Bu
         virtual _Slot4<ret, p1t, p2t, p3t, p4t> *clone() const
         {
             return new __Slot4F<ret, p1t, p2t, p3t, p4t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot4<ret, p1t, p2t, p3t, p4t> &rhs ) const
+        {
+            return pFnc == ((const __Slot4F<ret, p1t, p2t, p3t, p4t> &)rhs).pFnc;
         }
     
     private:
@@ -532,6 +826,17 @@ namespace Bu
             return *this;
         }
     
+        bool operator==( const Signal4<ret, p1t, p2t, p3t, p4t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
+        }
+    
     private:
         _Slot4<ret, p1t, p2t, p3t, p4t> *pCb;
     };
@@ -553,6 +858,53 @@ namespace Bu
             new __Slot4F<ret, p1t, p2t, p3t, p4t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t>
+    class SignalList4 : public Bu::List<Bu::Signal4<ret, p1t, p2t, p3t, p4t> >
+    {
+        typedef Bu::List<Bu::Signal4<ret, p1t, p2t, p3t, p4t> > MyType;
+    public:
+        SignalList4()
+        {
+        }
+    
+        using typename Bu::List<Bu::Signal4<ret, p1t, p2t, p3t, p4t> >::iterator;
+        using typename Bu::List<Bu::Signal4<ret, p1t, p2t, p3t, p4t> >::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4 );
+                else
+                    return (*i)( p1, p2, p3, p4 );
+            }
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t>
+    class SignalList4<void, p1t, p2t, p3t, p4t> : public Bu::List<Bu::Signal4<void, p1t, p2t, p3t, p4t> >
+    {
+        typedef Bu::List<Bu::Signal4<void, p1t, p2t, p3t, p4t> > MyType;
+        public:
+        SignalList4()
+        {
+        }
+   
+        using typename Bu::List<Bu::Signal4<void, p1t, p2t, p3t, p4t> >::iterator;
+        using typename Bu::List<Bu::Signal4<void, p1t, p2t, p3t, p4t> >::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_4
 
 #ifndef BU_SIGNAL_PARAM_COUNT_5
@@ -568,6 +920,7 @@ namespace Bu
         virtual ~_Slot5() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5 )=0;
         virtual _Slot5<ret, p1t, p2t, p3t, p4t, p5t> *clone() const=0;
+        virtual bool operator==( const _Slot5<ret, p1t, p2t, p3t, p4t, p5t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t>
@@ -586,6 +939,12 @@ namespace Bu
         virtual _Slot5<ret, p1t, p2t, p3t, p4t, p5t> *clone() const
         {
             return new __Slot5<cls, ret, p1t, p2t, p3t, p4t, p5t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot5<ret, p1t, p2t, p3t, p4t, p5t> &rhs ) const
+        {
+            const __Slot5<cls, ret, p1t, p2t, p3t, p4t, p5t> &rrhs = (const __Slot5<cls, ret, p1t, p2t, p3t, p4t, p5t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -609,6 +968,11 @@ namespace Bu
         virtual _Slot5<ret, p1t, p2t, p3t, p4t, p5t> *clone() const
         {
             return new __Slot5F<ret, p1t, p2t, p3t, p4t, p5t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot5<ret, p1t, p2t, p3t, p4t, p5t> &rhs ) const
+        {
+            return pFnc == ((const __Slot5F<ret, p1t, p2t, p3t, p4t, p5t> &)rhs).pFnc;
         }
     
     private:
@@ -640,6 +1004,17 @@ namespace Bu
             return *this;
         }
     
+        bool operator==( const Signal5<ret, p1t, p2t, p3t, p4t, p5t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
+        }
+    
     private:
         _Slot5<ret, p1t, p2t, p3t, p4t, p5t> *pCb;
     };
@@ -661,6 +1036,53 @@ namespace Bu
             new __Slot5F<ret, p1t, p2t, p3t, p4t, p5t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t>
+    class SignalList5 : public Bu::List<Bu::Signal5<ret, p1t, p2t, p3t, p4t, p5t> >
+    {
+        typedef Bu::List<Bu::Signal5<ret, p1t, p2t, p3t, p4t, p5t> > MyType;
+    public:
+        SignalList5()
+        {
+        }
+    
+        using typename Bu::List<Bu::Signal5<ret, p1t, p2t, p3t, p4t, p5t> >::iterator;
+        using typename Bu::List<Bu::Signal5<ret, p1t, p2t, p3t, p4t, p5t> >::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4, p5 );
+                else
+                    return (*i)( p1, p2, p3, p4, p5 );
+            }
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t, typename p5t>
+    class SignalList5<void, p1t, p2t, p3t, p4t, p5t> : public Bu::List<Bu::Signal5<void, p1t, p2t, p3t, p4t, p5t> >
+    {
+        typedef Bu::List<Bu::Signal5<void, p1t, p2t, p3t, p4t, p5t> > MyType;
+        public:
+        SignalList5()
+        {
+        }
+   
+        using typename Bu::List<Bu::Signal5<void, p1t, p2t, p3t, p4t, p5t> >::iterator;
+        using typename Bu::List<Bu::Signal5<void, p1t, p2t, p3t, p4t, p5t> >::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4, p5 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_5
 
 #ifndef BU_SIGNAL_PARAM_COUNT_6
@@ -676,6 +1098,7 @@ namespace Bu
         virtual ~_Slot6() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6 )=0;
         virtual _Slot6<ret, p1t, p2t, p3t, p4t, p5t, p6t> *clone() const=0;
+        virtual bool operator==( const _Slot6<ret, p1t, p2t, p3t, p4t, p5t, p6t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t>
@@ -694,6 +1117,12 @@ namespace Bu
         virtual _Slot6<ret, p1t, p2t, p3t, p4t, p5t, p6t> *clone() const
         {
             return new __Slot6<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot6<ret, p1t, p2t, p3t, p4t, p5t, p6t> &rhs ) const
+        {
+            const __Slot6<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t> &rrhs = (const __Slot6<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -717,6 +1146,11 @@ namespace Bu
         virtual _Slot6<ret, p1t, p2t, p3t, p4t, p5t, p6t> *clone() const
         {
             return new __Slot6F<ret, p1t, p2t, p3t, p4t, p5t, p6t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot6<ret, p1t, p2t, p3t, p4t, p5t, p6t> &rhs ) const
+        {
+            return pFnc == ((const __Slot6F<ret, p1t, p2t, p3t, p4t, p5t, p6t> &)rhs).pFnc;
         }
     
     private:
@@ -748,6 +1182,17 @@ namespace Bu
             return *this;
         }
     
+        bool operator==( const Signal6<ret, p1t, p2t, p3t, p4t, p5t, p6t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
+        }
+    
     private:
         _Slot6<ret, p1t, p2t, p3t, p4t, p5t, p6t> *pCb;
     };
@@ -769,6 +1214,53 @@ namespace Bu
             new __Slot6F<ret, p1t, p2t, p3t, p4t, p5t, p6t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t>
+    class SignalList6 : public Bu::List<Bu::Signal6<ret, p1t, p2t, p3t, p4t, p5t, p6t> >
+    {
+        typedef Bu::List<Bu::Signal6<ret, p1t, p2t, p3t, p4t, p5t, p6t> > MyType;
+    public:
+        SignalList6()
+        {
+        }
+    
+        using typename Bu::List<Bu::Signal6<ret, p1t, p2t, p3t, p4t, p5t, p6t> >::iterator;
+        using typename Bu::List<Bu::Signal6<ret, p1t, p2t, p3t, p4t, p5t, p6t> >::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4, p5, p6 );
+                else
+                    return (*i)( p1, p2, p3, p4, p5, p6 );
+            }
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t>
+    class SignalList6<void, p1t, p2t, p3t, p4t, p5t, p6t> : public Bu::List<Bu::Signal6<void, p1t, p2t, p3t, p4t, p5t, p6t> >
+    {
+        typedef Bu::List<Bu::Signal6<void, p1t, p2t, p3t, p4t, p5t, p6t> > MyType;
+        public:
+        SignalList6()
+        {
+        }
+   
+        using typename Bu::List<Bu::Signal6<void, p1t, p2t, p3t, p4t, p5t, p6t> >::iterator;
+        using typename Bu::List<Bu::Signal6<void, p1t, p2t, p3t, p4t, p5t, p6t> >::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4, p5, p6 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_6
 
 #ifndef BU_SIGNAL_PARAM_COUNT_7
@@ -784,6 +1276,7 @@ namespace Bu
         virtual ~_Slot7() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7 )=0;
         virtual _Slot7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> *clone() const=0;
+        virtual bool operator==( const _Slot7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t>
@@ -802,6 +1295,12 @@ namespace Bu
         virtual _Slot7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> *clone() const
         {
             return new __Slot7<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &rhs ) const
+        {
+            const __Slot7<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &rrhs = (const __Slot7<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -825,6 +1324,11 @@ namespace Bu
         virtual _Slot7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> *clone() const
         {
             return new __Slot7F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &rhs ) const
+        {
+            return pFnc == ((const __Slot7F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &)rhs).pFnc;
         }
     
     private:
@@ -856,6 +1360,17 @@ namespace Bu
             return *this;
         }
     
+        bool operator==( const Signal7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
+        }
+    
     private:
         _Slot7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> *pCb;
     };
@@ -877,6 +1392,53 @@ namespace Bu
             new __Slot7F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t>
+    class SignalList7 : public Bu::List<Bu::Signal7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> >
+    {
+        typedef Bu::List<Bu::Signal7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> > MyType;
+    public:
+        SignalList7()
+        {
+        }
+    
+        using typename Bu::List<Bu::Signal7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> >::iterator;
+        using typename Bu::List<Bu::Signal7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> >::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4, p5, p6, p7 );
+                else
+                    return (*i)( p1, p2, p3, p4, p5, p6, p7 );
+            }
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t>
+    class SignalList7<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t> : public Bu::List<Bu::Signal7<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t> >
+    {
+        typedef Bu::List<Bu::Signal7<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t> > MyType;
+        public:
+        SignalList7()
+        {
+        }
+   
+        using typename Bu::List<Bu::Signal7<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t> >::iterator;
+        using typename Bu::List<Bu::Signal7<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t> >::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4, p5, p6, p7 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_7
 
 #ifndef BU_SIGNAL_PARAM_COUNT_8
@@ -892,6 +1454,7 @@ namespace Bu
         virtual ~_Slot8() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8 )=0;
         virtual _Slot8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> *clone() const=0;
+        virtual bool operator==( const _Slot8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t>
@@ -910,6 +1473,12 @@ namespace Bu
         virtual _Slot8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> *clone() const
         {
             return new __Slot8<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &rhs ) const
+        {
+            const __Slot8<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &rrhs = (const __Slot8<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -933,6 +1502,11 @@ namespace Bu
         virtual _Slot8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> *clone() const
         {
             return new __Slot8F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &rhs ) const
+        {
+            return pFnc == ((const __Slot8F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &)rhs).pFnc;
         }
     
     private:
@@ -964,6 +1538,17 @@ namespace Bu
             return *this;
         }
     
+        bool operator==( const Signal8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
+        }
+    
     private:
         _Slot8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> *pCb;
     };
@@ -985,6 +1570,53 @@ namespace Bu
             new __Slot8F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t>
+    class SignalList8 : public Bu::List<Bu::Signal8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> >
+    {
+        typedef Bu::List<Bu::Signal8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> > MyType;
+    public:
+        SignalList8()
+        {
+        }
+    
+        using typename Bu::List<Bu::Signal8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> >::iterator;
+        using typename Bu::List<Bu::Signal8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> >::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4, p5, p6, p7, p8 );
+                else
+                    return (*i)( p1, p2, p3, p4, p5, p6, p7, p8 );
+            }
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t>
+    class SignalList8<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> : public Bu::List<Bu::Signal8<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> >
+    {
+        typedef Bu::List<Bu::Signal8<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> > MyType;
+        public:
+        SignalList8()
+        {
+        }
+   
+        using typename Bu::List<Bu::Signal8<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> >::iterator;
+        using typename Bu::List<Bu::Signal8<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> >::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4, p5, p6, p7, p8 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_8
 
 #ifndef BU_SIGNAL_PARAM_COUNT_9
@@ -1000,6 +1632,7 @@ namespace Bu
         virtual ~_Slot9() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8, p9t p9 )=0;
         virtual _Slot9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> *clone() const=0;
+        virtual bool operator==( const _Slot9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t, typename p9t>
@@ -1018,6 +1651,12 @@ namespace Bu
         virtual _Slot9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> *clone() const
         {
             return new __Slot9<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &rhs ) const
+        {
+            const __Slot9<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &rrhs = (const __Slot9<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -1041,6 +1680,11 @@ namespace Bu
         virtual _Slot9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> *clone() const
         {
             return new __Slot9F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &rhs ) const
+        {
+            return pFnc == ((const __Slot9F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &)rhs).pFnc;
         }
     
     private:
@@ -1072,6 +1716,17 @@ namespace Bu
             return *this;
         }
     
+        bool operator==( const Signal9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
+        }
+    
     private:
         _Slot9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> *pCb;
     };
@@ -1093,6 +1748,53 @@ namespace Bu
             new __Slot9F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t, typename p9t>
+    class SignalList9 : public Bu::List<Bu::Signal9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> >
+    {
+        typedef Bu::List<Bu::Signal9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> > MyType;
+    public:
+        SignalList9()
+        {
+        }
+    
+        using typename Bu::List<Bu::Signal9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> >::iterator;
+        using typename Bu::List<Bu::Signal9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> >::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8, p9t p9 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9 );
+                else
+                    return (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9 );
+            }
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t, typename p9t>
+    class SignalList9<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> : public Bu::List<Bu::Signal9<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> >
+    {
+        typedef Bu::List<Bu::Signal9<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> > MyType;
+        public:
+        SignalList9()
+        {
+        }
+   
+        using typename Bu::List<Bu::Signal9<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> >::iterator;
+        using typename Bu::List<Bu::Signal9<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> >::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8, p9t p9 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_9
 
 #ifndef BU_SIGNAL_PARAM_COUNT_10
@@ -1108,6 +1810,7 @@ namespace Bu
         virtual ~_Slot10() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8, p9t p9, p10t p10 )=0;
         virtual _Slot10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> *clone() const=0;
+        virtual bool operator==( const _Slot10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t, typename p9t, typename p10t>
@@ -1126,6 +1829,12 @@ namespace Bu
         virtual _Slot10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> *clone() const
         {
             return new __Slot10<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &rhs ) const
+        {
+            const __Slot10<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &rrhs = (const __Slot10<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -1149,6 +1858,11 @@ namespace Bu
         virtual _Slot10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> *clone() const
         {
             return new __Slot10F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &rhs ) const
+        {
+            return pFnc == ((const __Slot10F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &)rhs).pFnc;
         }
     
     private:
@@ -1180,6 +1894,17 @@ namespace Bu
             return *this;
         }
     
+        bool operator==( const Signal10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
+        }
+    
     private:
         _Slot10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> *pCb;
     };
@@ -1201,6 +1926,53 @@ namespace Bu
             new __Slot10F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t, typename p9t, typename p10t>
+    class SignalList10 : public Bu::List<Bu::Signal10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> >
+    {
+        typedef Bu::List<Bu::Signal10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> > MyType;
+    public:
+        SignalList10()
+        {
+        }
+    
+        using typename Bu::List<Bu::Signal10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> >::iterator;
+        using typename Bu::List<Bu::Signal10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> >::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8, p9t p9, p10t p10 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10 );
+                else
+                    return (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10 );
+            }
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t, typename p9t, typename p10t>
+    class SignalList10<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> : public Bu::List<Bu::Signal10<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> >
+    {
+        typedef Bu::List<Bu::Signal10<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> > MyType;
+        public:
+        SignalList10()
+        {
+        }
+   
+        using typename Bu::List<Bu::Signal10<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> >::iterator;
+        using typename Bu::List<Bu::Signal10<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> >::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8, p9t p9, p10t p10 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_10
 
 };
