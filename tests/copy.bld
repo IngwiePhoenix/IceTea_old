@@ -1,0 +1,15 @@
+rule "testRule" {
+	input "*";
+	profile "build" {
+		copy(INPUT, OUTPUT);
+	}
+}
+
+target "bar.txt" {
+	rule "testRule";
+	input ["foo.txt"];
+}
+
+action "all" {
+	build: "testTarget";
+}

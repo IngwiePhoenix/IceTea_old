@@ -10,9 +10,9 @@
 # :)
 #
 
-CXXFLAGS += "-fPIC -rdynamic";
-LDFLAGS += "-fPIC -rdynamic -Wl,-export-dynamic";
-CXXFLAGS += "-ggdb -W -Wall";
+CXXFLAGS += "-fPIC";
+LDFLAGS += "-fPIC";
+CXXFLAGS += "-ggdb";
 
 CC = CXX; // We actually want to use c++ to compile our c files.
 
@@ -23,7 +23,11 @@ if PREFIX == null then
 
 action "default"
 {
-    build: ["build", targets("plugins")];
+    build: ["build"];
+}
+
+action "plugins" {
+	build: targets("plugins");
 }
 
 action "man"
