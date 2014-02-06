@@ -1,0 +1,17 @@
+rule "testRule" {
+	input "*";
+	profile "build" {
+		live_execute("./test.sh");
+	}
+}
+target "testTarget" {
+	rule "testRule";
+	input [];
+}
+target "testTarget2" {
+	rule "testRule";
+	input [];
+}
+action "default" {
+	build: [ "testTarget", "testTarget2" ];
+}

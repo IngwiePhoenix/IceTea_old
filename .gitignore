@@ -3,3 +3,11 @@
 bin/*
 libbu++/*
 minibu/*
+*.yy.c
+*.yy.h
+*.tab.c
+*.tab.h
+.ninja_*
+*.ninja
+*.a
+build

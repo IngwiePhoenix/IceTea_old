@@ -68,12 +68,20 @@ action "viminstall"
     install: targets("viminstall");
 }
 
+target "libminibu.a" {
+	input [files("minibu/src/*.cpp")];
+	rule "lib";
+	CFLAGS += "-Iminibu -Iminibu/src";
+	CXXFLAGS += CFLAGS;
+}
+
 target "build"
 {
+	requires "libminibu.a";
     input [files("src/*.y"), files("src/*.l"), files("src/*.cpp")];
     rule "exe";
-    LDFLAGS += "-Llibbu++ -lbu++ -ldl";
-    CXXFLAGS += "-Ilibbu++";
+    LDFLAGS += "-ldl -L. -lminibu";
+    CXXFLAGS += "";
     CFLAGS = CXXFLAGS;
     tag "tools";
 }
