@@ -15,7 +15,7 @@
 
 PluginInterface3( pluginFunctionCheck, check, FunctionCheck, Function,
         "Ingwie Phoenix", 0, 1 );
-Bu::String FunctionCheck::getName() const { return "check"; }
+FUNCTION_NAME(FunctionCheck, "check");
 
 FunctionCheck::FunctionCheck()
 {
@@ -32,10 +32,12 @@ Variable FunctionCheck::call( Variable &input, VarList lParams ) {
 	// Gather values
 	Bu::String command = (*p).getString();	
 	int cmd_rt;
+	#ifdef __WIN32__
+	Bu::String prog = "where.exe";
+	#else
 	Bu::String prog = "which";
+	#endif
 	char* argv[] = { prog.getStr(), command.getStr(), NULL };
-	
-	// on windows, we'd use "where" instead of "which". Include that in porting... o.o
 	
 	// Now, lets run the command and return. which returns 0 on success, 1 on error.
 	Bu::Process* proc = new Bu::Process(Bu::Process::Both, "which", argv);
@@ -45,7 +47,6 @@ Variable FunctionCheck::call( Variable &input, VarList lParams ) {
 	}
 	if(proc->childExited()) cmd_rt = proc->childExitStatus();
 	else if(proc->childSignaled()) cmd_rt = -1; // It totally signaled, so were returning a negative value.
-	else cmd_rt = proc->childExitStatus(); // well, lets try, at least?
 		
 	return new Variable(cmd_rt);
 }

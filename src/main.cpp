@@ -32,7 +32,7 @@ class Options : public Bu::OptParser
 {
 public:
     Options( int argc, char *argv[] ) :
-        sView("default"),
+        sView("default2"),
         sAction("default"),
         sConfig("default.bld"),
         sCacheFile(".build_cache"),
@@ -163,7 +163,7 @@ public:
 
         sio << sio.nl << sio.nl;
 
-        return 0;
+        exit(0);
     }
 
     Bu::String sView;

@@ -2,6 +2,6 @@
 #define HAVE_HELPER_MACROS_H
 
 // Some helper macros :3
-#define FUNCTION_NAME(fName) Bu::String FunctionCheck::getName() const { return #fName; }
+#define FUNCTION_NAME(class, fName) Bu::String class::getName() const { return fName; }
 
 #endif

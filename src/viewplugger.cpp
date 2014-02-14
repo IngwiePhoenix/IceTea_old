@@ -13,12 +13,14 @@
 extern Bu::PluginInfo pluginViewDefault;
 extern Bu::PluginInfo pluginViewMake;
 extern Bu::PluginInfo pluginViewNinja;
+extern Bu::PluginInfo pluginViewDefault2;
 
 ViewPlugger::ViewPlugger()
 {
     registerBuiltinPlugin( &pluginViewDefault );
     registerBuiltinPlugin( &pluginViewMake );
     registerBuiltinPlugin( &pluginViewNinja );
+    registerBuiltinPlugin( &pluginViewDefault2 );
 
     DIR *dir = opendir("/usr/lib/build");
     if( !dir )

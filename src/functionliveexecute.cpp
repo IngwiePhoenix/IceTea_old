@@ -36,47 +36,11 @@ Variable FunctionLiveExecute::call( Variable &/*input*/, VarList lParams )
 {
     pContext->getView()->cmdStarted( lParams.first().getString() );
     Process pCmd(
-    	Process::Both, 
+    	Process::None, 
     	"/bin/bash", "/bin/bash", "-c",
         lParams.first().getString().getStr(), NULL
     );
-    
-    bool DoNL=false;
-
-    do {
-        char buf[128];
-        char errBuf[128];
-        bool out, err;
-        String sStdOut, sStdErr;
-        pCmd.select( out, err );
-        if(!DoNL && (out || err)) { DoNL=true; sio << sio.nl; }
-        if( err ) {
-        	int iRead = pCmd.readErr( errBuf, 128 );
-			sStdErr.append( errBuf, iRead );
-		}
-        if( out ) {
-        	int iRead2 = pCmd.read( buf, 128 );
-        	sStdOut.append( buf, iRead2 );
-        }
-        sio << sStdOut << sio.flush;
-        serr << sStdErr << serr.flush;
-    } while( pCmd.isRunning() );
-    
-    if( pCmd.childExited() )
-    {
-        if( pCmd.childExitStatus() != 0 )
-        {
-            throw Bu::ExceptionBase("Command exited with errorcode %d.", pCmd.childExitStatus() );
-        }
-    }
-    else
-    {
-        /*pContext->getView()->cmdFinished(
-            sStdOut, sStdErr, pCmd.childExitStatus()
-            );
-        */
-        throw Bu::ExceptionBase("Command Failed");
-    }
+    pCmd.wait();
     return Variable( pCmd.childExitStatus() );
 }
 
