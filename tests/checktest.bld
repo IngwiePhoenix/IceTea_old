@@ -1,0 +1,7 @@
+if check("gcc") != 0 then {
+	error "GCC not there.";
+}
+
+action "all" {
+	notice "ovo";
+}
