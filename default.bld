@@ -78,10 +78,14 @@ target "libminibu.a" {
 target "build"
 { 
 	requires "libminibu.a";
-    input [files("src/*.y"), files("src/*.l"), files("src/*.cpp")];
+    input [
+    	files("src/*.y"), files("src/*.l"), files("src/*.cpp"), 
+    	files("src/views/*.cpp"), files("src/functions/*.cpp"), 
+    	files("src/conditions/*.cpp"), files("src/misc/*.c")
+    ];
     rule "exe";
     LDFLAGS += "-ldl -L. -lminibu";
-	CFLAGS += "-Iminibu -Iminibu/src";
+	CFLAGS += "-Iminibu -Iminibu/src -Isrc -Isrc/views -Isrc/functions -Isrc/conditions -Isrc/misc";
     CXXFLAGS += CFLAGS;
     tag "tools";
 }

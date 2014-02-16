@@ -161,9 +161,19 @@ void ViewDefault2::cmdFinished( const Bu::String &sStdOut,
         }
         sio << C_BR_RED << "\\-----" << C_RESET << sio.nl;
     }
-    //sio << C_BR_WHITE << "[" << C_BR_GREEN << sStdOut << C_BR_WHITE << "]" << sio.nl;
-    //sio << C_BR_WHITE << "[" << C_BR_RED << sStdErr << C_BR_WHITE << "]" << sio.nl;
     bDisped = true;
+}
+
+void ViewDefault2::checkBegin(Bu::String what) {
+	config_what = what;
+	sio << C_BR_WHITE << "--" << C_BR_GREEN << " Checking for: " << what << "..." << sio.flush;
+}
+void ViewDefault2::checkEnd() { sio << C_DEFAULT << sio.nl; config_what.clear(); }
+void ViewDefault2::checkFail() {
+	sio << "\r" << C_BR_RED << "--" << " Checking for: " << config_what << " FAILED" << sio.flush;
+}
+void ViewDefault2::checkSuccess() {
+	sio << "\r" << C_BR_WHITE << "--" << C_BR_CYAN << " Checking for: " << config_what << " OK" << sio.flush;
 }
 
 void ViewDefault2::userError( const Bu::String &sMsg )

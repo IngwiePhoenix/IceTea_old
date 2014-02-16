@@ -33,7 +33,12 @@ extern Bu::PluginInfo pluginFunctionUnique;
 // custom
 extern Bu::PluginInfo pluginFunctionCopy;
 extern Bu::PluginInfo pluginFunctionLiveExecute;
+extern Bu::PluginInfo pluginFunctionOS;
+extern Bu::PluginInfo pluginFunctionPrint;
 extern Bu::PluginInfo pluginFunctionCheck;
+extern Bu::PluginInfo pluginFunctionCheckInit;
+extern Bu::PluginInfo pluginFunctionQuietExecute;
+extern Bu::PluginInfo pluginFunctionDownload;
 
 
 FunctionPlugger::FunctionPlugger()
@@ -61,7 +66,12 @@ FunctionPlugger::FunctionPlugger()
 	// custom
     registerBuiltinPlugin( &pluginFunctionCopy );
     registerBuiltinPlugin( &pluginFunctionLiveExecute );
+    registerBuiltinPlugin( &pluginFunctionOS );
+    registerBuiltinPlugin( &pluginFunctionPrint );
     registerBuiltinPlugin( &pluginFunctionCheck );
+    registerBuiltinPlugin( &pluginFunctionCheckInit );
+    registerBuiltinPlugin( &pluginFunctionQuietExecute );
+    registerBuiltinPlugin( &pluginFunctionDownload );
 
     DIR *dir = opendir("/usr/lib/build");
     if( !dir )

@@ -4,28 +4,39 @@
 //
 
 
-if CXX == null then
-{
-    CXX = "g++";
+if CXX == null then {
+	# Mac is always clang, period. :)
+	if OS() == "mac" then { CXX = "clang++"; }
+	# Windows may have different tools to use.
+	else if OS() == "win" then {
+		# has_tool("cl.exe") will set cxx to cl.
+		# otherwise, we try if we have gcc and set that - then clang.
+		# For now...
+		CXX = "cl.exe";
+	} else {
+		# Linux very often uses g++...could use clang, heh.
+    	CXX = "g++";
+    }
 }
 
-if AR == null then
-{
+if AR == null then {
     AR = "ar";
 }
 
-if CC == null then
-{
-    CC = "cc";
+if CC == null then {
+	if OS() == "mac" then { CC = "clang"; }
+	else if OS() == "win" then {
+		CC = "cl.exe";
+	} else {
+    	CC = "gcc";
+    }
 }
 
-if BISON == null then
-{
+if BISON == null then {
     BISON = "bison";
 }
 
-if FLEX == null then
-{
+if FLEX == null then {
     FLEX = "flex";
 }
 
@@ -52,7 +63,71 @@ function cToObj()
     {
         return OBJ_DIR + "/" + INPUT.fileName().regex("\\.c$", ".o");
     }
+}
 
+function lib(lname) {
+	# The best way to know whats up is to check the overall compiler: CC.
+	if CC == "gcc" then {
+		INPUT += "-l" + lname + " ";
+	} else if CC == "clang" then {
+		INPUT += "-l" + lname + " ";
+	} else {
+		# Uh, windows...dunno, yet.
+		print("Unsupported OS: Windows."); 
+	}
+	return INPUT;
+}
+
+function lib_dir(dir) {
+	# The best way to know whats up is to check the overall compiler: CC.
+	if CC == "gcc" then {
+		INPUT = INPUT + "-L" + dir + " ";
+	} else if CC == "clang" then {
+		INPUT = INPUT + "-L" + dir + " ";
+	} else { print("Unsupported OS: Windows."); }
+	return INPUT;
+}
+
+function inc_dir(dir) {
+	# The best way to know whats up is to check the overall compiler: CC.
+	if CC == "gcc" then {
+		INPUT = INPUT + "-I" + dir + " ";
+	} else if CC == "clang" then {
+		INPUT = INPUT + "-I" + dir + " ";
+	} else { print("Unsupported OS: Windows."); }
+	return INPUT;
+}
+
+// Checkers.
+function has_tool(t) {
+	if OS() == "win" then { which = "where.exe"; }
+	else { which = "which"; }
+	// Check for the tool.
+	return execute_quiet(which + " " + t);
+}
+
+function has_lib(library) {
+	fh = open("./.tmp.c","w");
+	fh.write("int main(void){ return 0; }");
+	fh.close();
+	instr = "${CC} ${CFLAGS} ${LDFLAGS} ./.tmp.c -o ./.tmp.out ";
+	instr = instr.lib(library);
+	rt = execute_quiet(instr);
+	unlink("./.tmp.c");
+	unlink("./.tmp.out");
+	return rt;
+}
+
+function has_header(header) {
+	fh = open("./.tmp.c","w");
+	fh.write("#include <" + header + ">\n");
+	fh.write("int main(void){ return 0; }");
+	fh.close();
+	instr = "${CC} ${CFLAGS} ${LDFLAGS} ./.tmp.c -o ./.tmp.out";
+	rt = execute_quiet(instr);
+	unlink("./.tmp.c");
+	unlink("./.tmp.out");
+	return rt;
 }
 
 rule "exe"
@@ -154,3 +229,57 @@ rule "class"
     }
 }
 
+# This is for OS X.
+if OS() == "mac" then {
+	rule "dylib" {
+		input "*.o";
+		profile "build" {
+			execute("${CXX} -dynamiclib ${LDFLAGS} -o ${OUTPUT} ${INPUT}");
+		}
+	}
+	rule "versioned_framework" {
+		input "*.dylib";
+		profile "build" {
+			# Need to do this one here.
+			if resource_path == null then { warning "No resources specified!"; }
+			if header_path == null then { warning "No headers specified!"; }
+			if info_plist == null then { warning "No Info.plist specified!"; }
+			framework_name = OUTPUT.replace(".framework","");
+			#mkdirp(OUTPUT + "/Versions/A/");
+			#mkdir(OUTPUT + "/Versions/A/Resources");
+			#mkdir(OUTPUT + "/Versions/A/Header");
+			if info_plist != null then {
+				copy(info_plist, OUTPUT + "/Versions/A/Resources/Info.plist");
+			}
+			if resource_path != null then {
+				copy(resource_path, OUTPUT + "/Versions/A/Resources");
+			}
+			copy(INPUT, OUTPUT +  "/Versions/A/" + framework_name);
+			execute("cd \"$(OUTPUT)\" && ln -s \"./Versions/A/${framework_name}\" \"${framework_name}\"");
+			execute("cd \"$(OUTPUT)\" && ln -s \"./Versions/A/Resources\" Resources");
+			execute("cd \"$(OUTPUT)\" && ln -s \"./Versions/A/Header\" Header");
+		}
+		profile "clean" {
+			execute("rm -rf \"${OUTPUT}\"");
+		}
+		profile "install" {
+			execute("cp \"${OUTPUT}\" /Library/Frameworks");
+		}
+	}
+	rule "unversioned_Framework" {
+		input "*.dylib";
+		profile "build" {
+			#mkdirp(OUTPUT);
+			copy(INPUT, OUTPUT + "/" + fileName(INPUT).replace(".dylib",""));
+			if resources_path != null then { copy(resources_path, OUTPUT + "/Resources"); }
+			if header_path != null then { copy(header_path, OUTPUT + "/Headers"); }
+			if info_plist != null then { copy(info_plist, OUTPUT + "/Info.plist"); }
+		}
+		profile "clean" {
+			execute("rm -rf \"${OUTPUT}\"");
+		}
+		profile "install" {
+			execute("cp \"${OUTPUT}\" /Library/Frameworks");
+		}
+	}
+}

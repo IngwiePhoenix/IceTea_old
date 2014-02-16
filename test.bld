@@ -1,0 +1,21 @@
+check_init("lib(libcurl)");
+check(has_lib("curl"));
+
+check_init("tool(ninja)");
+check(has_tool("ninja"));
+
+check_init("header(limits.h)");
+check(has_header("limits.h"));
+
+check_init("winsock");
+check(has_lib("winsock"));
+
+
+target "main" {
+	input ["pseudo/*.c"];
+	rule "exe";
+}
+
+action "all" {
+	build: "main";
+}

@@ -5,16 +5,16 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef VIEW_DEFAULT2_H
-#define VIEW_DEFAULT2_H
+#ifndef VIEW_DEFAULT_H
+#define VIEW_DEFAULT_H
 
 #include "view.h"
 
-class ViewDefault2 : public View
+class ViewDefault : public View
 {
 public:
-    ViewDefault2();
-    virtual ~ViewDefault2();
+    ViewDefault();
+    virtual ~ViewDefault();
 
     virtual void beginAction( const Bu::String &sAction );
     virtual void endAction();
@@ -31,6 +31,11 @@ public:
     virtual void cmdStarted( const Bu::String &sCmd );
     virtual void cmdFinished( const Bu::String &sStdOut,
             const Bu::String &sStdErr, long iExit );
+
+	virtual void checkBegin(const Bu::String what);
+	virtual void checkEnd();
+	virtual void checkFail();
+	virtual void checkSuccess();
 
     virtual void userError( const Bu::String &sMsg );
     virtual void userWarning( const Bu::String &sMsg );
@@ -50,6 +55,8 @@ private:
     int iCurrent;
     Bu::String sCurProfile;
     Bu::String sTopTarget;
+    
+    Bu::String config_what;
 };
 
 #endif

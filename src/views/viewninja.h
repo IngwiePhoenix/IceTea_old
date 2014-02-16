@@ -8,13 +8,25 @@
 #ifndef VIEW_DEFAULT_H
 #define VIEW_DEFAULT_H
 
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/time.h>
+#endif
+*/
+
 #include "view.h"
 
-class ViewDefault : public View
+class ViewNinja : public View
 {
 public:
-    ViewDefault();
-    virtual ~ViewDefault();
+    ViewNinja();
+    virtual ~ViewNinja();
 
     virtual void beginAction( const Bu::String &sAction );
     virtual void endAction();
@@ -31,6 +43,11 @@ public:
     virtual void cmdStarted( const Bu::String &sCmd );
     virtual void cmdFinished( const Bu::String &sStdOut,
             const Bu::String &sStdErr, long iExit );
+
+	virtual void checkBegin(const Bu::String what);
+	virtual void checkEnd();
+	virtual void checkFail();
+	virtual void checkSuccess();
 
     virtual void userError( const Bu::String &sMsg );
     virtual void userWarning( const Bu::String &sMsg );
@@ -50,6 +67,11 @@ private:
     int iCurrent;
     Bu::String sCurProfile;
     Bu::String sTopTarget;
+    
+    // custom
+    bool targedProcessed;
+    bool needNewLine;
+    Bu::String config_what;
 };
 
 #endif

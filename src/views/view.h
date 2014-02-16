@@ -40,6 +40,11 @@ public:
     virtual void cmdFinished( const Bu::String &sStdOut,
             const Bu::String &sStdErr, long iExit )=0;
 
+	virtual void checkBegin(Bu::String what)=0;
+	virtual void checkEnd()=0;
+	virtual void checkFail()=0;
+	virtual void checkSuccess()=0;
+
     virtual void userError( const Bu::String &sMsg )=0;
     virtual void userWarning( const Bu::String &sMsg )=0;
     virtual void userNotice( const Bu::String &sMsg )=0;

@@ -66,6 +66,14 @@ void ViewMake::cmdFinished( const Bu::String &sStdOut,
     sio << sStdOut << sStdErr;
 }
 
+// Going for the autoconf style :)
+void ViewMake::checkBegin(Bu::String what) {
+	sio << "checking for: " << what << "... " << sio.flush;
+}
+void ViewMake::checkEnd() { sio << sio.nl; }
+void ViewMake::checkFail() { sio << "FAILED" << sio.flush; }
+void ViewMake::checkSuccess() { sio << "OK" << sio.flush; }
+
 void ViewMake::userError( const Bu::String &sMsg )
 {
     sio << "Error: " << sMsg << sio.nl;

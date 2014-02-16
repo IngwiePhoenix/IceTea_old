@@ -176,6 +176,18 @@ void ViewDefault::cmdFinished( const Bu::String &sStdOut,
     bDisped = true;
 }
 
+void ViewDefault::checkBegin(Bu::String what) {
+	config_what = what;
+	sio << C_BR_WHITE << "--" << C_BR_GREEN << " Checking for: " << config_what << "..." << sio.flush;
+}
+void ViewDefault::checkEnd() { sio << C_DEFAULT << sio.nl; config_what.clear(); }
+void ViewDefault::checkFail() {
+	sio << "\r" << C_BR_RED << "--" << " Checking for: " << config_what << " FAILED" << sio.flush;
+}
+void ViewDefault::checkSuccess() {
+	sio << "\r" << C_BR_WHITE << "--" << C_BR_CYAN << " Checking for: " << config_what << " OK" << sio.flush;
+}
+
 void ViewDefault::userError( const Bu::String &sMsg )
 {
     sio << C_BR_RED << "Error: " << sMsg << C_RESET << sio.nl;

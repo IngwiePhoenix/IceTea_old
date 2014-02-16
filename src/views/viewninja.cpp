@@ -162,6 +162,18 @@ void ViewNinja::cmdFinished(
     bDisped = true;
 }
 
+void ViewNinja::checkBegin(Bu::String what) {
+	config_what = what;
+	sio << C_BR_WHITE << "--" << C_BR_GREEN << " Checking for: " << what << "..." << sio.flush;
+}
+void ViewNinja::checkEnd() { sio << C_DEFAULT << sio.nl; config_what.clear(); }
+void ViewNinja::checkFail() {
+	sio << "\r" << C_BR_RED << "!" << " Checking for: " << config_what << " FAILED" << sio.flush;
+}
+void ViewNinja::checkSuccess() {
+	sio << "\r" << C_BR_WHITE << ">" << C_BR_CYAN << " Checking for: " << config_what << " OK" << sio.flush;
+}
+
 void ViewNinja::userError( const Bu::String &sMsg )
 {
     sio << C_BR_RED << "Error: " << sMsg << C_RESET << sio.nl;
