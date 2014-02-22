@@ -8,14 +8,18 @@ check_init("header(limits.h)");
 check(has_header("limits.h"));
 
 check_init("winsock");
-check(has_lib("winsock"));
+HAS_WINSOCK = has_lib("winsock");
+check(HAS_WINSOCK);
+print("HAS_WINSOCK:",HAS_WINSOCK);
 
 
-target "main" {
-	input ["pseudo/*.c"];
-	rule "exe";
+target "google.html" {
+	display "Download";
+	profile "build" {
+		download("http://google.de/index.html",OUTPUT);
+	}
 }
 
 action "all" {
-	build: "main";
+	build: [targets()];
 }

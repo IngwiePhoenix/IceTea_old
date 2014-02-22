@@ -9,10 +9,11 @@
 #include "helper_macros.h"
 #include <bu/plugger.h>
 #include <stdlib.h>
+#include <bu/sio.h>
 extern "C" {
 #include "http.h"
 }
-
+using namespace Bu;
 PluginInterface3( pluginFunctionDownload, download, FunctionDownload, Function,
         "Ingwie Phoenix", 0, 1 );
 FUNCTION_NAME(FunctionDownload, "download")  
@@ -30,7 +31,7 @@ Variable FunctionDownload::call( Variable &input, VarList lParams ) {
 	Bu::String to = (*i).getString();
 	Variable rt = new Variable(Variable::typeInt);
 
-	if( (sd = http_request( to.getStr() )) < 1 ) {
+	if( (sd = http_request( url.getStr() )) < 1 ) {
 		rt = 1;
 		return rt;
 	}
