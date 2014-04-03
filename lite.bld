@@ -1,0 +1,6 @@
+// Just a pretty blunt rule page. But, useful.
+target "liblite.a" {
+	rule "lib";
+	input [files("lite/src/*.cc")];
+	CXXFLAGS += "-Ilite/include";
+}

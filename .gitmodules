@@ -1,0 +1,3 @@
+[submodule "lite"]
+	path = lite
+	url = https://github.com/merguez-it/lite.git

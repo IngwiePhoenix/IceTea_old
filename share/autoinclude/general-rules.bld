@@ -19,10 +19,6 @@ if CXX == null then {
     }
 }
 
-if AR == null then {
-    AR = "ar";
-}
-
 if CC == null then {
 	if OS() == "mac" then { CC = "clang"; }
 	else if OS() == "win" then {
@@ -32,13 +28,10 @@ if CC == null then {
     }
 }
 
-if BISON == null then {
-    BISON = "bison";
-}
-
-if FLEX == null then {
-    FLEX = "flex";
-}
+// Misc stuff
+if AR == null then { AR = "ar"; }
+if BISON == null then { BISON = "bison"; }
+if FLEX == null then { FLEX = "flex"; }
 
 function cppToObj()
 {
@@ -50,7 +43,17 @@ function cppToObj()
     {
         return OBJ_DIR + "/" + INPUT.fileName().regex("\\.cpp$", ".o");
     }
-
+}
+function ccToObj()
+{
+    if OBJ_DIR == null then
+    {
+        return INPUT.regex("\\.cc$", ".o");
+    }
+    else
+    {
+        return OBJ_DIR + "/" + INPUT.fileName().regex("\\.cc$", ".o");
+    }
 }
 
 function cToObj()
@@ -130,6 +133,20 @@ function has_header(header) {
 	return rt;
 }
 
+function has_function(fnc, header, library) {
+	fh = open("./.tmp.c","w");
+	fh.write("#include <" + header + ">\n");
+	fh.write("int main(void){ if(&" + fnc + " != NULL) return 2; }");
+	fh.close();
+	instr = "${CC} ${CFLAGS} ${LDFLAGS} ./.tmp.c -o ./.tmp.out";
+	instr = instr.lib(library);
+	rt = execute_quiet(instr);
+	unlink("./.tmp.c");
+	unlink("./.tmp.out");
+	if rt == "2" then { return 0; }
+	else { return 1; }
+}
+
 rule "exe"
 {
     input "*.o";
@@ -170,6 +187,19 @@ rule "cpp"
         execute("${CXX} ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
     }
 }
+// Duplicate, but for .cc
+rule "cc"
+{
+    input "*.cc";
+    output INPUT.ccToObj();
+    requires getMakeDeps("${CXX} ${CXXFLAGS} -M -MG ${INPUT}");
+    profile "build"
+    {
+        execute("${CXX} ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
+    }
+}
+
+
 
 // Heh, we're not going to use this one.
 rule "c"

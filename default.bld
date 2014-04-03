@@ -16,6 +16,9 @@ CXXFLAGS += "-ggdb";
 
 CC = CXX; // We actually want to use c++ to compile our c files.
 
+// Including this, so we can late ron include lite.
+include "lite.bld";
+
 if PREFIX == null then
 {
     PREFIX = "/usr/local";
@@ -77,7 +80,7 @@ target "libminibu.a" {
 
 target "build"
 { 
-	requires "libminibu.a";
+	requires ["libminibu.a", "liblite.a"];
     input [
     	files("src/*.y"), files("src/*.l"), files("src/*.cpp"), 
     	files("src/views/*.cpp"), files("src/functions/*.cpp"), 
@@ -85,7 +88,7 @@ target "build"
     ];
     rule "exe";
     LDFLAGS += "-ldl -L. -lminibu";
-	CFLAGS += "-Iminibu -Iminibu/src -Isrc -Isrc/views -Isrc/functions -Isrc/conditions -Isrc/misc";
+	CFLAGS += "-Iminibu -Iminibu/src -Isrc -Isrc/views -Isrc/functions -Isrc/conditions -Isrc/misc -Ilite/include";
     CXXFLAGS += CFLAGS;
     tag "tools";
 }

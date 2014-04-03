@@ -45,7 +45,7 @@ public:
         iInfoLevel( 0 )
     {
         bool bClean = false;
-        addHelpBanner("build mark 3\n");
+        addHelpBanner("build mark 3 (Ingwie Phoenix' version)\n");
 
         Bu::String sViews("Select a view from: ");
         StrList lViews = ViewPlugger::getInstance().getPluginList();
@@ -165,6 +165,20 @@ public:
 
         exit(0);
     }
+    
+    // Override to enable the enable opts.
+    void optionError( const Bu::String &sOption ) {
+    	if(
+    		sOption.compareSub( "--enable", 0, strlen("--enable") )
+    		|| sOption.compareSub( "--with", 0, strlen("--with") )
+    	) {
+    		// The option is an enabler. add it to the functionals.
+    		long size = strlen("--");
+    		String nOpt( sOption.getSubStrIdx(size, sOption.getSize()) );
+    		nOpt = nOpt.replace("-","_");
+    		functionals.append(nOpt);
+    	}
+    }
 
     Bu::String sView;
     Bu::String sAction;
@@ -177,6 +191,7 @@ public:
     bool bEnviron;
     bool bCache;
     int iInfoLevel;
+    List<String> functionals;
 };
 
 int main( int argc, char *argv[] )
@@ -194,7 +209,7 @@ int main( int argc, char *argv[] )
     }
 
     Options opts( argc, argv );
-
+    
     try
     {
         cnt.setView( ViewPlugger::getInstance().instantiate( opts.sView ) );
@@ -232,6 +247,13 @@ int main( int argc, char *argv[] )
                 String( *env+iSplit+1 )
                 );
         }
+    }
+    // Append all the variables from functionals into the scope.
+    // opts.functionals
+    for( StrList::iterator i = opts.functionals.begin(); i; i++ ) {    	
+    	cnt.addVariable(
+    		(*i), String("1")
+    	);
     }
 
     if( opts.bAutoInclude )

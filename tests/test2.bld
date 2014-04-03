@@ -1,0 +1,3 @@
+if enable_foo != null then {
+	print("Value: ",enable_foo);
+}
