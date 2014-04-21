@@ -16,9 +16,6 @@ CXXFLAGS += "-ggdb";
 
 CC = CXX; // We actually want to use c++ to compile our c files.
 
-// Including this, so we can late ron include lite.
-include "lite.bld";
-
 if PREFIX == null then
 {
     PREFIX = "/usr/local";
