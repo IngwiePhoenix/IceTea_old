@@ -55,6 +55,17 @@ function ccToObj()
         return OBJ_DIR + "/" + INPUT.fileName().regex("\\.cc$", ".o");
     }
 }
+function cxxToObj()
+{
+    if OBJ_DIR == null then
+    {
+        return INPUT.regex("\\.cxx$", ".o");
+    }
+    else
+    {
+        return OBJ_DIR + "/" + INPUT.fileName().regex("\\.cc$", ".o");
+    }
+}
 
 function cToObj()
 {
@@ -157,7 +168,7 @@ rule "exe"
     }
 }
 
-rule "so"
+/*rule "so"
 {
     input "*.o";
     profile "build"
@@ -165,7 +176,7 @@ rule "so"
         INPUT = [INPUT].unique().matches("*.o");
         execute("${CXX} -shared -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
     }
-}
+}*/
 
 rule "lib"
 {
@@ -174,6 +185,16 @@ rule "lib"
     {
         INPUT = [INPUT].unique().matches("*.o");
         execute("${AR} cr ${OUTPUT} ${INPUT}");
+    }
+}
+
+rule "cxx" {
+    input "*.cxx";
+    output INPUT.cxxToObj();
+    requires getMakeDeps("${CXX} ${CXXFLAGS} -M -MG ${INPUT}");
+    profile "build"
+    {
+        execute("${CXX} ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
     }
 }
 
@@ -187,9 +208,9 @@ rule "cpp"
         execute("${CXX} ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
     }
 }
+
 // Duplicate, but for .cc
-rule "cc"
-{
+rule "cc" {
     input "*.cc";
     output INPUT.ccToObj();
     requires getMakeDeps("${CXX} ${CXXFLAGS} -M -MG ${INPUT}");
@@ -198,8 +219,6 @@ rule "cc"
         execute("${CXX} ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
     }
 }
-
-
 
 // Heh, we're not going to use this one.
 rule "c"
@@ -236,31 +255,25 @@ rule "flex"
     }
 }
 
-rule "jar"
-{
-    input "*.class";
-    profile "build"
-    {
-        if exists(OUTPUT) then
-        {
-            unlink(OUTPUT);
-        }
-        execute("jar cf ${OUTPUT} ${INPUT}");
-    }
+rule "obj-c" {
+   	input "*.m";
+   	output INPUT.replace(".m",".o");
+   	requires getMakeDeps("${CC} ${CFLAGS} ${OBJCFLAGS} -M -MG ${INPUT}");
+   	profile "build" {
+       	execute("${CC} -x objective-c ${CFLAGS} ${OBJCFLAGS} -c -o ${OUTPUT} ${INPUT}", "clang");
+   	}
 }
-
-rule "class"
-{
-    input "*.java";
-    output INPUT.regex("\\.java", ".class");
-    profile "build"
-    {
-        execute("javac -cp . ${INPUT}");
-    }
+rule "obj-cxx" {
+   	input "*.mm";
+   	output INPUT.replace(".mm",".o");
+   	requires getMakeDeps("${CXX} ${CXXFLAGS} ${OBJCXXFLAGS} -M -MG ${INPUT}");
+   	profile "build" {
+       	execute("${CXX} -x objective-c++ ${CXXFLAGS} ${OBJCXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "clang++");
+   	}
 }
 
 # This is for OS X.
-if OS() == "mac" then {
+/*if OS() == "mac" then {
 	rule "dylib" {
 		input "*.o";
 		profile "build" {
@@ -312,4 +325,4 @@ if OS() == "mac" then {
 			execute("cp \"${OUTPUT}\" /Library/Frameworks");
 		}
 	}
-}
+}*/
