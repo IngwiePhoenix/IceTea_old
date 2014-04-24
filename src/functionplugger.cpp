@@ -31,7 +31,6 @@ extern Bu::PluginInfo pluginFunctionWrite;
 extern Bu::PluginInfo pluginFunctionUnique;
 
 // custom
-extern Bu::PluginInfo pluginFunctionCopy;
 extern Bu::PluginInfo pluginFunctionLiveExecute;
 extern Bu::PluginInfo pluginFunctionOS;
 extern Bu::PluginInfo pluginFunctionPrint;
@@ -64,7 +63,6 @@ FunctionPlugger::FunctionPlugger()
     registerBuiltinPlugin( &pluginFunctionUnique );
 
 	// custom
-    registerBuiltinPlugin( &pluginFunctionCopy );
     registerBuiltinPlugin( &pluginFunctionLiveExecute );
     registerBuiltinPlugin( &pluginFunctionOS );
     registerBuiltinPlugin( &pluginFunctionPrint );

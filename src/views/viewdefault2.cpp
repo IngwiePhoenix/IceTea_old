@@ -109,7 +109,7 @@ void ViewDefault2::processTarget( const Bu::String &sProfile,
     int iPct = (iTotal>0)?(iCurrent*100/iTotal):(100);
     sio << C_BR_WHITE << "[" << C_BR_GREEN << Fmt(3) << iPct
         << "%" << C_BR_WHITE << "] " << C_BR_MAGENTA
-        << Fmt(10) << rTarget.getDisplay() << C_BR_WHITE
+        << Fmt(15) << rTarget.getDisplay() << C_BR_WHITE
         << ": " << rTarget.getOutputList().first() << C_RESET << sio.nl;
 
     bDisped = true;

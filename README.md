@@ -12,6 +12,8 @@ Features:
  * Supports plugins.
  * Write much, much less and do more.
  * Builtin understanding of dependency tracking.
+ 	* This feature is currently removed, as I am working on Windows compatibility. It'll be re-introduced later
+ 	* Well, it is still present, but not used in any compilation rules.
 
 ## Requirements
 
@@ -45,6 +47,18 @@ tarball release.
 
 Build also builds the easiest when using build.  Once you have a working
 version of build it's very easy to keep working on build.
+
+### Building form source
+
+The minimal requirement is Flex and Bison. As I have worked on the fork, I have not found a clever way to dynamicaly download the dependency files using Windows' shell. On linux, you may have CURL or Wget available. 
+For now, my fork will further include the `minibu/` folder. Now, you just have to run `./speedbuild.sh` to build yourself a copy. But its recommended to use `build.sh`. The speedbuild is only good if you wish to understand how this tool is built on the simplest of all ways. After having used either of these scripts, you may want to properly build the tool using itself. To do so, follow these steps:
+
+
+    cp build build_speed
+    find . -name "*.o" -delete
+    ./build_speed
+
+Doing that, you will get a new build executable, but properly linked, configured and compiled. You can delete `build_speed` now.
 
 # Example Build Scripts
 
@@ -90,3 +104,8 @@ use, then creates two explicit targets.  The second target, joved, also
 requires that libjove.a is up to date, but it is not treated as an input.  This
 is enough to determine order of building, all source files, targets, and even
 provides full dependency tracking.
+
+
+# Windows compatibility
+
+As I am evolving this fork, I am also working on further improving the compatibility. In my current version, I am supporting a few of `cl.exe`'s command switches, as well as the rules. My goal is to be fully windows-compatible, to build projects of any scale on any platform.

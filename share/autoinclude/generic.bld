@@ -1,130 +1,80 @@
-//
-// Really, variables here should default to something that's platform dependant,
-// but for now, we use linux, I'll default them to gnu/linux
-//
-
-
-if CXX == null then {
-	# Mac is always clang, period. :)
-	if OS() == "mac" then { CXX = "clang++"; }
-	# Windows may have different tools to use.
-	else if OS() == "win" then {
-		# has_tool("cl.exe") will set cxx to cl.
-		# otherwise, we try if we have gcc and set that - then clang.
-		# For now...
-		CXX = "cl.exe";
-	} else {
-		# Linux very often uses g++...could use clang, heh.
-    	CXX = "g++";
-    }
+// Assigning the rough tools.
+//    requires getMakeDeps("${CXX} ${CXXFLAGS} -M -MG ${INPUT}");
+if OS() == "win" then {
+	if WHICH == null then { WHICH = "where"; }
+	if CC == null then { CC = "cl.exe"; }
+	if CXX == null then { CXX = "cl.exe"; }
+	if LINK == null then { LINK = "link.exe"; }
+	if LIB == null then { LIB = "lib.exe"; }
+	IS_GNU="no";
+} else {
+	if WHICH == null then { WHICH = "which"; }
+	if CC == null then { CC = "gcc"; }
+	if CXX == null then { CXX = "g++"; }
+	if LINK == null then { LINK = "ld"; }
+	if LIB == null then { LIB = "ar"; }
+	IS_GNU="yes";
 }
 
-if CC == null then {
-	if OS() == "mac" then { CC = "clang"; }
-	else if OS() == "win" then {
-		CC = "cl.exe";
-	} else {
-    	CC = "gcc";
-    }
+// Define file extensions
+if OS() == "win" then {
+	SHLIB_EXT = "dll";
+	OBJ_EXT = "*.obj";
+	ASM_EXT1 = "*.asm";
+	ASM_EXT2 = "*.asm";
+} else if OS() == "mac" then {
+	SHLIB_EXT = "dylib";
+	OBJ_EXT = "*.o";
+	ASM_EXT1 = "*.S";
+	ASM_EXT2 = "*.s";
+} else {
+	SHLIB_EXT = "so";
+	OBJ_EXT = "*.o";
+	ASM_EXT1 = "*.S";
+	ASM_EXT2 = "*.s";
 }
 
 // Misc stuff
-if AR == null then { AR = "ar"; }
 if BISON == null then { BISON = "bison"; }
 if FLEX == null then { FLEX = "flex"; }
 
-function cppToObj()
-{
-    if OBJ_DIR == null then
-    {
-        return INPUT.regex("\\.cpp$", ".o");
-    }
-    else
-    {
-        return OBJ_DIR + "/" + INPUT.fileName().regex("\\.cpp$", ".o");
-    }
-}
-function ccToObj()
-{
-    if OBJ_DIR == null then
-    {
-        return INPUT.regex("\\.cc$", ".o");
-    }
-    else
-    {
-        return OBJ_DIR + "/" + INPUT.fileName().regex("\\.cc$", ".o");
-    }
-}
-function cxxToObj()
-{
-    if OBJ_DIR == null then
-    {
-        return INPUT.regex("\\.cxx$", ".o");
-    }
-    else
-    {
-        return OBJ_DIR + "/" + INPUT.fileName().regex("\\.cc$", ".o");
-    }
-}
-
-function cToObj()
-{
-    if OBJ_DIR == null then
-    {
-        return INPUT.regex("\\.c$", ".o");
-    }
-    else
-    {
-        return OBJ_DIR + "/" + INPUT.fileName().regex("\\.c$", ".o");
-    }
-}
-
 function lib(lname) {
-	# The best way to know whats up is to check the overall compiler: CC.
-	if CC == "gcc" then {
-		INPUT += "-l" + lname + " ";
-	} else if CC == "clang" then {
-		INPUT += "-l" + lname + " ";
+	if IS_GNU == "yes" then {
+		return INPUT+" -l"+name;
 	} else {
-		# Uh, windows...dunno, yet.
-		print("Unsupported OS: Windows."); 
+		// Appearently, you only need to specify the .lib file...
+		return INPUT+" lib"+name;
 	}
-	return INPUT;
 }
-
 function lib_dir(dir) {
-	# The best way to know whats up is to check the overall compiler: CC.
-	if CC == "gcc" then {
-		INPUT = INPUT + "-L" + dir + " ";
-	} else if CC == "clang" then {
-		INPUT = INPUT + "-L" + dir + " ";
-	} else { print("Unsupported OS: Windows."); }
-	return INPUT;
+	if IS_GNU == "yes" then {
+		return INPUT+" -L"+dir;
+	} else {
+		return INPUT+"  /LIBPATH:"+dir;
+	}
 }
-
 function inc_dir(dir) {
-	# The best way to know whats up is to check the overall compiler: CC.
-	if CC == "gcc" then {
-		INPUT = INPUT + "-I" + dir + " ";
-	} else if CC == "clang" then {
-		INPUT = INPUT + "-I" + dir + " ";
-	} else { print("Unsupported OS: Windows."); }
-	return INPUT;
+	if IS_GNU == "yes" then {
+		return INPUT+" -I"+dir;
+	} else {
+		return INPUT+" /I "+dir;
+	}
 }
 
+/*	if IS_GNU == "yes" then {
+	} else {
+	}
+*/
 // Checkers.
 function has_tool(t) {
-	if OS() == "win" then { which = "where.exe"; }
-	else { which = "which"; }
-	// Check for the tool.
-	return execute_quiet(which + " " + t);
+	return execute_quiet(WHICH + " " + t);
 }
 
 function has_lib(library) {
 	fh = open("./.tmp.c","w");
 	fh.write("int main(void){ return 0; }");
 	fh.close();
-	instr = "${CC} ${CFLAGS} ${LDFLAGS} ./.tmp.c -o ./.tmp.out ";
+	instr = "${CC} ${LDFLAGS} ./.tmp.c -o ./.tmp.out";
 	instr = instr.lib(library);
 	rt = execute_quiet(instr);
 	unlink("./.tmp.c");
@@ -137,7 +87,7 @@ function has_header(header) {
 	fh.write("#include <" + header + ">\n");
 	fh.write("int main(void){ return 0; }");
 	fh.close();
-	instr = "${CC} ${CFLAGS} ${LDFLAGS} ./.tmp.c -o ./.tmp.out";
+	instr = "${CC} ${CFLAGS} ./.tmp.c -o ./.tmp.out";
 	rt = execute_quiet(instr);
 	unlink("./.tmp.c");
 	unlink("./.tmp.out");
@@ -149,137 +99,130 @@ function has_function(fnc, header, library) {
 	fh.write("#include <" + header + ">\n");
 	fh.write("int main(void){ if(&" + fnc + " != NULL) return 2; }");
 	fh.close();
-	instr = "${CC} ${CFLAGS} ${LDFLAGS} ./.tmp.c -o ./.tmp.out";
+	instr = "${CC} ${CFLAGS} -c ./.tmp.c -o ./.tmp.o";
 	instr = instr.lib(library);
 	rt = execute_quiet(instr);
 	unlink("./.tmp.c");
-	unlink("./.tmp.out");
-	if rt == "2" then { return 0; }
-	else { return 1; }
+	unlink("./.tmp.o");
+	return rt;
 }
 
-rule "exe"
-{
-    input "*.o";
-    profile "build"
-    {
-        INPUT = [INPUT].unique().matches("*.o");
+// Change file extension
+function objectify() {
+	if IS_GNU == "yes" then {
+		return INPUT+".o";
+	} else {
+		return INPUT+".obj";
+	}
+}
+
+/*
+	Defining "finals".
+*/
+rule "exe" {
+	display "Executable";
+    input matches(OBJ_EXT);
+    profile "build" {
         execute("${CXX} -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
     }
 }
-
-/*rule "so"
-{
-    input "*.o";
-    profile "build"
-    {
-        INPUT = [INPUT].unique().matches("*.o");
+rule "so" {
+	display "Shared object";
+    input matches(OBJ_EXT);
+    profile "build" {
         execute("${CXX} -shared -o ${OUTPUT} ${INPUT} ${LDFLAGS}");
     }
-}*/
-
-rule "lib"
-{
-    input "*.o";
-    profile "build"
-    {
-        INPUT = [INPUT].unique().matches("*.o");
-        execute("${AR} cr ${OUTPUT} ${INPUT}");
+}
+rule "lib" {
+	display "Static library";
+    input matches(OBJ_EXT);
+    profile "build" {
+        execute("${LIB} cr ${OUTPUT} ${INPUT}");
     }
 }
 
-rule "cxx" {
-    input "*.cxx";
-    output INPUT.cxxToObj();
-    requires getMakeDeps("${CXX} ${CXXFLAGS} -M -MG ${INPUT}");
-    profile "build"
-    {
+/*
+	Source file processing
+*/
+rule "c++" {
+	display "C++";
+    input matches("*.cc", "*.cxx", "*.c++", "*.cpp");
+    output INPUT.objectify();
+    profile "build" {
         execute("${CXX} ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
     }
 }
-
-rule "cpp"
-{
-    input "*.cpp";
-    output INPUT.cppToObj();
-    requires getMakeDeps("${CXX} ${CXXFLAGS} -M -MG ${INPUT}");
-    profile "build"
-    {
-        execute("${CXX} ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
-    }
-}
-
-// Duplicate, but for .cc
-rule "cc" {
-    input "*.cc";
-    output INPUT.ccToObj();
-    requires getMakeDeps("${CXX} ${CXXFLAGS} -M -MG ${INPUT}");
-    profile "build"
-    {
-        execute("${CXX} ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
-    }
-}
-
-// Heh, we're not going to use this one.
-rule "c"
-{
-    input "*.c";
-    output INPUT.cToObj();
-    requires getMakeDeps("${CC} ${CFLAGS} -M -MG ${INPUT}");
-    profile "build"
-    {
+rule "c" {
+	display "C";
+    input matches("*.c", "*.C");
+    output INPUT.objectify();
+    profile "build" {
         execute("${CC} ${CFLAGS} -c -o ${OUTPUT} ${INPUT}");
     }
 }
+rule "asm" {
+	display "Assembly";
+	input matches(ASM_EXT1, ASM_EXT2); // It is different on the OSes...
+    output INPUT.objectify();
+    profile "build" {
+        execute("${CC} -c ${INPUT} -o ${OUTPUT}");
+    }
+}
 
-rule "bison"
-{
+/*
+	Generators for scanners and the like.
+*/
+rule "bison" {
+	display "YACC (bison)";
     input "*.y";
     output [INPUT.regex("\\.y$", ".tab.c"), INPUT.regex("\\.y$", ".tab.h")];
-    profile "build"
-    {
+    profile "build" {
         BASE = INPUT.regex("\\.y", "");
         execute("${BISON} -b${BASE} ${BISONFLAGS} ${INPUT}");
         // if you add a -v bison will produce a .output file
     }
 }
-
-rule "flex"
-{
+rule "flex" {
+	display "Lex (flex)";
     input "*.l";
     output INPUT.regex("\\.l$", ".yy.c");
     output INPUT.regex("\\.l$", ".yy.h");
-    profile "build"
-    {
+    profile "build" {
         execute("${FLEX} ${FLEXFLAGS} ${INPUT}");
     }
 }
 
-rule "obj-c" {
-   	input "*.m";
-   	output INPUT.replace(".m",".o");
-   	requires getMakeDeps("${CC} ${CFLAGS} ${OBJCFLAGS} -M -MG ${INPUT}");
-   	profile "build" {
-       	execute("${CC} -x objective-c ${CFLAGS} ${OBJCFLAGS} -c -o ${OUTPUT} ${INPUT}", "clang");
-   	}
-}
-rule "obj-cxx" {
-   	input "*.mm";
-   	output INPUT.replace(".mm",".o");
-   	requires getMakeDeps("${CXX} ${CXXFLAGS} ${OBJCXXFLAGS} -M -MG ${INPUT}");
-   	profile "build" {
-       	execute("${CXX} -x objective-c++ ${CXXFLAGS} ${OBJCXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "clang++");
-   	}
-}
-
-# This is for OS X.
-/*if OS() == "mac" then {
+// ObjC is enabled.
+if OS() == "mac" then {
+	// Compile steps
+	rule "obj-c" {
+		display "Objective-C";
+   		input "*.m";
+    	output INPUT.objectify();
+   		profile "build" {
+    	   	execute("${CC} -x objective-c ${CFLAGS} ${OBJCFLAGS} -c ${INPUT} -o ${OUTPUT}", "clang");
+   		}
+	}
+	rule "obj-cxx" {
+		display "Objective-C++";
+	   	input "*.mm";
+    	output INPUT.objectify();
+   		profile "build" {
+    	   	execute("${CXX} -x objective-c++ ${CXXFLAGS} ${OBJCXXFLAGS} -c ${INPUT} -o ${OUTPUT}", "clang++");
+   		}
+	}
+	// Final
 	rule "dylib" {
+		display "Dynamic library";
 		input "*.o";
 		profile "build" {
 			execute("${CXX} -dynamiclib ${LDFLAGS} -o ${OUTPUT} ${INPUT}");
 		}
 	}
+}
+
+# This is for OS X.
+/*if OS() == "mac" then {
 	rule "versioned_framework" {
 		input "*.dylib";
 		profile "build" {

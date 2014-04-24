@@ -101,7 +101,7 @@ void BuildParser::include( const Bu::String &sStr, void *scanner, YYLTYPE *loc )
                     break;
                 i = j+1;
             }
-            sio << "Hey, found it from here:  " << sStr.getSubStr( sStr.begin(), i ) << sio.nl;
+            //sio << "Hey, found it from here:  " << sStr.getSubStr( sStr.begin(), i ) << sio.nl;
             xAst.addNode( AstNode::typePushPrefix, sStr.getSubStr( sStr.begin(), i ) );
         }
         else
